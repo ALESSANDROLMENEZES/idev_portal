@@ -15,7 +15,7 @@ module.exports = {
         allowNull: false,
         comment: "null",
         references: {
-          model: 'Challenges',
+          model: 'challenges',
           key: 'id'
         }
       }

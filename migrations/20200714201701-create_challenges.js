@@ -66,7 +66,7 @@ module.exports = {
         allowNull: false,
         comment: "null",
         references: {
-          model: 'Module',
+          model: 'modules',
           key: 'id'
         }
       },
@@ -75,7 +75,7 @@ module.exports = {
         allowNull: false,
         comment: "null",
         references: {
-          model: 'Challenge_status',
+          model: 'challenge_status',
           key: 'id'
         }
       }
