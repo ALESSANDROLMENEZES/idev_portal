@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "test": "jest",
+    "test:coverage": "npm test -- --coverage",
+    "test:report": "codecov",
+    "test:watch": "npm test -- --watch"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -20,7 +25,10 @@
   },
   "devDependencies": {
     "faker": "^4.1.0",
+    "jest": "^26.1.0",
+    "jest-runner-prettier": "^0.3.6",
     "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
     "sequelize-cli": "^6.2.0"
   }
 }
