@@ -47,7 +47,9 @@ test('Deve aceitar salvar', async () => {
     let n = parseInt(Math.random() * 1000);
     let user = {email:`username${n}@mail.com`, password:'123'};
     let { email, password } = await userController.store(user);
-    expect({email, password}).toEqual({email:`username${n}@mail.com`, password:'123'});
+    expect({ email, password }).toEqual({ email: `username${n}@mail.com`, password: '123' });
+    expect(user).not.toBeNull();
+    expect(user).not.toBeUndefined();
 });
 
 test('Deve normalizar o email em lowercase', async () => {

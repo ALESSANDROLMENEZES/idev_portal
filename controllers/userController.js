@@ -6,18 +6,22 @@ const validator = require('validator');
 
 module.exports = {
     index: async (user) => {
-        (!user.email) ? user.email = '' : user.email;
-        (!user.name) ? user.name = '' : user.name;
-        const users = await User.findAll({
-            where: {
-                [Op.or]: [
-                    { email: { [Op.like]:`%${user.email}%`} },
-                    { name:{[Op.like]:`%${user.name}%`}}
-                ]
-            },
-            limit:7
-        });
-        return users;
+        try {
+            (!user.email) ? user.email = '' : user.email;
+            (!user.name) ? user.name = '' : user.name;
+            const users = await User.findAll({
+                where: {
+                    [Op.or]: [
+                        { email: { [Op.like]:`%${user.email}%`} },
+                        { name:{[Op.like]:`%${user.name}%`}}
+                    ]
+                },
+                limit:7
+            });
+            return users;   
+        } catch (error) {
+            return [];
+        }
     },
     
     store: async (user) => {

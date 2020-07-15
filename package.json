@@ -5,9 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "test": "jest",
+    "test": "jest --color --verbose",
     "test:coverage": "npm test -- --coverage",
-    "test:report": "codecov",
     "test:watch": "npm test -- --watch"
   },
   "dependencies": {
