@@ -23,16 +23,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       comment: "null"
     },
-    'ask': {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      comment: "null"
-    },
-    'rightAnswerId': {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      comment: "null"
-    },
     'createdAt': {
       type: DataTypes.DATE,
       allowNull: false,

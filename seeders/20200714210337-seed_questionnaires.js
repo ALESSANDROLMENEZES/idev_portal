@@ -1,24 +1,22 @@
+const moment = require('moment');
+const currentDate = new Date();
 'use strict';
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+    await queryInterface.bulkInsert('questionnaires', [
+      {
+        id:1,
+        classId:1, 
+        title:'Questionário de fixação',
+        createdAt:moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
+        updatedAt:moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
+        avaliable:'1',
+      }
+    ], {});
   },
-
+  
   down: async (queryInterface, Sequelize) => {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.bulkDelete('questionnaires', null, {});
   }
 };

@@ -24,16 +24,6 @@ module.exports = {
         allowNull: false,
         comment: "null"
       },
-      'ask': {
-        type: Sequelize.STRING(255),
-        allowNull: false,
-        comment: "null"
-      },
-      'rightAnswerId': {
-        type: Sequelize.INTEGER(11),
-        allowNull: false,
-        comment: "null"
-      },
       'createdAt': {
         type: Sequelize.DATE,
         allowNull: false,

@@ -1,24 +1,38 @@
+const faker = require('faker');
 'use strict';
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+    await queryInterface.bulkInsert('questions', [
+      {
+        id:1,
+        text: faker.lorem,
+        rightAnswerId:1
+      },
+      {
+        id:2,
+        text: faker.lorem,
+        rightAnswerId:2
+      },
+      {
+        id:3,
+        text: faker.lorem,
+        rightAnswerId:3
+      },
+      {
+        id:4,
+        text: faker.lorem,
+        rightAnswerId:4
+      },
+      {
+        id:5,
+        text: faker.lorem,
+        rightAnswerId:5
+      },
+    ], {});
   },
-
+  
   down: async (queryInterface, Sequelize) => {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.bulkDelete('questions', null, {});
   }
 };
