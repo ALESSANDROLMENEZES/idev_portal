@@ -56,3 +56,28 @@ test('Deve normalizar o email em lowercase', async () => {
     let { email, password } = await userController.store(user);
     expect({email, password}).toEqual({email:`username${n}@mail.com`, password:'123'});
 });
+
+test('Deve retornar o usuário Alessandro ', async () => {
+    let user = await userController.show({ email: 'Alessandroadm@Live.com', password:'123' });
+    expect(user.name).toBe('Alessandro');
+});
+
+test('Deve retornar o informe um email ', async () => {
+    let result = await userController.show({ });
+    expect(result).toBe('Informe um email');
+});
+
+test('Deve retornar o informe sua senha ', async () => {
+    let result = await userController.show({email:'alessandro@live.com' });
+    expect(result).toBe('Informe sua senha');
+});
+
+test('Deve retornar o Email inválido ', async () => {
+    let result = await userController.show({ email:'alessandro', password:'123'});
+    expect(result).toBe('Email inválido');
+});
+
+test('Deve retornar Email ou senha inválido ', async () => {
+    let result = await userController.show({ email:'alessandro@live.com', password:'123'});
+    expect(result).toBe('Email ou senha inválido');
+});
