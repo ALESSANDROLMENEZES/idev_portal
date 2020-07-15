@@ -11,7 +11,7 @@ module.exports = {
         if (!user.email || !user.password) {
             return 'Informe, email e senha';
         }
-        console.log(!(validator.isEmail(user.email)), user.email);
+
         if (!(validator.isEmail(user.email))) {
             return 'Email inválido'; 
         }
