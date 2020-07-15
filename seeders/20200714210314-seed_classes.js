@@ -11,7 +11,7 @@ module.exports = {
         title:'Introdução a Javascript',
         subtitle:'Front end',
         resume:faker.lorem.words(10),
-        text:faker.lorem.text,
+        text:faker.lorem.text(),
         code:`'subtitle': { type: DataTypes.STRING(80), allowNull: false, comment: "null" },`,
         slides:'https://docs.google.com/presentation/d/11srr9-8m09V7V8nXmELwUHp6-rTPAbX1uwWyE77loFY/embed',
         video:'https://www.youtube.com/embed/Fl21sUB1KHA',
