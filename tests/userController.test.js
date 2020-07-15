@@ -5,17 +5,17 @@ const {User} = require('../models');
 afterAll(async() => await User.sequelize.close());
 
 test('Listar usuários', async () => {
-    let users = await userController.index();
+    let users = await userController.index({email:'alessandro', name:''});
     expect(users[5].email).toBe('alessandroadm@live.com');
 });
 
-test('Deve retornar mais de 5 usuários', async () => {
-    let users = await userController.index();
-    expect(users.length).toBeGreaterThan(5);
+test('Deve retornar mais de 6 usuários', async () => {
+    let users = await userController.index({email:'', name:''});
+    expect(users.length).toBeGreaterThan(6);
 });
 
 test('O primeiro usuário deve ter id: 1 ', async () => {
-    let users = await userController.index();
+    let users = await userController.index({email:'', name:''});
     expect(users[0].id).toBe(1);
 });
 

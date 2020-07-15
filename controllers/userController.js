@@ -1,30 +1,45 @@
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 const bk = require('bcrypt');
 const { User } = require('../models');
 const validator = require('validator');
- 
+
 module.exports = {
-    index: async () => {
-        const users = await User.findAll();
+    index: async (user) => {
+        (!user.email) ? user.email = '' : user.email;
+        (!user.name) ? user.name = '' : user.name;
+        const users = await User.findAll({
+            where: {
+                [Op.or]: [
+                    { email: { [Op.like]:`%${user.email}%`} },
+                    { name:{[Op.like]:`%${user.name}%`}}
+                ]
+            },
+            limit:7
+        });
         return users;
     },
     
     store: async (user) => {
-        if (!user.email || !user.password) {
-            return 'Informe, email e senha';
+        try {
+            if (!user.email || !user.password) {
+                return 'Informe, email e senha';
+            }
+            if (!(validator.isEmail(user.email))) {
+                return 'Email inválido'; 
+            }
+            const alreadyExistis = await User.findOne({ where: { email: user.email } });
+            if (alreadyExistis) {
+                return 'Email já cadastrado'; 
+            }
+            user.email = user.email.toLowerCase();
+            const result = await User.create(user);
+            return result;               
+        } catch (error) {
+            return 'Ocorreu um erro';   
         }
-
-        if (!(validator.isEmail(user.email))) {
-            return 'Email inválido'; 
-        }
-        const alreadyExistis = await User.findOne({ where: { email: user.email } });
-        if (alreadyExistis) {
-            return 'Email já cadastrado'; 
-        }
-        user.email = user.email.toLowerCase();
-        const result = await User.create(user);
-        return result;
     },
-
+    
     show: async (user) => {
         if (!user.email) {
             return 'Informe um email';
