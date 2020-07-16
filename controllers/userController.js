@@ -64,5 +64,28 @@ module.exports = {
             return 'Email ou senha inválido';
         }
         return result;
+    },
+
+    update: async (user) => {
+        console.log('IMPRIMINDO O VALOR RECEBIDO');
+        console.log(user);
+        try {
+            const transaction = await User.sequelize.transaction();
+            if (!user) {
+                await transaction.rollback();
+                return 'Informe um usuário';
+            }
+            if (!user.id) {
+                await transaction.rollback();
+                return 'Informe um usuário';
+            }
+            let result = await User.update(user, {where:{id:user.id}});
+            await transaction.commit();
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return 'Ocorreu um erro';
+        }
     }
 };

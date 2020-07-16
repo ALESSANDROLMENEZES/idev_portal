@@ -49,8 +49,8 @@ module.exports = {
     },
     
     update: async (mod) => {
-        const transaction = await Module.sequelize.transaction();
         try {
+            const transaction = await Module.sequelize.transaction();
             if (!mod) {
                 await transaction.rollback();
                 return 'Informe um módulo'; 

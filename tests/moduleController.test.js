@@ -2,7 +2,7 @@ const moduleController = require('../controllers/moduleController');
 const {Module} = require('../models');
 
 //beforeAll(async() => await User.sequelize.close());
-afterAll(async () => await Module.sequelize.close());
+//afterAll(async () => await Module.sequelize.close());
 
 
 test('Deve salvar um novo módulo ', async () => {
