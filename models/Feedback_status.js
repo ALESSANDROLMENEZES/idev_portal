@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "null"
     }
   }, {
-    tableName: 'feedback_status'
+      tableName: 'feedback_status',
+      timestamps:false,
   });
 };

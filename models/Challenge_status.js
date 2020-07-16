@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "null"
     }
   }, {
-    tableName: 'challenge_status'
+      tableName: 'challenge_status',
+      timestamps:false,
   });
 };

@@ -19,6 +19,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'teams'
+      tableName: 'teams',
+      timestamps:false,
   });
 };

@@ -21,3 +21,35 @@ test('Deve retornar mensagem de erro ', async () => {
     expect(result).not.toBeUndefined();
 });
 
+
+test('Deve retornar apenas os módulos do usuário comun ', async () => {
+    const user = { id:1, admin:0};
+    const result = await moduleController.index(user);
+    expect(result[0].title).toBe('Introdução a javascript');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar solicitando autenticação ', async () => {
+    const result = await moduleController.index();
+    expect(result).toBe('Você precisa realizar o login');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar um array vazio usuário não possui módulos ', async () => {
+    const user = { id:2, admin:0};
+    const result = await moduleController.index(user);
+    expect(result).toEqual([]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar um array com todos os módulos para o admin ', async () => {
+    const user = { id:6, admin:1};
+    const result = await moduleController.index(user);
+    expect(result.length).toBeGreaterThan(1);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+

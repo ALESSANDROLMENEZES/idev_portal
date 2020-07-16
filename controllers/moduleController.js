@@ -1,4 +1,6 @@
-const { Module } = require('../models');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+const { Module, User_module } = require('../models');
 module.exports = {
     store: async (mod) => {
         try {
@@ -12,6 +14,36 @@ module.exports = {
             return result;
         } catch (error) {
             return 'Ocorreu um erro';
+        }
+    },
+
+    index: async (user) => {
+        let result;
+        if (!user) {
+            return 'Você precisa realizar o login';
+        }
+        if (user.admin) {
+            result = await Module.findAll();
+            return result;
+        } else {
+            const moulesAvaliableForUser = await User_module.findAll({
+                where: {
+                    userId: user.id
+                }
+            });
+            if (!moulesAvaliableForUser) {
+                return [];
+            }
+            
+            const ids = moulesAvaliableForUser.map((item) => item.dataValues.userId);
+            result = await Module.findAll({
+                where: {
+                    id: {
+                        [Op.in]: ids
+                    }
+                }
+            });
+            return result;
         }
     }
 };

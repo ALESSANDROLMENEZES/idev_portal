@@ -23,6 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'users_modules'
+      tableName: 'users_modules',
+      timestamps:false,
   });
 };

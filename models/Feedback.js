@@ -47,6 +47,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'feedbacks'
+      tableName: 'feedbacks',
+      timestamps:false,
   });
 };

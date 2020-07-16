@@ -23,6 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'questionnaires_questions'
+      tableName: 'questionnaires_questions',
+      timestamps:false,
   });
 };
