@@ -1,5 +1,6 @@
 const userController = require('../controllers/userController');
-const {User} = require('../models');
+const { User } = require('../models');
+let newUser = {};
 
 //beforeAll(async() => await User.sequelize.close());
 afterAll(async() => await User.sequelize.close());
@@ -56,21 +57,22 @@ test('Deve retornar email já cadastrado', async () => {
 });
 
 test('Deve aceitar salvar', async () => {
-    let n = parseInt(Math.random() * 1000);
-    let user = {email:`username${n}@mail.com`, password:'123'};
-    let { email, password } = await userController.store(user);
-    expect({ email, password }).toEqual({ email: `username${n}@mail.com`, password: '123' });
-    expect(user).not.toBeNull();
-    expect(user).not.toBeUndefined();
+    newUser.email = 'UserNamE987@maiL.Com';
+    newUser.password = '123';
+    let { id, email, password } = await userController.store(newUser);
+    newUser.id = id;
+    expect({ email }).toEqual({ email: 'username987@mail.com' });
+    expect(email).not.toBeNull();
+    expect(email).not.toBeUndefined();
+    expect(password).not.toBeNull();
+    expect(password).not.toBeUndefined();
 });
 
 test('Deve normalizar o email em lowercase', async () => {
-    let n = parseInt(Math.random() * 1000);
-    let user = {email:`USERNAME${n}@maiL.cOm`, password:'123'};
-    let { email, password } = await userController.store(user);
-    expect({ email, password }).toEqual({ email: `username${n}@mail.com`, password: '123' });
-    expect(user).not.toBeNull();
-    expect(user).not.toBeUndefined();
+    let { email } = newUser;
+    expect({ email }).toEqual({ email: 'username987@mail.com' });
+    expect(email).not.toBeNull();
+    expect(email).not.toBeUndefined();
 });
 
 test('Deve retornar o usuário Alessandro ', async () => {
@@ -133,4 +135,41 @@ test('Deve retornar o usuário com o nome original', async () => {
     expect(result).toBe('Informe um usuário');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
+});
+
+
+
+test('Deve solicitar um usuário ', async () => {
+    const result = await userController.destroy();
+    expect(result).toBe('Informe um usuário');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve solicitar um usuário ', async () => {
+    const result = await userController.destroy({name:'Usuário sem id'});
+    expect(result).toBe('Informe um usuário');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve excluir o último usuário salvo ', async () => {
+    const result = await userController.destroy(newUser);
+    expect(result).toBe(1);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar mensagem de usuário já excluido ', async () => {
+    const result = await userController.destroy(newUser);
+    expect(result).toBe('O usuário já foi excluido');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('A exclusão anterior não pode ter excluido todos os usuário ', async () => {
+    let users = await userController.index({email:'', name:''});
+    expect(users.length).toBeGreaterThan(6);
+    expect(users).not.toBeNull();
+    expect(users).not.toBeUndefined();
 });

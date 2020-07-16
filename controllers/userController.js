@@ -67,10 +67,8 @@ module.exports = {
     },
 
     update: async (user) => {
-        console.log('IMPRIMINDO O VALOR RECEBIDO');
-        console.log(user);
+        const transaction = await User.sequelize.transaction();
         try {
-            const transaction = await User.sequelize.transaction();
             if (!user) {
                 await transaction.rollback();
                 return 'Informe um usuário';
@@ -85,6 +83,32 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
+            return 'Ocorreu um erro';
+        }
+    },
+
+    destroy: async (user) => {
+        const transaction = await User.sequelize.transaction();
+        try {
+            if (!user) {
+                await transaction.rollback();
+                return 'Informe um usuário'; 
+            }
+            if (!user.id) {
+                await transaction.rollback();
+                return 'Informe um usuário'; 
+            } 
+            let userExists = await User.findByPk(user.id);
+            if (!userExists) {
+                await transaction.rollback();
+                return 'O usuário já foi excluido'; 
+            }
+            let result = await User.destroy({ where: { id: user.id } });
+            await transaction.commit();
+            return result;
+        } catch (error) {
+            console.log(error);
+            await transaction.rollback();
             return 'Ocorreu um erro';
         }
     }

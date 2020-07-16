@@ -4,13 +4,13 @@ const {Module} = require('../models');
 //beforeAll(async() => await User.sequelize.close());
 //afterAll(async () => await Module.sequelize.close());
 
-
+let newModule;
 test('Deve salvar um novo módulo ', async () => {
     const mod = { title: 'Terminal Git e Github' };
-    const result = await moduleController.store(mod);
-    expect(result.title).toBe('Terminal Git e Github');
-    expect(result).not.toBeNull();
-    expect(result).not.toBeUndefined();
+    newModule = await moduleController.store(mod);
+    expect(newModule.title).toBe('Terminal Git e Github');
+    expect(newModule).not.toBeNull();
+    expect(newModule).not.toBeUndefined();
 });
 
 test('Deve retornar mensagem de erro ', async () => {
@@ -62,7 +62,6 @@ test('Deve retornar uma mensagem pedindo para informar o módulo ', async () => 
 
 test('Deve retornar uma mensagem pedindo para informar o módulo ', async () => {
     const result = await moduleController.update();
-    console.log(result);
     expect(result).toBe('Informe um módulo');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
@@ -70,7 +69,6 @@ test('Deve retornar uma mensagem pedindo para informar o módulo ', async () => 
 
 test('Deve retornar o titulo alterado ', async () => {
     const result = await moduleController.update({ id: 1, title: 'Javascript na prática' });
-    console.log(result);
     expect(result).toEqual([1]);
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
@@ -78,8 +76,43 @@ test('Deve retornar o titulo alterado ', async () => {
 
 test('Deve retornar voltar o nome do título ao que era antes ', async () => {
     const result = await moduleController.update({ id: 1, title: 'Introdução a javascript' });
-    console.log(result);
     expect(result).toEqual([1]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve solicitar um módulo ', async () => {
+    const result = await moduleController.destroy();
+    expect(result).toBe('Informe um módulo');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve solicitar um módulo ', async () => {
+    const result = await moduleController.destroy({description:'Modulo sem id'});
+    expect(result).toBe('Informe um módulo');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve excluir o último módulo salvo ', async () => {
+    const result = await moduleController.destroy(newModule);
+    expect(result).toBe(1);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar mensagem de módulo já excluido ', async () => {
+    const result = await moduleController.destroy(newModule);
+    expect(result).toBe('O módulo já foi excluido');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('A exclusão anterior não pode ter excluido todos os módulos ', async () => {
+    const user = { id:6, admin:1};
+    const result = await moduleController.index(user);
+    expect(result.length).toBeGreaterThan(1);
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });

@@ -50,7 +50,26 @@ module.exports = {
     
     update: async (mod) => {
         try {
+            if (!mod) {
+                return 'Informe um módulo'; 
+            }
+            if (!mod.id) {
+                return 'Informe um módulo'; 
+            }
             const transaction = await Module.sequelize.transaction();
+            let result = await Module.update(mod, { where: { id: mod.id } });
+            await transaction.commit();
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return 'Ocorreu um erro';
+        }
+    },
+
+    destroy: async (mod) => {
+        const transaction = await Module.sequelize.transaction();
+        try {
             if (!mod) {
                 await transaction.rollback();
                 return 'Informe um módulo'; 
@@ -58,13 +77,18 @@ module.exports = {
             if (!mod.id) {
                 await transaction.rollback();
                 return 'Informe um módulo'; 
+            } 
+            let moduleExists = await Module.findByPk(mod.id);
+            if (!moduleExists) {
+                await transaction.rollback();
+                return 'O módulo já foi excluido'; 
             }
-            let result = await Module.update(mod, {where:{id:mod.id}});
+            let result = await Module.destroy({ where: { id: mod.id } });
             await transaction.commit();
             return result;
         } catch (error) {
-            await transaction.rollback();
             console.log(error);
+            await transaction.rollback();
             return 'Ocorreu um erro';
         }
     }
