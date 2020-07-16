@@ -2,7 +2,6 @@ const userController = require('../controllers/userController');
 const { User } = require('../models');
 let newUser = {};
 
-//beforeAll(async() => await User.sequelize.close());
 afterAll(async() => await User.sequelize.close());
 
 test('Listar usuários', async () => {
