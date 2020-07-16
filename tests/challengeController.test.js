@@ -16,6 +16,7 @@ challenge = {
 
 test('Deve informar que salvou um novo desafio ', async () => {
     let result = await challengeController.store(challenge);
+    challenge.id = result.id;
     expect(result.title).toBe('Hello World');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
@@ -35,6 +36,29 @@ test('Deve informar que o status informado não está disponível ', async () =>
     challenge.statusId = 5;
     let result = await challengeController.store(challenge);
     expect(result).toBe('O status informado não está  disponível');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar o desafio alterado ', async () => {
+    challenge.moduleId = 2;
+    challenge.statusId = 2;
+    challenge.title = 'Título do desafio alterado';
+    challenge.subtitle = 'Subtítulo alterado';
+    challenge.text = 'Texto alterado para uma fração pequena';
+    let result = await challengeController.update(challenge);
+    expect(result).toEqual([1]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar mensagem de desafio não encontrado ', async () => {
+    challenge.moduleId = 1;
+    challenge.statusId = 1;
+    challenge.title = 'Título do desafio alterado';
+    challenge.id = 190;
+    let result = await challengeController.update(challenge);
+    expect(result).toBe('Não encontrei o desafio informado');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
