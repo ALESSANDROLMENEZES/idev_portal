@@ -53,3 +53,33 @@ test('Deve retornar um array com todos os módulos para o admin ', async () => {
     expect(result).not.toBeUndefined();
 });
 
+test('Deve retornar uma mensagem pedindo para informar o módulo ', async () => {
+    const result = await moduleController.update({});
+    expect(result).toBe('Informe um módulo');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar uma mensagem pedindo para informar o módulo ', async () => {
+    const result = await moduleController.update();
+    console.log(result);
+    expect(result).toBe('Informe um módulo');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar o titulo alterado ', async () => {
+    const result = await moduleController.update({ id: 1, title: 'Javascript na prática' });
+    console.log(result);
+    expect(result).toEqual([1]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar voltar o nome do título ao que era antes ', async () => {
+    const result = await moduleController.update({ id: 1, title: 'Introdução a javascript' });
+    console.log(result);
+    expect(result).toEqual([1]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});

@@ -13,10 +13,11 @@ module.exports = {
             const result = await Module.create(mod);
             return result;
         } catch (error) {
+            console.log(error);
             return 'Ocorreu um erro';
         }
     },
-
+    
     index: async (user) => {
         let result;
         if (!user) {
@@ -44,6 +45,27 @@ module.exports = {
                 }
             });
             return result;
+        }
+    },
+    
+    update: async (mod) => {
+        const transaction = await Module.sequelize.transaction();
+        try {
+            if (!mod) {
+                await transaction.rollback();
+                return 'Informe um módulo'; 
+            }
+            if (!mod.id) {
+                await transaction.rollback();
+                return 'Informe um módulo'; 
+            }
+            let result = await Module.update(mod, {where:{id:mod.id}});
+            await transaction.commit();
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return 'Ocorreu um erro';
         }
     }
 };
