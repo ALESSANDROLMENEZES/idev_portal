@@ -73,3 +73,17 @@ test('Deve retornar apenas um status ', async () => {
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
+
+test('Deve atualizar a descrição de um status ', async () => {
+    let result = await challengeStatusController.update({id:1, description:'liBERADO'});
+    expect(result).toEqual([1]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve atualizar a descrição de um status ', async () => {
+    let result = await challengeStatusController.update({id:1, description:'Disponível'});
+    expect(result).toEqual([1]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
