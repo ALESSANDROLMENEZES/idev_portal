@@ -12,9 +12,9 @@ test('Listar usuários', async () => {
     expect(users).not.toBeUndefined();
 });
 
-test('Deve retornar mais de 6 usuários', async () => {
+test('Deve retornar mais de 5 usuários', async () => {
     let users = await userController.index({email:'', name:''});
-    expect(users.length).toBeGreaterThan(6);
+    expect(users.length).toBeGreaterThan(5);
     expect(users).not.toBeNull();
     expect(users).not.toBeUndefined();
 });
@@ -169,7 +169,7 @@ test('Deve retornar mensagem de usuário já excluido ', async () => {
 
 test('A exclusão anterior não pode ter excluido todos os usuário ', async () => {
     let users = await userController.index({email:'', name:''});
-    expect(users.length).toBeGreaterThan(6);
+    expect(users.length).toBeGreaterThan(5);
     expect(users).not.toBeNull();
     expect(users).not.toBeUndefined();
 });

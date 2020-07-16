@@ -1,29 +1,29 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Module_class', {
-    'moduleId': {
+  return sequelize.define('QuestionAnswer', {
+    'questionId': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       comment: "null",
       references: {
-        model: 'Module',
+        model: 'Question',
         key: 'id'
       }
     },
-    'classId': {
+    'answerId': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       comment: "null",
       references: {
-        model: 'Class',
+        model: 'Answer',
         key: 'id'
       }
     }
   }, {
-      tableName: 'modules_classes',
+      tableName: 'questions_answers',
       timestamps:false,
   });
 };

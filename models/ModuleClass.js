@@ -1,17 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('User_module', {
-    'userId': {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      primaryKey: true,
-      comment: "null",
-      references: {
-        model: 'User',
-        key: 'id'
-      }
-    },
+  return sequelize.define('ModuleClass', {
     'moduleId': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -21,9 +11,19 @@ module.exports = function(sequelize, DataTypes) {
         model: 'Module',
         key: 'id'
       }
+    },
+    'classId': {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      primaryKey: true,
+      comment: "null",
+      references: {
+        model: 'Class',
+        key: 'id'
+      }
     }
   }, {
-      tableName: 'users_modules',
+      tableName: 'modules_classes',
       timestamps:false,
   });
 };

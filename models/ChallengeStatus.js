@@ -1,12 +1,13 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Feedback_status', {
+  return sequelize.define('ChallengeStatus', {
     'id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
-      comment: "null"
+      comment: "null",
+      autoIncrement: true
     },
     'description': {
       type: DataTypes.STRING(45),
@@ -14,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "null"
     }
   }, {
-      tableName: 'feedback_status',
+      tableName: 'challenge_status',
       timestamps:false,
   });
 };

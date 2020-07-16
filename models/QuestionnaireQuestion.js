@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Questionnaire_question', {
+  return sequelize.define('QuestionnaireQuestion', {
     'questionnaireId': {
       type: DataTypes.INTEGER(11),
       allowNull: false,

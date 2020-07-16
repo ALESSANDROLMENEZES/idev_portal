@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const { Module, User_module } = require('../models');
+const { Module, UserModule } = require('../models');
 module.exports = {
     store: async (mod) => {
         try {
@@ -27,7 +27,7 @@ module.exports = {
             result = await Module.findAll();
             return result;
         } else {
-            const moulesAvaliableForUser = await User_module.findAll({
+            const moulesAvaliableForUser = await UserModule.findAll({
                 where: {
                     userId: user.id
                 }
