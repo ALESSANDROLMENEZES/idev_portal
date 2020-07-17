@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('User', {
+  const User = sequelize.define('User', {
     'id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -85,6 +85,27 @@ module.exports = function(sequelize, DataTypes) {
       comment: "null"
     }
   }, {
-    tableName: 'users'
+      tableName: 'users',
+      defaultScope: {
+        attributes: { exclude: ['password'] },
+      },
+      scopes: {
+        withPassword: {
+            attributes: { },
+        }
+    }
   });
+
+  User.associate = (models) => {
+    
+    User.belongsToMany(models.Team, {
+      through: 'team_users',
+      as: 'members',
+      foreignKey: 'userId'
+    });
+
+  };
+
+  return User;
+
 };

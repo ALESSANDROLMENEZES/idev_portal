@@ -5,7 +5,7 @@ const { User } = require('../models');
 const validator = require('validator');
 
 module.exports = {
-
+    
     index: async (user) => {
         try {
             (!user.email) ? user.email = '' : user.email;
@@ -25,7 +25,7 @@ module.exports = {
         }
     },
     
-
+    
     store: async (user) => {
         try {
             if (!user.email || !user.password) {
@@ -46,13 +46,10 @@ module.exports = {
         }
     },
     
-
+    
     show: async (user) => {
         if (!user.email) {
             return 'Informe um email';
-        }
-        if (!user.password) {
-            return 'Informe sua senha';
         }
         if(!(validator.isEmail(user.email))){
             return 'Email inválido';
@@ -60,16 +57,12 @@ module.exports = {
         user.email = user.email.toLowerCase();
         const result = await User.findOne({ where: { email: user.email } });
         if (!result) {
-            return 'Email ou senha inválido';
-        }
-        const passMatch = bk.compareSync(user.password, result.password);
-        if (!passMatch) {
-            return 'Email ou senha inválido';
+            return 'Email inválido';
         }
         return result;
     },
-
-
+    
+    
     update: async (user) => {
         const transaction = await User.sequelize.transaction();
         try {
@@ -90,7 +83,7 @@ module.exports = {
             return 'Ocorreu um erro';
         }
     },
-
+    
     
     destroy: async (id) => {
         const transaction = await User.sequelize.transaction();
@@ -106,7 +99,7 @@ module.exports = {
             }
             
             let userExists = await User.findByPk(id);
-
+            
             if (!userExists) {
                 await transaction.rollback();
                 return 'O usuário já foi excluido'; 
@@ -119,5 +112,27 @@ module.exports = {
             await transaction.rollback();
             return 'Ocorreu um erro';
         }
-    }
+    },
+    
+    login: async (user) => {
+        if (!user.email) {
+            return 'Informe um email';
+        }
+        if (!user.password) {
+            return 'Informe sua senha';
+        }
+        if(!(validator.isEmail(user.email))){
+            return 'Email inválido';
+        }
+        user.email = user.email.toLowerCase();
+        const result = await User.scope('withPassword').findOne({ where: { email: user.email } });
+        if (!result) {
+            return 'Email ou senha inválido';
+        }
+        const passMatch = bk.compareSync(user.password, result.password);
+        if (!passMatch) {
+            return 'Email ou senha inválido';
+        }
+        return 'Logado!';
+    },
 };

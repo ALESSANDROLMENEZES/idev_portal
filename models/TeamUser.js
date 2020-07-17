@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('TeamUser', {
+  const TeamUser = sequelize.define('TeamUser', {
     'teamId': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -21,9 +21,34 @@ module.exports = function(sequelize, DataTypes) {
         model: 'User',
         key: 'id'
       }
-    }
+    },
+    'createdAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
+    'updatedAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
   }, {
       tableName: 'team_users',
-      timestamps:false,
   });
+  
+  TeamUser.associate = (models) => {
+    
+    TeamUser.belongsTo(models.User, {
+      as: 'team_member', foreignKey: 'userId'
+    });
+    
+    TeamUser.belongsTo(models.Team, {
+      as: 'member_team', foreignKey: 'teamId'
+    });
+    
+  };
+  
+  return TeamUser;
 };

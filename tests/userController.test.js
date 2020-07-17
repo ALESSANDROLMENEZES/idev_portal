@@ -88,9 +88,9 @@ test('Deve retornar o informe um email ', async () => {
     expect(result).not.toBeUndefined();
 });
 
-test('Deve retornar o informe sua senha ', async () => {
-    let result = await userController.show({email:'alessandro@live.com' });
-    expect(result).toBe('Informe sua senha');
+test('Deve retornar o usuário sem a senha ', async () => {
+    let result = await userController.show({email:'alessandroadm@live.com' });
+    expect(result.password).toBeUndefined();
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
@@ -104,9 +104,23 @@ test('Deve retornar o Email inválido ', async () => {
 
 test('Deve retornar Email ou senha inválido ', async () => {
     let result = await userController.show({ email:'alessandro@live.com', password:'123'});
+    expect(result).toBe('Email inválido');
+});
+
+test('Não deve conseguir fazer o login com email incorreto ', async () => {
+    let result = await userController.login({ email:'alessandro@live.com', password:'123'});
     expect(result).toBe('Email ou senha inválido');
 });
 
+test('Não deve conseguir fazer o login com a senha incorreta ', async () => {
+    let result = await userController.login({ email:'alessandroadm@live.com', password:'senhaerrada'});
+    expect(result).toBe('Email ou senha inválido');
+});
+
+test('Deve conseguir fazer o login com as credenciais corretas ', async () => {
+    let result = await userController.login({ email:'alessandroadm@live.com', password:'123'});
+    expect(result).toBe('Logado!');
+});
 
 test('Deve retornar o usuário alterado', async () => {
     let result = await userController.update({id:6, name:'Alexandre Silva'});
@@ -122,14 +136,14 @@ test('Deve retornar o usuário com o nome original', async () => {
     expect(result).not.toBeUndefined();
 });
 
-test('Deve retornar o usuário com o nome original', async () => {
+test('Deve solicitar o id do usuario', async () => {
     let result = await userController.update({name:'Alessandro'});
     expect(result).toBe('Informe um usuário');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
-test('Deve retornar o usuário com o nome original', async () => {
+test('Deve retornar solicitando um usuario', async () => {
     let result = await userController.update();
     expect(result).toBe('Informe um usuário');
     expect(result).not.toBeNull();
@@ -138,7 +152,7 @@ test('Deve retornar o usuário com o nome original', async () => {
 
 
 
-test('Deve solicitar um usuário ', async () => {
+test('Deve solicitar um id de usuário ', async () => {
     const result = await userController.destroy();
     expect(result).toBe('Informe um id');
     expect(result).not.toBeNull();

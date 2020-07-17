@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Team', {
+  const Team = sequelize.define('Team', {
     'id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -22,4 +22,17 @@ module.exports = function(sequelize, DataTypes) {
       tableName: 'teams',
       timestamps:false,
   });
+
+  Team.associate = (models) => {
+    
+    Team.belongsToMany(models.User, {
+      through: 'team_users',
+      as: 'members',
+      foreignKey: 'teamId'
+    });
+
+  };
+
+  return Team;
+
 };
