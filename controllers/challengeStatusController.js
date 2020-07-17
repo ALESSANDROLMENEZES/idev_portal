@@ -4,20 +4,26 @@ module.exports = {
 
     store: async (challengeStatus) => {
         try {
+            
             if (!challengeStatus) {
                 return 'Informe uma descrição';
             }
-            let description = challengeStatus.description || false;
+            
+            let description = challengeStatus.description;
             if (!description) {
                 return 'Informe uma descrição';
             }
-            const alreadyExistis = await ChallengeStatus.findOne({ where: { description} });
+            
+            const alreadyExistis = await ChallengeStatus.findOne({ where: { description } });
             if (alreadyExistis) {
                 return 'Já existe um status com essa descrição'; 
             }
+            
             challengeStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
+            
             const result = await ChallengeStatus.create(challengeStatus);
-            return result;               
+            return result;  
+            
         } catch (error) {
             console.log(error);
             return 'Ocorreu um erro';   
@@ -41,7 +47,7 @@ module.exports = {
                 return 'O status já foi excluido'; 
             }
 
-            let result = await ChallengeStatus.destroy({ where: { id: challengeStatus.id } });
+            let result = await ChallengeStatus.destroy({ where: { id } });
             
             await transaction.commit();
             return result;

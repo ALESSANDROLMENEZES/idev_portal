@@ -26,7 +26,7 @@ test('Deve informar que o módulo informado não está disponível ', async () =
     challenge.moduleId = 5;
     challenge.statusId = 1;
     let result = await challengeController.store(challenge);
-    expect(result).toBe('O módulo informado não está  disponível');
+    expect(result).toBe('O módulo informado não está disponível');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
@@ -35,7 +35,7 @@ test('Deve informar que o status informado não está disponível ', async () =>
     challenge.moduleId = 1;
     challenge.statusId = 5;
     let result = await challengeController.store(challenge);
-    expect(result).toBe('O status informado não está  disponível');
+    expect(result).toBe('O status informado não está disponível');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
@@ -72,7 +72,7 @@ test('Deve retornar mensagem de desafio não encontrado ', async () => {
     challenge.statusId = 1;
     challenge.title = 'Título do desafio alterado again?';
     let result = await challengeController.update(challenge.id);
-    expect(result).toBe('Não encontrei o desafio informado');
+    expect(result).toBe('O status informado não está disponível');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });

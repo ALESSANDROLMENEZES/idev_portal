@@ -7,7 +7,7 @@ const validateChallenge = async (challenge) => {
         let moduleExist = await Module.findByPk(challenge.moduleId);
         
         if (!statusExist || !moduleExist) {
-            (statusExist) ? msg = 'O módulo informado não está  disponível' : msg = 'O status informado não está  disponível';
+            (statusExist) ? msg = 'O módulo informado não está disponível' : msg = 'O status informado não está disponível';
             return { status:422, msg };
         }
         
@@ -92,7 +92,7 @@ module.exports = {
                 return 'Não encontrei o desafio informado';
             }
             
-            const result = await Challenge.destroy(id);
+            const result = await Challenge.destroy({ where: { id } });
             transaction.commit();
             return result;
             
