@@ -100,3 +100,17 @@ test('Deve retornar um array vazio ', async () => {
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
+
+test('Exibir um desafio ', async () => {
+    let result = await challengeController.show(1);
+    expect(result.title).toBe('Desafio I');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Exibir uma mensagem de id inválido ', async () => {
+    let result = await challengeController.show('a');
+    expect(result).toBe('Informe um id válido');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});

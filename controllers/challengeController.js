@@ -110,6 +110,7 @@ module.exports = {
         }
     },
 
+    
     index: async (conectedUser, status = 1, page = 1, limit = 14 ) => {
         //Usuário conectado é admin?
             //>Se sim, listar todos os desafios com paginação, independente de status ou módulo
@@ -157,12 +158,28 @@ module.exports = {
                 limit,
                 offset: limit * page
             });
-            
+
             return result;
 
         } catch (error) {
             console.log(error);
             return 'Ocorreu um erro';
+        }
+    },
+
+    show: async (id) => {
+        try {
+            
+            if (isNaN(id)) {
+                return 'Informe um id válido';
+            }
+            
+            const result = await Challenge.findByPk(id);
+            return result;
+
+        } catch (error) {
+            console.log(error);
+            return [];
         }
     }
     
