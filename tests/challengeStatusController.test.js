@@ -40,14 +40,14 @@ test('Deve retornar uma mensagem que já existe um status com a mesma descriçã
 
 test('Deve retornar uma mensagem solicitando um status ', async () => {
     let result = await challengeStatusController.destroy();
-    expect(result).toBe('Informe um status');
+    expect(result).toBe('Informe um id válido');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
 test('Deve retornar uma mensagem solicitando o id do status ', async () => {
     let result = await challengeStatusController.destroy({description:'Em análise'});
-    expect(result).toBe('Informe um status');
+    expect(result).toBe('Informe um id válido');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });

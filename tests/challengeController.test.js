@@ -61,7 +61,7 @@ test('Deve retornar o desafio excluido ', async () => {
 
 test('Deve retornar o desafio excluido ', async () => {
     let result = await challengeController.destroy('ab');
-    expect(result).toEqual('Não encontrei o desafio informado');
+    expect(result).toEqual('Informe um id válido');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });

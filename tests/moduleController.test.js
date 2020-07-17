@@ -79,14 +79,14 @@ test('Deve retornar voltar o nome do título ao que era antes ', async () => {
 
 test('Deve solicitar um módulo ', async () => {
     const result = await moduleController.destroy();
-    expect(result).toBe('Informe um módulo');
+    expect(result).toBe('Informe um id');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
 test('Deve solicitar um módulo ', async () => {
     const result = await moduleController.destroy({});
-    expect(result).toBe('Informe um módulo');
+    expect(result).toBe('Informe um id válido');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });

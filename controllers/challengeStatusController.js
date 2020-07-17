@@ -31,7 +31,7 @@ module.exports = {
             
             if (isNaN(id)) {
                 transaction.rollback();
-                return 'Não encontrei o status informado';
+                return 'Informe um id válido';
             }
 
             let statusExists = await ChallengeStatus.findByPk(id);

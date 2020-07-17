@@ -140,14 +140,14 @@ test('Deve retornar o usuário com o nome original', async () => {
 
 test('Deve solicitar um usuário ', async () => {
     const result = await userController.destroy();
-    expect(result).toBe('Informe um usuário');
+    expect(result).toBe('Informe um id');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
 test('Deve solicitar um usuário ', async () => {
     const result = await userController.destroy({});
-    expect(result).toBe('Informe um usuário');
+    expect(result).toBe('Informe um id válido');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });

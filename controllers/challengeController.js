@@ -83,7 +83,7 @@ module.exports = {
         try {
             if (isNaN(id)) {
                 transaction.rollback();
-                return 'Não encontrei o desafio informado';
+                return 'Informe um id válido';
             }
             const challengeExist = await Challenge.findByPk(id);
             

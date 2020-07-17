@@ -78,12 +78,12 @@ module.exports = {
 
             if (!id) {
                 await transaction.rollback();
-                return 'Informe um módulo'; 
+                return 'Informe um id'; 
             }
 
             if (isNaN(id)) {
                 transaction.rollback();
-                return 'Não encontrei o módulo';
+                return 'Informe um id válido';
             }
 
             let moduleExists = await Module.findByPk(id);

@@ -97,12 +97,12 @@ module.exports = {
         try {
             if (!id) {
                 await transaction.rollback();
-                return 'Informe um usuário'; 
+                return 'Informe um id'; 
             }
             
             if (isNaN(id)) {
                 transaction.rollback();
-                return 'Não encontrei o usuário';
+                return 'Informe um id válido';
             }
             
             let userExists = await User.findByPk(id);
