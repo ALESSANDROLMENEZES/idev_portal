@@ -54,7 +54,7 @@ test('Deve retornar uma mensagem solicitando o id do status ', async () => {
 
 
 test('Deve excluir apenas o status informado ', async () => {
-    let result = await challengeStatusController.destroy(status);
+    let result = await challengeStatusController.destroy(status.id);
     expect(result).toBe(1);
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();

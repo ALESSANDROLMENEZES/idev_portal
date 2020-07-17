@@ -85,21 +85,21 @@ test('Deve solicitar um módulo ', async () => {
 });
 
 test('Deve solicitar um módulo ', async () => {
-    const result = await moduleController.destroy({description:'Modulo sem id'});
+    const result = await moduleController.destroy({});
     expect(result).toBe('Informe um módulo');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
 test('Deve excluir o último módulo salvo ', async () => {
-    const result = await moduleController.destroy(newModule);
+    const result = await moduleController.destroy(newModule.id);
     expect(result).toBe(1);
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
 test('Deve retornar mensagem de módulo já excluido ', async () => {
-    const result = await moduleController.destroy(newModule);
+    const result = await moduleController.destroy(newModule.id);
     expect(result).toBe('O módulo já foi excluido');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();

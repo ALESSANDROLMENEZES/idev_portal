@@ -52,12 +52,26 @@ test('Deve retornar o desafio alterado ', async () => {
     expect(result).not.toBeUndefined();
 });
 
+test('Deve retornar o desafio excluido ', async () => {
+    let result = await challengeController.destroy(challenge.id);
+    expect(result).toEqual(1);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar o desafio excluido ', async () => {
+    let result = await challengeController.destroy('ab');
+    expect(result).toEqual('Não encontrei o desafio informado');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+
 test('Deve retornar mensagem de desafio não encontrado ', async () => {
     challenge.moduleId = 1;
     challenge.statusId = 1;
-    challenge.title = 'Título do desafio alterado';
-    challenge.id = 190;
-    let result = await challengeController.update(challenge);
+    challenge.title = 'Título do desafio alterado again?';
+    let result = await challengeController.update(challenge.id);
     expect(result).toBe('Não encontrei o desafio informado');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();

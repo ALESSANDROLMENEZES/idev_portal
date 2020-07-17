@@ -146,21 +146,21 @@ test('Deve solicitar um usuário ', async () => {
 });
 
 test('Deve solicitar um usuário ', async () => {
-    const result = await userController.destroy({name:'Usuário sem id'});
+    const result = await userController.destroy({});
     expect(result).toBe('Informe um usuário');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
 test('Deve excluir o último usuário salvo ', async () => {
-    const result = await userController.destroy(newUser);
+    const result = await userController.destroy(newUser.id);
     expect(result).toBe(1);
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
 
 test('Deve retornar mensagem de usuário já excluido ', async () => {
-    const result = await userController.destroy(newUser);
+    const result = await userController.destroy(newUser.id);
     expect(result).toBe('O usuário já foi excluido');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();

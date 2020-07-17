@@ -1,7 +1,9 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const { Module, UserModule } = require('../models');
+
 module.exports = {
+
     store: async (mod) => {
         try {
             if (!mod.title) {
@@ -17,6 +19,7 @@ module.exports = {
             return 'Ocorreu um erro';
         }
     },
+    
     
     index: async (user) => {
         let result;
@@ -48,6 +51,7 @@ module.exports = {
         }
     },
     
+
     update: async (mod) => {
         try {
             if (!mod) {
@@ -67,25 +71,33 @@ module.exports = {
         }
     },
 
-    destroy: async (mod) => {
+    
+    destroy: async (id) => {
         const transaction = await Module.sequelize.transaction();
         try {
-            if (!mod) {
+
+            if (!id) {
                 await transaction.rollback();
                 return 'Informe um módulo'; 
             }
-            if (!mod.id) {
-                await transaction.rollback();
-                return 'Informe um módulo'; 
-            } 
-            let moduleExists = await Module.findByPk(mod.id);
+
+            if (isNaN(id)) {
+                transaction.rollback();
+                return 'Não encontrei o módulo';
+            }
+
+            let moduleExists = await Module.findByPk(id);
+
             if (!moduleExists) {
                 await transaction.rollback();
                 return 'O módulo já foi excluido'; 
             }
-            let result = await Module.destroy({ where: { id: mod.id } });
+
+            let result = await Module.destroy({ where: { id } });
+
             await transaction.commit();
             return result;
+
         } catch (error) {
             console.log(error);
             await transaction.rollback();

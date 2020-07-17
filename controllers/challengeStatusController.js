@@ -24,31 +24,35 @@ module.exports = {
         }
     },
  
-    destroy: async (challengeStatus) => {
+
+    destroy: async (id) => {
         const transaction = await ChallengeStatus.sequelize.transaction();
         try {
-            if (!challengeStatus) {
-                await transaction.rollback();
-                return 'Informe um status'; 
+            
+            if (isNaN(id)) {
+                transaction.rollback();
+                return 'Não encontrei o status informado';
             }
-            if (!challengeStatus.id) {
-                await transaction.rollback();
-                return 'Informe um status'; 
-            } 
-            let statusExists = await ChallengeStatus.findByPk(challengeStatus.id);
+
+            let statusExists = await ChallengeStatus.findByPk(id);
+
             if (!statusExists) {
                 await transaction.rollback();
                 return 'O status já foi excluido'; 
             }
+
             let result = await ChallengeStatus.destroy({ where: { id: challengeStatus.id } });
+            
             await transaction.commit();
             return result;
+
         } catch (error) {
             console.log(error);
             await transaction.rollback();
             return 'Ocorreu um erro';
         }
     },
+
 
     index: async (limit=7) => {
         try {
@@ -59,6 +63,7 @@ module.exports = {
             return error;
         }
     },
+
 
     show: async (id) => {
         try {
@@ -73,6 +78,7 @@ module.exports = {
         }
     },
 
+    
     update: async (challengeStatus) => {
         const transaction = await ChallengeStatus.sequelize.transaction();
         try {

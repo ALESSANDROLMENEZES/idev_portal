@@ -5,6 +5,7 @@ const { User } = require('../models');
 const validator = require('validator');
 
 module.exports = {
+
     index: async (user) => {
         try {
             (!user.email) ? user.email = '' : user.email;
@@ -24,6 +25,7 @@ module.exports = {
         }
     },
     
+
     store: async (user) => {
         try {
             if (!user.email || !user.password) {
@@ -44,6 +46,7 @@ module.exports = {
         }
     },
     
+
     show: async (user) => {
         if (!user.email) {
             return 'Informe um email';
@@ -66,6 +69,7 @@ module.exports = {
         return result;
     },
 
+
     update: async (user) => {
         const transaction = await User.sequelize.transaction();
         try {
@@ -87,23 +91,27 @@ module.exports = {
         }
     },
 
-    destroy: async (user) => {
+    
+    destroy: async (id) => {
         const transaction = await User.sequelize.transaction();
         try {
-            if (!user) {
+            if (!id) {
                 await transaction.rollback();
                 return 'Informe um usuário'; 
             }
-            if (!user.id) {
-                await transaction.rollback();
-                return 'Informe um usuário'; 
-            } 
-            let userExists = await User.findByPk(user.id);
+            
+            if (isNaN(id)) {
+                transaction.rollback();
+                return 'Não encontrei o usuário';
+            }
+            
+            let userExists = await User.findByPk(id);
+
             if (!userExists) {
                 await transaction.rollback();
                 return 'O usuário já foi excluido'; 
             }
-            let result = await User.destroy({ where: { id: user.id } });
+            let result = await User.destroy({ where: { id } });
             await transaction.commit();
             return result;
         } catch (error) {
