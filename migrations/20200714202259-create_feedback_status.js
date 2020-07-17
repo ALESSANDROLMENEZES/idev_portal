@@ -7,7 +7,8 @@ module.exports = {
         type: Sequelize.INTEGER(11),
         allowNull: false,
         primaryKey: true,
-        comment: "null"
+        comment: "null",
+        autoIncrement: true
       },
       'description': {
         type: Sequelize.STRING(45),
