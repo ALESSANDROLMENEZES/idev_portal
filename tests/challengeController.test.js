@@ -76,3 +76,27 @@ test('Deve retornar mensagem de desafio não encontrado ', async () => {
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
 });
+
+test('Deve informar que a data de expiração tem que ser maior que a atual ', async () => {
+    challenge.expiresAt = moment(currentDate).subtract(3, 'days').format('YYYY-MM-DD hh:mm:ss');
+    let result = await challengeController.store(challenge);
+    expect(result).toBe('A data de expiração deve ser maior que a data atual');
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve listar os desafios para administrador ', async () => {
+    let user = { id: 1, admin: 1 };
+    let result = await challengeController.index(user);
+    expect(result.length).toBeGreaterThan(4);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
+
+test('Deve retornar um array vazio ', async () => {
+    let user = { id: 5, admin: 0 };
+    let result = await challengeController.index(user);
+    expect(result).toEqual([]);
+    expect(result).not.toBeNull();
+    expect(result).not.toBeUndefined();
+});
