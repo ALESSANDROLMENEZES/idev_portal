@@ -1,4 +1,4 @@
-const { Team, User,TeamUser } = require('../models');
+const { Team, User } = require('../models');
 
 const validateId = (id) => {
     id = parseInt(id);
@@ -10,7 +10,7 @@ module.exports = {
     store: async (challengeId) => {
         try {
             if (validateId(challengeId)) {
-                return Error('Informe um id válido');
+                return { error: true, status:422, msg:'Informe um id válido'};
             }
             const result = await Team.create({ challengeId });
             return result;
@@ -23,15 +23,15 @@ module.exports = {
     update: async (team) => {
         try {
             if (validateId(team.id)) {
-                return Error('Informe um id válido');
+                return { error: true, status:422, msg:'Informe um id válido'};
             }
             
             const teamExist = await Team.findByPk(team.id);
             if (!teamExist) {
-                return Error('O time informado não está disponível');
+                return { error: true, status:422, msg:'O time informado não está disponível'};
             }
 
-            const result = await Team.update(team, { where: { id: team.id } });
+            const result = await Team.update(team, { where: { id:team.id } });
 
             return result;
 
@@ -44,15 +44,15 @@ module.exports = {
     destroy: async (id) => {
         try {
             if (validateId(id)) {
-                return Error('Informe um id válido');
+                return { error: true, status:422, msg:'Informe um id válido'};
             }
             
             const teamExist = await Team.findByPk(id);
             if (!teamExist) {
-                return Error('O time informado não está disponível');
+                return { error: true, status:422, msg:'O time informado não está disponível'};
             }
 
-            const result = await Team.destroy(team, { where: { id } });
+            const result = await Team.destroy({ where: { id } });
 
             return result;
 
@@ -65,10 +65,18 @@ module.exports = {
     show: async (id) => {
         try {
             if (validateId(id)) {
-                return Error('Informe um id válido');
+                return { error: true, status:422, msg:'Informe um id válido'};
             }
             
-            const result = await Team.findByPk(id);
+            const result = await Team.findByPk(id, {
+                include: [
+                    {
+                        model: User,
+                        as: 'members',
+                        required:true
+                    }
+                ]
+            });
 
             return result;
 

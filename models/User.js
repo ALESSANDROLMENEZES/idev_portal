@@ -97,13 +97,13 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   User.associate = (models) => {
-    
+    //Não alterar -> Ok
     User.belongsToMany(models.Team, {
       through: 'team_users',
       as: 'members',
       foreignKey: 'userId'
     });
-
+    
   };
 
   return User;

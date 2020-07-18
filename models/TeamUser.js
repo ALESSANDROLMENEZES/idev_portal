@@ -38,17 +38,6 @@ module.exports = function(sequelize, DataTypes) {
       tableName: 'team_users',
   });
   
-  TeamUser.associate = (models) => {
-    
-    TeamUser.belongsTo(models.User, {
-      as: 'team_member', foreignKey: 'userId'
-    });
-    
-    TeamUser.belongsTo(models.Team, {
-      as: 'member_team', foreignKey: 'teamId'
-    });
-    
-  };
   
   return TeamUser;
 };

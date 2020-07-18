@@ -59,15 +59,7 @@ module.exports = {
     index: async (limit=14, page = 1) => {
         try {
       
-            const result = await TeamUser.findAll({
-                include: [
-                    {
-                        model: User,
-                        as: 'team_member',
-                        required: 'true',
-                    }
-                ],
-            });
+            const result = await TeamUser.findAll({limit});
 
             return result;
             

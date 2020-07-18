@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Team.associate = (models) => {
-    
+    // Não alterar > Ok
     Team.belongsToMany(models.User, {
       through: 'team_users',
       as: 'members',
