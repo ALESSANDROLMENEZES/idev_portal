@@ -53,14 +53,16 @@ module.exports = {
     
 
     update: async (mod) => {
+        const transaction = await Module.sequelize.transaction();
         try {
             if (!mod) {
+                await transaction.rollback();
                 return 'Informe um módulo'; 
             }
             if (!mod.id) {
+                await transaction.rollback();
                 return 'Informe um módulo'; 
             }
-            const transaction = await Module.sequelize.transaction();
             let result = await Module.update(mod, { where: { id: mod.id } });
             await transaction.commit();
             return result;
