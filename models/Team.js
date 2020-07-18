@@ -17,12 +17,23 @@ module.exports = function(sequelize, DataTypes) {
         model: 'Challenge',
         key: 'id'
       }
-    }
+    },
+    'createdAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
+    'updatedAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
   }, {
-      tableName: 'teams',
-      timestamps:false,
+    tableName: 'teams'
   });
-
+  
   Team.associate = (models) => {
     // Não alterar > Ok
     Team.belongsToMany(models.User, {
@@ -30,9 +41,9 @@ module.exports = function(sequelize, DataTypes) {
       as: 'members',
       foreignKey: 'teamId'
     });
-
+    
   };
-
+  
   return Team;
-
+  
 };

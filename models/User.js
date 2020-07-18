@@ -103,6 +103,8 @@ module.exports = function(sequelize, DataTypes) {
       as: 'members',
       foreignKey: 'userId'
     });
+
+
     
   };
 
