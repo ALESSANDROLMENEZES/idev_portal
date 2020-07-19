@@ -9,12 +9,11 @@ module.exports = {
         const transaction = await Team.sequelize.transaction();
         try {
             
-            if (teamUser.teamId || validateId(teamUser.userId) || validateId(teamUser.challengeId)) {
+            if (validateId(teamUser.teamId) || validateId(teamUser.userId) || validateId(teamUser.challengeId)) {
                 transaction.rollback();
                 return { error: true, status:422, msg:'Informe um id válido'};
             }
             
-            //verificar se o usuário já está em algum time
             const userAlredyInTeam = await Team.findAll({
                 include: [
                     {
@@ -28,16 +27,13 @@ module.exports = {
                     challengeId:teamUser.challengeId
                 }
             });
-            
 
-            if (userAlredyInTeam.id) {
+            if (userAlredyInTeam[0] !== undefined) {
                 transaction.rollback();
                 return { error: true, status:422, msg:'Este usuário já está cadastrado em outro time'};
             }
             
-            //Por padrão o time é 0, assim será criado um time novo, caso contrário o usuário apenas 
-            //será alocado à um time
-            if ((parseInt(teamUser.teamId) === 0) || teamUser.teamId === undefined) {
+            if (teamUser.teamId === undefined || ((parseInt(teamUser.teamId)) === 0)) {
                 const newTeam = await Team.create({
                     challengeId: teamUser.challengeId
                 });
@@ -62,12 +58,12 @@ module.exports = {
     update: async (teamUser) => {
         try {
             if (validateId(teamUser.teamId) || validateId(teamUser.userId)) {
-                return Error('Informe um id válido');
+                return { error: true, status:422, msg:'Informe um id válido'};
             }
             
             const teamExist = await TeamUser.findByPk(teamUser.id);
             if (!teamExist) {
-                return Error('O time informado não está disponível');
+                return { error: true, status:422, msg:'O time informado não está disponível'};
             }
             
             const result = await TeamUser.update({
@@ -81,7 +77,8 @@ module.exports = {
             return result;
             
         } catch (error) {
-            return error;
+            console.log(error);
+            return { error: true, status:422, msg:error.message};
         }  
     },
     
@@ -89,11 +86,20 @@ module.exports = {
     destroy: async (teamUser) => {
         try {
             if (validateId(teamUser.teamId) || validateId(teamUser.userId)) {
-                return Error('Informe um id válido');
+                return { error: true, status:422, msg:'Informe um id válido'};
             }
             
-            const result = await TeamUser.destroy({ where: { teamUser } });
-            
+            const foundTeamUser = await TeamUser.findOne({
+                where: {
+                    teamId: teamUser.teamId,
+                    userId: teamUser.userId
+                }
+            });
+
+            console.log(foundTeamUser);
+
+            const result = await foundTeamUser.destroy();
+           
             return result;
             
         } catch (error) {
