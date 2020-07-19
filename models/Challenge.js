@@ -67,7 +67,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Module',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'statusId': {
       type: DataTypes.INTEGER(11),
@@ -76,7 +78,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Challenge_status',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     }
   }, {
     tableName: 'challenges'

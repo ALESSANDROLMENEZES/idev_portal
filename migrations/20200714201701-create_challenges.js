@@ -68,7 +68,9 @@ module.exports = {
         references: {
           model: 'modules',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'statusId': {
         type: Sequelize.INTEGER(11),
@@ -77,7 +79,9 @@ module.exports = {
         references: {
           model: 'challenge_status',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       }
     });
   },

@@ -10,7 +10,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Team',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'userId': {
       type: DataTypes.INTEGER(11),
@@ -20,7 +22,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'User',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'createdAt': {
       type: DataTypes.DATE,

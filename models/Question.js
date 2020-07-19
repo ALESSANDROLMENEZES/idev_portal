@@ -21,7 +21,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Answer',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     }
   }, {
       tableName: 'questions',

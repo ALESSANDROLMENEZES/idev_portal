@@ -16,7 +16,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Class',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'title': {
       type: DataTypes.STRING(45),

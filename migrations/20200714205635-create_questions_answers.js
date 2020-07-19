@@ -11,7 +11,9 @@ module.exports = {
         references: {
           model: 'questions',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'answerId': {
         type: Sequelize.INTEGER(11),
@@ -21,7 +23,9 @@ module.exports = {
         references: {
           model: 'answers',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       }
     });
   },

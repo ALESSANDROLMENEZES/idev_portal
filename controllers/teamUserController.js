@@ -92,7 +92,7 @@ module.exports = {
                 return Error('Informe um id válido');
             }
             
-            const result = await TeamUser.destroy(teamUser, { where: { teamUser } });
+            const result = await TeamUser.destroy({ where: { teamUser } });
             
             return result;
             

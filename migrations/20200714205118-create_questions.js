@@ -22,7 +22,9 @@ module.exports = {
         references: {
           model: 'answers',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       }
     });
   },

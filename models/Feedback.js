@@ -26,7 +26,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'User',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'statusId': {
       type: DataTypes.INTEGER(11),
@@ -35,7 +37,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Feedback_status',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'teamId': {
       type: DataTypes.INTEGER(11),
@@ -44,7 +48,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Team',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     }
   }, {
       tableName: 'feedbacks',

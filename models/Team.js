@@ -16,7 +16,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Challenge',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'createdAt': {
       type: DataTypes.DATE,

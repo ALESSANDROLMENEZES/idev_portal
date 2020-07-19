@@ -18,7 +18,9 @@ module.exports = {
         references: {
           model: 'users',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'classId': {
         type: Sequelize.INTEGER(11),
@@ -28,7 +30,9 @@ module.exports = {
         references: {
           model: 'classes',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'createdAt': {
         type: Sequelize.DATE,

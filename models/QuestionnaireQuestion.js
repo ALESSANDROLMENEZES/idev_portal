@@ -10,7 +10,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Questionnaire',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     'questionId': {
       type: DataTypes.INTEGER(11),
@@ -20,7 +22,9 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'Question',
         key: 'id'
-      }
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     }
   }, {
       tableName: 'questionnaires_questions',

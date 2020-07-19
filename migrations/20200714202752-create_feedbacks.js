@@ -27,7 +27,9 @@ module.exports = {
         references: {
           model: 'users',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'statusId': {
         type: Sequelize.INTEGER(11),
@@ -36,7 +38,9 @@ module.exports = {
         references: {
           model: 'feedback_status',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'teamId': {
         type: Sequelize.INTEGER(11),
@@ -45,7 +49,9 @@ module.exports = {
         references: {
           model: 'teams',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       }
     });
   },

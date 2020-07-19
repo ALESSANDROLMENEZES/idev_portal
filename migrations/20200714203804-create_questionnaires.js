@@ -17,7 +17,9 @@ module.exports = {
         references: {
           model: 'classes',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'title': {
         type: Sequelize.STRING(45),

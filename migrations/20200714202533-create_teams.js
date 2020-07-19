@@ -17,7 +17,9 @@ module.exports = {
         references: {
           model: 'challenges',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       'createdAt': {
         type: Sequelize.DATE,
