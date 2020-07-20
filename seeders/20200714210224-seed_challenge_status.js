@@ -9,10 +9,14 @@ module.exports = {
       },
       {
         id: 2,
-        description: 'Expirado'
+        description: 'Concluído'
       },
       {
         id: 3,
+        description: 'Expirado'
+      },
+      {
+        id: 4,
         description: 'Bloqueado'
       },
     ], {});

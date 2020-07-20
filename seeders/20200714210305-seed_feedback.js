@@ -8,7 +8,6 @@ module.exports = {
         comment: faker.lorem.text(8),
         score: 1,
         userId: 1,
-        statusId: 1,
         teamId:1
       },
       {
@@ -16,7 +15,6 @@ module.exports = {
         comment: faker.lorem.text(8),
         score: 1,
         userId: 2,
-        statusId: 1,
         teamId:1
       },
       {
@@ -24,7 +22,6 @@ module.exports = {
         comment: faker.lorem.text(8),
         score: 1,
         userId: 3,
-        statusId: 1,
         teamId:1
       },
       {
@@ -32,7 +29,6 @@ module.exports = {
         comment: faker.lorem.text(8),
         score: 1,
         userId: 4,
-        statusId: 1,
         teamId:1
       },
     ], {});

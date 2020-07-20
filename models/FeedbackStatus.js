@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('FeedbackStatus', {
+  const FeedbackStatus = sequelize.define('FeedbackStatus', {
     'id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -18,4 +18,8 @@ module.exports = function(sequelize, DataTypes) {
       tableName: 'feedback_status',
       timestamps:false,
   });
+
+
+  return FeedbackStatus;
+
 };

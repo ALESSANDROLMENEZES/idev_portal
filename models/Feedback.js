@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
-      comment: "null"
+      comment: "null",
+      autoIncrement: true
     },
     'comment': {
       type: DataTypes.TEXT,
@@ -25,17 +26,6 @@ module.exports = function(sequelize, DataTypes) {
       comment: "null",
       references: {
         model: 'User',
-        key: 'id'
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
-    },
-    'statusId': {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      comment: "null",
-      references: {
-        model: 'Feedback_status',
         key: 'id'
       },
       onUpdate: 'CASCADE',

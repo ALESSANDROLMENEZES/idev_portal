@@ -20,6 +20,22 @@ module.exports = function(sequelize, DataTypes) {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     },
+    'statusId': {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      comment: "null",
+      references: {
+        model: 'Feedback_status',
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
+    'github': {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: "null"
+    },
     'createdAt': {
       type: DataTypes.DATE,
       allowNull: false,
@@ -42,6 +58,16 @@ module.exports = function(sequelize, DataTypes) {
       through: 'team_users',
       as: 'members',
       foreignKey: 'teamId'
+    });
+    
+    Team.belongsTo(models.Challenge, {
+      as: 'challenge_team',
+      foreignKey: 'challengeId'
+    });
+
+    Team.belongsTo(models.FeedbackStatus, {
+      as: 'feedback_status',
+      foreignKey: 'statusId'
     });
     
   };

@@ -21,6 +21,22 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      'statusId': {
+        type: Sequelize.INTEGER(11),
+        allowNull: false,
+        comment: "null",
+        references: {
+          model: 'Feedback_status',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      'github': {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+        comment: "null"
+      },
       'createdAt': {
         type: Sequelize.DATE,
         allowNull: false,
