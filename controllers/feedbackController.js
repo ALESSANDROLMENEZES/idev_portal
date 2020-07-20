@@ -5,16 +5,50 @@ const connectedUser = { id: 6, admin: true };
 const minCoinsToFeedback = { admin:0, user:1};
 const statusToFeedback = [2, 3];
 
-let feedback = { teamId: 1, comment: 'Lorem ipsum lo da lor, e setbem ale aser nameise dalaroe', score:7, userId:connectedUser.id, statusId:4 };
+
 
 module.exports = {
-
-    store: async () => {
+    
+    store: async (feedback) => {
         const transaction = await Team.sequelize.transaction();
         try {
             let minCoins;
             (connectedUser.admin) ? minCoins = minCoinsToFeedback.admin : minCoins = minCoinsToFeedback.user;
+            
+            const alreadyFeedback = await Feedback.findOne({ where: { userId: feedback.userId, teamId: feedback.teamId } });
+            
+            if (alreadyFeedback) {
+                const users = await TeamUser.findAll({ where: { teamId: feedback.teamId } });
+                if (!users) {
+                    await transaction.rollback();
+                    return { error: true, status: 422, msg: 'Não foi encontrado o time do desafio' };
+                }
+                if (!statusToFeedback.includes(alreadyFeedback.statusId)) {
+                    transaction.rollback();
+                    return { error: true, status: 422, msg: 'Permissão negada! O Status do feedback não permite alteração' };
+                }
+                
+                const promises = users.map((user) => {
+                    let score = parseInt(user.score) + parseInt(feedback.score);
+                    return new Promise((resolve, reject) => {
+                        resolve(User.update({ score }, { where: { id: user.userId } }));
+                    });
+                });
+                
+                let result = await Promise.all(promises);
 
+                alreadyFeedback.comment = feedback.comment;
+                alreadyFeedback.score = feedback.score;
+                await alreadyFeedback.save();
+
+                const team = await Team.findByPk(feedback.teamId);
+                team.statusId = feedback.statusId;
+
+                await transaction.commit();
+                return result;
+                
+            }
+            
             const isValidTeam = await Team.findOne({
                 include: [
                     {
@@ -46,18 +80,18 @@ module.exports = {
                     id:feedback.teamId
                 }
             });
-
+            
             if (!isValidTeam) {
-                transaction.rollback();
+                await transaction.rollback();
                 return { error: true, status: 422, msg: 'O time não concluiu o desafio ou não possui moedas suficiente' };
             }
-
-          
+            
+            
             const dataToUpdateProfiles = [];
-
+            
             for (let index = 0; index < isValidTeam.members.length; index++) {
                 if (isValidTeam.members[index].id === connectedUser.id) {
-                    transaction.rollback();
+                    await transaction.rollback();
                     return { error: true, status: 422, msg: 'Outro usuário deve avaliar seu time' }; 
                 }
                 dataToUpdateProfiles.push({
@@ -67,35 +101,35 @@ module.exports = {
                     coins:parseInt(isValidTeam.members[index].coins) - parseInt(minCoinsToFeedback.user)
                 });
             }
-
+            
             const promises = dataToUpdateProfiles.map((user) => {
                 return new Promise((resolve, reject) => {
                     resolve(User.update({ score: user.score, xp: user.xp, coins: user.coins }, { where: { id: user.id } }));
                 });
             });
-                
+            
             await Promise.all(promises);
             
             
             const userGiveFeedback = await User.findByPk(connectedUser.id);
-
+            
             userGiveFeedback.coins += parseInt(minCoinsToFeedback.user) * dataToUpdateProfiles.length;
-            userGiveFeedback.save();
-
+            await userGiveFeedback.save();
+            
             const result = await Feedback.create({comment:feedback.comment, score:feedback.score, userId:feedback.userId,teamId:feedback.teamId});
-
+            
             isValidTeam.statusId = feedback.statusId;
-            isValidTeam.save();
-
-            transaction.commit();
+            await isValidTeam.save();
+            
+            await transaction.commit();
             return result;
-
+            
         } catch (error) {
-            transaction.rollback();
+            await transaction.rollback();
             console.log(error);
             return { error: true, status: 422, msg: 'Ocorreu um erro' };
         }
-
+        
     }
-
+    
 };

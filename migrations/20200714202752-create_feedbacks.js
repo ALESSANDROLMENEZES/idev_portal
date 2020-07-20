@@ -12,7 +12,7 @@ module.exports = {
       },
       'comment': {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: true,
         comment: "null"
       },
       'score': {

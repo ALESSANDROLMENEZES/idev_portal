@@ -82,7 +82,7 @@ test('Deve atualizar a descrição de um status e normalizar a descrição ', as
 });
 
 test('Deve atualizar a descrição de um status ', async () => {
-    let result = await feedbackStatusController.update({id:1, description:'Disponível'});
+    let result = await feedbackStatusController.update({id:1, description:'Em desenvolvimento'});
     expect(result).toEqual([1]);
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();

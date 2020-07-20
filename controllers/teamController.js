@@ -1,21 +1,42 @@
-const { Team, User, sequelize } = require('../models');
+const { Team, User, Challenge,FeedbackStatus } = require('../models');
+const moment = require('moment');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const connectedUser = { id: 6, admin: true };
+const minCoinsToFeedback = { admin:0, user:1};
 
 const validateId = (id) => {
     id = parseInt(id);
     return (isNaN(id));
 };
 
-const EmDesenvolvimento = 1;
+
 module.exports = {
-    store: async (challengeId) => {
+    store: async (team) => {
         try {
-            if (validateId(challengeId)) {
+
+            if (!team) {
                 return { error: true, status:422, msg:'Informe um id válido'};
             }
-            const result = await Team.create({ challengeId, statusId:EmDesenvolvimento });
+            
+            if (validateId(team.challengeId)) {
+                return { error: true, status:422, msg:'Informe um id válido'};
+            }
+
+            const avaliableChallenge = await Challenge.findByPk(team.challengeId);
+            if (!avaliableChallenge) {
+                return { error: true, status:422, msg:'Este desafio não está mais disponível'};
+            }
+            
+            const NOW = new Date();
+            const currentDate = moment(NOW);
+            const expiresAt = moment(avaliableChallenge.expiresAt);
+
+            if (expiresAt < currentDate) {
+                return { error: true, status:422, msg:'Este desafio expirou'};
+            }
+
+            const result = await Team.create(team);
             return result;
         } catch (error) {
             return error;
@@ -107,7 +128,7 @@ module.exports = {
     index: async (limit=14, page = 1) => {
         try {
             let coins;
-            (connectedUser.admin) ? coins = 0 : coins = 1;
+            (connectedUser.admin) ? coins = minCoinsToFeedback.admin : coins = minCoinsToFeedback.user;
             const result = await Team.findAll({
                 include: [
                     {

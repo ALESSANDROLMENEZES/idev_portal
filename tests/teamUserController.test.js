@@ -1,6 +1,6 @@
 const teamUserController = require("../controllers/teamUserController");
 
-let teamUser = {teamId:0, userId:3, challengeId:2};
+let teamUser = {teamId:0, userId:3, challengeId:2, statusId:1};
 
 test('Deve criar um novo time com o desafio id: 2 e adicionar o participante id:3 ', async () => {
     

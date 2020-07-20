@@ -35,7 +35,8 @@ module.exports = {
             
             if (teamUser.teamId === undefined || ((parseInt(teamUser.teamId)) === 0)) {
                 const newTeam = await Team.create({
-                    challengeId: teamUser.challengeId
+                    challengeId: teamUser.challengeId,
+                    statusId:teamUser.statusId
                 });
                 teamUser.teamId = newTeam.id;
             }
@@ -95,8 +96,6 @@ module.exports = {
                     userId: teamUser.userId
                 }
             });
-
-            console.log(foundTeamUser);
 
             const result = await foundTeamUser.destroy();
            
