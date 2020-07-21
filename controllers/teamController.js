@@ -46,6 +46,11 @@ module.exports = {
 
     update: async (team) => {
         try {
+
+            if (!team) {
+                return { error: true, status:422, msg:'Informe um id válido'};
+            }
+
             if (validateId(team.id)) {
                 return { error: true, status:422, msg:'Informe um id válido'};
             }

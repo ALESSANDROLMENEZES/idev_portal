@@ -12,42 +12,73 @@ module.exports = {
     store: async (feedback) => {
         const transaction = await Team.sequelize.transaction();
         try {
+            
             let minCoins;
             (connectedUser.admin) ? minCoins = minCoinsToFeedback.admin : minCoins = minCoinsToFeedback.user;
             
-            const alreadyFeedback = await Feedback.findOne({ where: { userId: feedback.userId, teamId: feedback.teamId } });
-            
+
+            const alreadyFeedback = await Feedback.findOne({
+                where: {
+                    userId: feedback.userId,
+                    teamId: feedback.teamId
+                }
+            });
             if (alreadyFeedback) {
-                const users = await TeamUser.findAll({ where: { teamId: feedback.teamId } });
-                if (!users) {
+                const validTeam = await Team.findOne({
+                    include: [
+                        {
+                            model: User,
+                            as: 'members',
+                            required: true,
+                        },
+                        {
+                            model: Challenge,
+                            as: 'challenge_team',
+                            required: true,
+                            attributes: ['score', 'xp']
+                        },
+                        {
+                            model: FeedbackStatus,
+                            as: 'feedback_status',
+                            required: true,
+                        },
+                    ],
+                    where: {
+                        statusId: {
+                            [Op.in]: statusToFeedback
+                        },
+                        id:feedback.teamId
+                    }
+                });
+
+                if (!validTeam) {
                     await transaction.rollback();
                     return { error: true, status: 422, msg: 'Não foi encontrado o time do desafio' };
                 }
-                if (!statusToFeedback.includes(alreadyFeedback.statusId)) {
-                    transaction.rollback();
-                    return { error: true, status: 422, msg: 'Permissão negada! O Status do feedback não permite alteração' };
-                }
                 
-                const promises = users.map((user) => {
+                const promises = validTeam.members.map((user) => {
                     let score = parseInt(user.score) + parseInt(feedback.score);
                     return new Promise((resolve, reject) => {
-                        resolve(User.update({ score }, { where: { id: user.userId } }));
+                        resolve(User.update({ score }, { where: { id: user.id } }));
                     });
                 });
                 
-                let result = await Promise.all(promises);
+                await Promise.all(promises);
 
                 alreadyFeedback.comment = feedback.comment;
                 alreadyFeedback.score = feedback.score;
-                await alreadyFeedback.save();
+                let result = await alreadyFeedback.save();
 
-                const team = await Team.findByPk(feedback.teamId);
-                team.statusId = feedback.statusId;
+                validTeam.statusId = feedback.statusId;
+                await validTeam.save();
 
                 await transaction.commit();
                 return result;
                 
             }
+
+
+
             
             const isValidTeam = await Team.findOne({
                 include: [

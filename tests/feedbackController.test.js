@@ -10,6 +10,12 @@ let feedback = {
     statusId: 3
 };
 
+let team = {
+    id: 1,
+    challengeId: 1,
+    statusId: 2
+};
+
 
 test('Retornar mensagem de time sem moeda ou desafio não finalizado ', async () => {
     
@@ -19,9 +25,8 @@ test('Retornar mensagem de time sem moeda ou desafio não finalizado ', async ()
 });
 
 
-test('Deve retornar o status do desafio alterado para realizar feedback ', async () => {
-    let challenge = {id:1, statusId: 2};
-    let result = await challengeController.update(challenge);
+test('Deve retornar o status do time alterado para realizar feedback ', async () => {
+    let result = await teamController.update(team);
     expect(result).toEqual([1]);
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
@@ -31,6 +36,7 @@ test('Deve salvar um novo feedback ', async () => {
     
     const teamBefore = await teamController.show(feedback.teamId);
     let result = await feedbackController.store(feedback);
+
     const teamAfter = await teamController.show(feedback.teamId);
     const scoreBefore = teamBefore.members[0].score;
     const scoreAfter = teamAfter.members[0].score;
@@ -44,14 +50,15 @@ test('Deve apenas atualizar um feedback ', async () => {
     feedback.comment = 'Lorem ipsum lo da lor, e setbem ale aser nameise dalaroe';
     feedback.score = 7;
     feedback.statusId = 4;
-
+    
     const teamBefore = await teamController.show(feedback.teamId);
+    let result = await feedbackController.store(feedback);
     const teamAfter = await teamController.show(feedback.teamId);
+
     const scoreBefore = teamBefore.members[0].score;
     const scoreAfter = teamAfter.members[0].score;
 
-    let result = feedbackController.store(feedback);
-    expect(result.comment).toBe('Lorem ipsum lo da lor, e setbem ale aser nameise dalaroe');
+    expect(result.comment).toEqual('Lorem ipsum lo da lor, e setbem ale aser nameise dalaroe');
     expect(result.id).toBeGreaterThan(4);
     expect(scoreAfter).toBeGreaterThan(scoreBefore);
     

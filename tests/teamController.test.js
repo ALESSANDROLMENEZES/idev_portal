@@ -38,7 +38,7 @@ test('Deve retornar mensagem de desafio expirado ', async () => {
 });
 
 test('Deve retornar uma mensagem de time indisponível ', async () => {
-    let result = await teamController.update({id:50, challengeId:'Teste'});
+    let result = await teamController.update({id:950, challengeId:'Teste'});
     expect(result.msg).toBe('O time informado não está disponível');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
@@ -60,7 +60,7 @@ test('Deve atualizar  ', async () => {
 });
 
 test('Deve retornar um erro avisando que o time não existe  ', async () => {
-    let result = await teamController.update({ ...team, id:50 });
+    let result = await teamController.update({ ...team, id:950 });
     expect(result.msg).toBe('O time informado não está disponível');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
@@ -76,7 +76,7 @@ test('Deve atualizar ', async () => {
 
 test('Deve informar que o time informado não está disponível ', async () => {
     team.challengeId = 1;
-    let result = await teamController.destroy(50);
+    let result = await teamController.destroy(950);
     expect(result.msg).toBe('O time informado não está disponível');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
@@ -84,7 +84,7 @@ test('Deve informar que o time informado não está disponível ', async () => {
 
 test('Deve informar que o time informado não está disponível ', async () => {
     team.challengeId = 1;
-    let result = await teamController.destroy(50);
+    let result = await teamController.destroy(950);
     expect(result.msg).toBe('O time informado não está disponível');
     expect(result).not.toBeNull();
     expect(result).not.toBeUndefined();
