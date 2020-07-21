@@ -5,7 +5,12 @@ const connectedUser = { id: 6, admin: true };
 const minCoinsToFeedback = { admin:0, user:1};
 const statusToFeedback = [2, 3];
 
-
+const validateId = (id) => {
+    id = parseInt(id);
+    if (isNaN(id)) {
+        return { error: true, status: 422, msg: 'Informe um id válido' };
+    }
+};
 
 module.exports = {
     
@@ -161,6 +166,55 @@ module.exports = {
             return { error: true, status: 422, msg: 'Ocorreu um erro' };
         }
         
+    },
+
+
+    destroy: async (id) => {
+        const transaction = await Feedback.sequelize.transaction();
+        try {
+            validateId(id);
+            const result = await Feedback.findByPk(id);
+            result.destroy();
+            await transaction.commit();
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return { error: true, status: 422, msg: 'Ocorreu um erro' };
+        }
+    },
+
+    show: async (id) => {
+        const transaction = await Feedback.sequelize.transaction();
+        try {
+            validateId(id);
+            const result = await Feedback.findByPk(id);
+            if (!result) {
+                return {};
+            }
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return { error: true, status: 422, msg: 'Ocorreu um erro' };
+        }
+    },
+
+
+    index: async (limit=14, page=1, statusId=2) => {
+        try {
+            const result = await Feedback.findAll({
+                limit
+            });
+            if (!result) {
+                return [];
+            }
+            return result;
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return { error: true, status: 422, msg: 'Ocorreu um erro' }; 
+        }
     }
     
 };
