@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Class', {
+  const Class = sequelize.define('Class', {
     'id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -71,4 +71,14 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'classes'
   });
+
+  Class.associate = (models) => {
+    Class.belongsToMany(models.Module, {
+      through: 'modules_classes',
+      as: 'class_module',
+      foreignKey: 'classId'
+    });
+  };
+
+  return Class;
 };

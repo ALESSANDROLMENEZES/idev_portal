@@ -42,11 +42,5 @@ module.exports = function(sequelize, DataTypes) {
       tableName: 'team_users',
   });
   
-  TeamUser.associate = (models) => {
-    
-
-    
-  };
-  
   return TeamUser;
 };
