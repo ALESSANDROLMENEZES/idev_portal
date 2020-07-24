@@ -27,6 +27,18 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: 'default',
       comment: "null"
     },
+    'telegram': {
+      type: DataTypes.STRING(80),
+      allowNull: true,
+      defaultValue: '',
+      comment: "null"
+    },
+    'whatsapp': {
+      type: DataTypes.STRING(15),
+      allowNull: true,
+      defaultValue: '',
+      comment: "null"
+    },
     'password': {
       type: DataTypes.STRING(255),
       allowNull: false,

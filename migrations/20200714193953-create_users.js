@@ -55,6 +55,18 @@ module.exports = {
         defaultValue: '0',
         comment: "null"
       },
+      'telegram': {
+        type: Sequelize.STRING(80),
+        allowNull: true,
+        defaultValue: '',
+        comment: "null"
+      },
+      'whatsapp': {
+        type: Sequelize.STRING(15),
+        allowNull: true,
+        defaultValue: '',
+        comment: "null"
+      },
       'admin':{
         type: Sequelize.BOOLEAN,
         allowNull: false,
