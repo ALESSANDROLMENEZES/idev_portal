@@ -32,8 +32,7 @@ module.exports = {
                     {
                         model: Module,
                         as: 'class_module',
-                        required: true,
-                        where:{id:moduleId}
+                        required: true
                     }
                 ]
             });
