@@ -23,6 +23,24 @@ module.exports = {
             console.log(error);
             return { error: true, msg: error.message, status: 422 };
         }      
+    },
+
+    show: async (id) => {
+        try {
+            const result = await Class.findByPk(id,{
+                include: [
+                    {
+                        model: Module,
+                        as: 'class_module',
+                        required: true,
+                        where:{id:moduleId}
+                    }
+                ]
+            });
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error: true, msg: error.message, status: 422 };
+        }
     }
-    
 };
