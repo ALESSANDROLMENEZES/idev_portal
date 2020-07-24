@@ -57,8 +57,8 @@ module.exports = {
             return { status:422, msg };
             }
 
-            if (!_class.video.includes('/embed?') || !_class.video.includes('https://docs')) {
-            msg = 'Informe um válido link do google slides: /embed?';
+            if (!_class.video.includes('/embed') || !_class.video.includes('https://www.youtube')) {
+            msg = 'Informe um link válido do youtube com a propriedade: /embed?';
             return { status:422, msg };
             }
         

@@ -46,5 +46,6 @@ test('Deve retornar mensagem de link incorreto ', async () => {
 
 test('Deve salvar uma nova aula ', async () => {
     const result = await classController.store(_class);
+    console.log(result);
     expect(result.id).toBeGreaterThan(7);
 });
