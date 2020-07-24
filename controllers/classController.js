@@ -25,6 +25,7 @@ module.exports = {
         }      
     },
 
+
     show: async (id) => {
         try {
             const result = await Class.findByPk(id,{
@@ -43,6 +44,7 @@ module.exports = {
         }
     },
 
+
     store: async(_class)=>{
         try {
             if (!_class) {
@@ -54,5 +56,54 @@ module.exports = {
             console.log(error);
             return { error: true, msg: error.message, status: 422 };
         }
+    },
+
+
+    update: async (_class) => {
+        const transaction = await Class.sequelize.transaction();
+        try {
+            if (!_class) {
+                return { error: true, msg: 'informe uma classe', status: 422 }; 
+            }
+
+            const foundClass = await Class.findByPk(_class.id);
+            if (!foundClass) {
+                return { error: true, msg: 'Não foi encontrada uma aula com o id especificado', status: 422 }; 
+            }
+
+            const result = await Class.update(_class, { where: { id: _class.id } });
+
+            await transaction.commit();
+
+            return result;
+
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return { error: true, msg: error.message, status: 422 };
+        }
+    },
+
+
+    destroy: async (id) => {
+        const transaction = await Class.sequelize.transaction();
+        try {
+            const foundClass = await Class.findByPk(id);
+            if (!foundClass) {
+                return { error: true, msg: 'Não foi encontrada uma aula com o id especificado', status: 422 }; 
+            }
+            const result = await foundClass.destroy();
+
+            await transaction.commit();
+
+            return result;
+            
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return { error: true, msg: error.message, status: 422 };  
+        }
     }
+
+
 };
