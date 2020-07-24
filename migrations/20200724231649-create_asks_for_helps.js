@@ -1,26 +1,27 @@
-/* jshint indent: 2 */
+'use strict';
 
-module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('AskForHelp', {
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('asks_for_helps', {
       'id': {
-        type: DataTypes.INTEGER(11),
+        type: Sequelize.INTEGER(11),
         allowNull: false,
         primaryKey: true,
         comment: "null",
         autoIncrement: true
       },
       'title': {
-        type: DataTypes.STRING(255),
+        type: Sequelize.STRING(255),
         allowNull: false,
         comment: "null"
       },
       'description': {
-        type: DataTypes.STRING(255),
+        type: Sequelize.STRING(255),
         allowNull: false,
         comment: "null"
       },
       'userId': {
-        type: DataTypes.INTEGER(11),
+        type: Sequelize.INTEGER(11),
         allowNull: false,
         primaryKey: true,
         comment: "null",
@@ -32,25 +33,27 @@ module.exports = function(sequelize, DataTypes) {
         onDelete: 'CASCADE',
       },
       'createdAt': {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         comment: "null"
       },
       'updatedAt': {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         comment: "null"
       },
       'avaliable': {
-        type: DataTypes.BOOLEAN,
+        type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: '1',
         comment: "null"
       }
-    }, {
-      tableName: 'asks_for_helps'
     });
-  };
-  
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('asks_for_helps');
+  }
+};
