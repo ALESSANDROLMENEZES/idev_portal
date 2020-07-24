@@ -41,5 +41,18 @@ module.exports = {
             console.log(error);
             return { error: true, msg: error.message, status: 422 };
         }
+    },
+
+    store: async(_class)=>{
+        try {
+            if (!_class) {
+                return { error: true, msg: 'informe uma classe', status: 422 };
+            }
+            const result = await Class.create(_class);
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error: true, msg: error.message, status: 422 };
+        }
     }
 };
