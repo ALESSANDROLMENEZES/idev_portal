@@ -47,6 +47,7 @@ test('Deve retornar mensagem de link incorreto ', async () => {
 test('Deve salvar uma nova aula ', async () => {
     const result = await classController.store(_class);
     _class.id = result.id;
+    //COLOCAR FUNÇÃO PARA VINCULAR A AULA AO MODULO 
     expect(result.id).toBeGreaterThan(7);
 });
 
