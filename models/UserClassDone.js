@@ -33,6 +33,11 @@ module.exports = function(sequelize, DataTypes) {
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
         },
+        'percentDone': {
+            type: DataTypes.DECIMAL(3,2),
+            allowNull: false,
+            comment: "null"
+        },
         'createdAt': {
             type: DataTypes.DATE,
             allowNull: false,

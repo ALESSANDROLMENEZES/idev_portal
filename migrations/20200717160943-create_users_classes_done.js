@@ -34,6 +34,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      'percentDone': {
+        type: Sequelize.DECIMAL(3,2),
+        allowNull: false,
+        comment: "null"
+      },
       'createdAt': {
         type: Sequelize.DATE,
         allowNull: false,

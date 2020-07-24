@@ -24,7 +24,7 @@ module.exports = {
 
         } catch (error) {
             console.log(error);
-            return 'Ocorreu um erro';
+            return { error: true, msg: error.message, status: 422 };
         }
     }
 
