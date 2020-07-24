@@ -111,13 +111,13 @@ module.exports = {
     },
 
     
-    index: async (conectedUser, status = 1, page = 1, limit = 14 ) => {
+    index: async (conectedUser, status = 1, page = 1, limit = 14) => {
         //Usuário conectado é admin?
-            //>Se sim, listar todos os desafios com paginação, independente de status ou módulo
+        //>Se sim, listar todos os desafios com paginação, independente de status ou módulo
         //Usuário não é admin
-            //>Listar apenas os desafios ativos e
-            //>Verificar quais módulos estão ativos para o usuário
-            //>Listar desafios apenas de acordo com os modulos que estão disponíveis para o usuário
+        //>Listar apenas os desafios ativos e
+        //>Verificar quais módulos estão ativos para o usuário
+        //>Listar desafios apenas de acordo com os modulos que estão disponíveis para o usuário
         try {
 
             limit = parseInt(limit);
@@ -134,11 +134,11 @@ module.exports = {
                     offset: limit * page
                 });
                 return result;
-            } 
+            }
 
             const userModules = await UserModule.findAll({
                 where: {
-                    userId:conectedUser.id
+                    userId: conectedUser.id
                 }
             });
 
@@ -151,9 +151,9 @@ module.exports = {
             let { count: size, rows: result } = await Challenge.findAndCountAll({
                 where: {
                     statusId: 1,
-                        moduleId: {
-                            [Op.in]: modules
-                        }
+                    moduleId: {
+                        [Op.in]: modules
+                    }
                 },
                 limit,
                 offset: limit * page
@@ -170,11 +170,11 @@ module.exports = {
     
     show: async (id) => {
         try {
-            
+
             if (isNaN(id)) {
                 return 'Informe um id válido';
             }
-            
+
             const result = await Challenge.findByPk(id);
             return result;
 
