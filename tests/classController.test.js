@@ -46,6 +46,21 @@ test('Deve retornar mensagem de link incorreto ', async () => {
 
 test('Deve salvar uma nova aula ', async () => {
     const result = await classController.store(_class);
-    console.log(result);
+    _class.id = result.id;
     expect(result.id).toBeGreaterThan(7);
 });
+
+
+test('Deve atualizar uma aula ', async () => {
+    _class.text = 'Texto alterado';
+    await classController.update(_class);
+    const result = await classController.show(_class.id);
+    expect(result.text).toBe('Texto alterado');
+});
+
+test('Deve excluir uma aula ', async () => {
+    await classController.destroy(_class.id);
+    const result = await classController.show(_class.id);
+    expect(result).toEqual({});
+});
+
