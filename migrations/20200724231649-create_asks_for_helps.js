@@ -26,7 +26,7 @@ module.exports = {
         primaryKey: true,
         comment: "null",
         references: {
-          model: 'User',
+          model: 'users',
           key: 'id'
         },
         onUpdate: 'CASCADE',
