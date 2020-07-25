@@ -70,7 +70,7 @@ test('Deve trazer o feedback atualizado ', async () => {
 
 test('deve excluir o feedback ', async () => {
     const result = await feedbackController.destroy(feedback.id);
-    expect(result.id).toBeGreaterThan(5);
+    expect(result.id).toBeGreaterThan(4);
 });
 
 test('Deve trazer um objeto vazio ', async () => {
