@@ -23,7 +23,7 @@ module.exports = {
     store: async (moduleClass) => {
         try {
             const invalid = await validateData(moduleClass);
-            if (valid.error) {
+            if (invalid.error) {
                 return invalid;
             }
             const result = await ModuleClass.create(moduleClass);

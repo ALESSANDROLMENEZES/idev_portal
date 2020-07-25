@@ -1,4 +1,5 @@
 const classController = require('../controllers/classController');
+const moduleClassController = require('../controllers/moduleClassesController');
 const faker = require('faker');
 const _class = {
     title: faker.lorem.words(2),
@@ -47,7 +48,7 @@ test('Deve retornar mensagem de link incorreto ', async () => {
 test('Deve salvar uma nova aula ', async () => {
     const result = await classController.store(_class);
     _class.id = result.id;
-    //COLOCAR FUNÇÃO PARA VINCULAR A AULA AO MODULO 
+    await moduleClassController.store({moduleId:2,classId:_class.id});
     expect(result.id).toBeGreaterThan(7);
 });
 

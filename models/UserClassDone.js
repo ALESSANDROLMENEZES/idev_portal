@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('UserClassDone', {
+    const UserClassDone = sequelize.define('UserClassDone', {
         'id': {
             type: DataTypes.INTEGER(11),
             allowNull: false,
@@ -53,4 +53,13 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         tableName: 'users_classes_done',    
     });
+
+    UserClassDone.associate = (models) => {
+        UserClassDone.belongsTo(models.Class, {
+            as: 'class_done',
+            foreignKey: 'classId'
+        });
+    };
+
+    return UserClassDone;
 };
