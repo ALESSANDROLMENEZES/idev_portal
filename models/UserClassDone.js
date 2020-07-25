@@ -34,7 +34,7 @@ module.exports = function(sequelize, DataTypes) {
             onDelete: 'CASCADE',
         },
         'percentDone': {
-            type: DataTypes.DECIMAL(3,2),
+            type: DataTypes.DECIMAL(5,2),
             allowNull: false,
             comment: "null"
         },
