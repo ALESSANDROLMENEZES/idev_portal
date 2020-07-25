@@ -5,6 +5,7 @@ const teamController = require('../controllers/teamController');
 const feedbackController = require('../controllers/feedbackController');
 const askForHelpController = require('../controllers/askForHelpController');
 const classController = require('../controllers/classController');
+const userClassDoneController = require('../controllers/userClassDoneController');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -34,7 +35,12 @@ router.get('/asks', async (req, res, next) => {
 router.get('/class', async (req, res, next) => {
   let result = await classController.index(1);
     res.status(200).json(result);
-  });
+});
+  
+router.get('/index', async (req, res, next) => {
+  let result = await userClassDoneController.index();
+  res.status(200).json(result);
+});
 
 
 module.exports = router;

@@ -10,6 +10,7 @@ module.exports = {
         userId: 1,
         classId: 1,
         percentDone: 10.20,
+        likes:1,
         createdAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
         updatedAt:moment(currentDate).format('YYYY-MM-DD hh:mm:ss')
       }

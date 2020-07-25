@@ -38,6 +38,12 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             comment: "null"
         },
+        'likes': {
+            type: DataTypes.INTEGER(11),
+            allowNull: false,
+            defaultValue:'0',
+            comment: "null",
+        },
         'createdAt': {
             type: DataTypes.DATE,
             allowNull: false,
@@ -59,6 +65,11 @@ module.exports = function(sequelize, DataTypes) {
             as: 'class_done',
             foreignKey: 'classId'
         });
+
+        UserClassDone.belongsTo(models.User, {
+            as: 'user_classdone',
+            foreignKey: 'userId'
+          });
     };
 
     return UserClassDone;
