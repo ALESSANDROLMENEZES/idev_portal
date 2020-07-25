@@ -115,6 +115,12 @@ module.exports = function(sequelize, DataTypes) {
       as: 'members',
       foreignKey: 'userId'
     });
+
+    User.belongsToMany(models.Module, {
+      through: 'users_modules',
+      as: 'module_users',
+      foreignKey: 'userId'
+    });
     
     
   };

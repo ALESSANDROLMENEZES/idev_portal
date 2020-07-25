@@ -36,9 +36,16 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Module.associate = (models) => {
+    
     Module.belongsToMany(models.Class, {
       through: 'modules_classes',
       as: 'class_module',
+      foreignKey: 'moduleId'
+    });
+
+    Module.belongsToMany(models.User, {
+      through: 'users_modules',
+      as: 'user_modules',
       foreignKey: 'moduleId'
     });
   };
