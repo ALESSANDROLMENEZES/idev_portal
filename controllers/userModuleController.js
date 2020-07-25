@@ -1,5 +1,5 @@
 const { UserModule, User, Module } = require('../models');
-
+const connectedUser = { id: 1 };
 module.exports = {
 
     store: async (userModule) => {
@@ -21,24 +21,39 @@ module.exports = {
             if (!userExist.active) {
                 return { error: true, status: 422, msg:'O usuário informado não está ativo'};
             }
-            const moduleAlreadyAvaliableToUser = await UserModule.findOne({
-                where: {
-                    userId: userModule.userId,
-                    moduleId:userModule.moduleId
-                }
-            });
 
-            if (moduleAlreadyAvaliableToUser) {
-                return { error: true, status: 422, msg:'O módulo informado já está ativo para o usuário'}; 
-            }
-
-            const result = await UserModule.create(userModule);
-            return result;
+            const [result, created ]= await UserModule.findOrCreate({ where: { userId: userModule.userId,
+                moduleId:userModule.moduleId } });
+            return { result, created };
 
         } catch (error) {
             console.log(error);
             return { error: true, status: 422, msg:error.message};
         }
+    },
+
+    index: async () => {
+       try {
+           const { count: size, rows: result } = await Module.findAndCountAll({
+               include: [
+                   {
+                       model: User,
+                       as: 'user_modules',
+                       required: true,
+                       attributes:['id'],
+                       where: {
+                        id:connectedUser.id
+                    }      
+                   }
+               ],
+               attributes: ['id', 'title', 'avaliable'],
+               where:{avaliable:true}
+           });
+           return { result, size };
+       } catch (error) {
+           console.log(error);
+           return { error: true, status: 422, msg: error.message };
+       } 
     }
 
 };

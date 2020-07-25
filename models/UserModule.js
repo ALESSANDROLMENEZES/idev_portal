@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('UserModule', {
+  const UserModule = sequelize.define('UserModule', {
     'userId': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -25,9 +25,22 @@ module.exports = function(sequelize, DataTypes) {
       },
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
-    }
+    },
+    'createdAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
+    'updatedAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
   }, {
       tableName: 'users_modules',
       timestamps:false,
   });
+  return UserModule;
 };
