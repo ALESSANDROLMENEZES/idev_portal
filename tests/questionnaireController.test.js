@@ -18,3 +18,12 @@ test('Deve atualizar o questionário que foi salvo anteriormente ', async () => 
     console.log(result);
     expect(result.title).toBe('Titulo atualizado');
 });
+
+test('Deve exibir o questionário que foi salvo ', () => {
+    //Escrever test após criar o controller de respostas 
+});
+
+test('Deve excluir um questionário ', async () => {
+    const result = await questionnaireController.destroy(newQuestionnaire.id);
+    //Escrever test após criar o controller de respostas 
+});
