@@ -18,6 +18,17 @@ module.exports = {
             console.log(error);
             return { error: true, status: 422, msg: error.message };
         }
+    },
+
+    destroy: async (id) => {
+        try {
+            const questionnaireQuestionExist = await QuestionnaireQuestion.findByPk(id);
+            const result = await questionnaireQuestionExist.destroy();
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error: true, status: 422, msg: error.message };
+        }
     }
 
 };
