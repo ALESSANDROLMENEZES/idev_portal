@@ -1,4 +1,4 @@
-const { Questionnaire, Question, Answer } = require('../models');
+const { Questionnaire, Question, Answer, Class } = require('../models');
 
 module.exports = {
     
@@ -31,5 +31,19 @@ module.exports = {
             return { error:true, status:422, msg:error.message};
         }  
     },
+
+    store: async (questionnaire) => {
+        try {
+            const classExist = await Class.findByPk(questionnaire.classId);
+            if (!classExist) {
+                return { error: true, status: 422, msg: 'A aula informada não está disponível' };
+            }
+            const result = await Questionnaire.create(questionnaire);
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error: true, status: 422, msg: error.message };
+        }
+    }
     
 };
