@@ -42,6 +42,17 @@ module.exports = {
         }
     },
 
-    
+    show: async (id) => {
+        try {
+            const result = await Answer.findByPk(id);
+            if (!result) {
+                return { error: true, status:422, msg:'A resposta informada não foi encontrada'};    
+            }
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error: true, status:422, msg:error.message};
+        }
+    }
     
 };
