@@ -19,7 +19,7 @@ test('Deve atualizar o questionário que foi salvo anteriormente ', async () => 
     expect(result.title).toBe('Titulo atualizado');
 });
 
-test('Deve exibir o questionário que foi salvo ', () => {
+test('Deve exibir o questionário que foi salvo ', async() => {
     //Escrever test após criar o controller de respostas 
 });
 
