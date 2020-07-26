@@ -44,12 +44,6 @@ module.exports = function(sequelize, DataTypes) {
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
         },
-        'answerChoosedId': {
-            type: DataTypes.INTEGER(11),
-            allowNull: false,
-            primaryKey: true,
-            comment: "null",
-        },
         'createdAt': {
             type: DataTypes.DATE,
             allowNull: false,

@@ -45,12 +45,6 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
     },
-    'answerChoosedId': {
-        type: Sequelize.INTEGER(11),
-        allowNull: false,
-        primaryKey: true,
-        comment: "null",
-    },
     'createdAt': {
         type: Sequelize.DATE,
         allowNull: false,
