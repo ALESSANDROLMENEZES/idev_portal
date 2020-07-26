@@ -31,11 +31,19 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Question.associate = (models) => {
+
     Question.belongsToMany(models.Questionnaire, {
       through: 'questionnaires_questions',
-      as: 'quetions_questionnaires',
+      as: 'questions_questionnaires',
       foreignKey: 'questionId'
     });
+
+    Question.belongsToMany(models.Answer, {
+      through: 'questions_answers',
+      as: 'question_answers',
+      foreignKey: 'questionId'
+    });
+
   };
 
   return Question;

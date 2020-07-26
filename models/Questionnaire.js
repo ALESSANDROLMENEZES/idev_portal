@@ -50,7 +50,7 @@ module.exports = function(sequelize, DataTypes) {
   Questionnaire.associate = (models) => {
     Questionnaire.belongsToMany(models.Question, {
       through: 'questionnaires_questions',
-      as: 'quetions_questionnaires',
+      as: 'questions_questionnaires',
       foreignKey: 'questionnaireId'
     });
   };
