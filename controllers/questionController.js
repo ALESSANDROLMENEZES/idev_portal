@@ -35,6 +35,33 @@ module.exports = {
             console.log(error);
             return { error:true, status:422, msg:error.message};
         }
+    },
+
+    destroy: async (id) => {
+        try {
+            const questionExist = await Question.findByPk(id);
+            if (!questionExist) {
+                return { error:true, status:422, msg:'Não foi encontrada a questão informada'};
+            }
+            const result = await questionExist.destroy();
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error:true, status:422, msg:error.message};
+        }
+    },
+
+    show: async (id) => {
+        try {
+            const result = await Question.findByPk(id);
+            if (!result) {
+                return { };
+            }
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error:true, status:422, msg:error.message};
+        }
     }
     
 };
