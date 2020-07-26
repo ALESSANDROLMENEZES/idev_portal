@@ -25,7 +25,19 @@ module.exports = function(sequelize, DataTypes) {
       },
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
-    }
+    },
+    'createdAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
+    'updatedAt': {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      comment: "null"
+    },
   }, {
       tableName: 'questionnaires_questions',
       timestamps:false,

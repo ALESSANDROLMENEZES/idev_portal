@@ -1,3 +1,5 @@
+const moment = require('moment');
+const currentDate = new Date();
 'use strict';
 
 module.exports = {
@@ -5,23 +7,33 @@ module.exports = {
     await queryInterface.bulkInsert('questionnaires_questions', [
       {
         questionnaireId: 1,
-        questionId: 1
+        questionId: 1,
+        createdAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
+        updatedAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
       },
       {
         questionnaireId: 1,
-        questionId: 2
+        questionId: 2,
+        createdAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
+        updatedAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
       },
       {
         questionnaireId: 1,
-        questionId: 3
+        questionId: 3,
+        createdAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
+        updatedAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
       },
       {
         questionnaireId: 1,
-        questionId: 4
+        questionId: 4,
+        createdAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
+        updatedAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
       },
       {
         questionnaireId: 1,
-        questionId: 5
+        questionId: 5,
+        createdAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
+        updatedAt: moment(currentDate).format('YYYY-MM-DD hh:mm:ss'),
       },
     ], {});
   },

@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Questionnaire', {
+  const Questionnaire = sequelize.define('Questionnaire', {
     'id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -46,4 +46,14 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'questionnaires'
   });
+
+  Questionnaire.associate = (models) => {
+    Questionnaire.belongsToMany(models.Question, {
+      through: 'questionnaires_questions',
+      as: 'quetions_questionnaires',
+      foreignKey: 'questionnaireId'
+    });
+  };
+
+  return Questionnaire;
 };

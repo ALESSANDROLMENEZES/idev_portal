@@ -7,6 +7,7 @@ const askForHelpController = require('../controllers/askForHelpController');
 const classController = require('../controllers/classController');
 const userClassDoneController = require('../controllers/userClassDoneController');
 const userModuleController = require('../controllers/userModuleController');
+const questionnaireController = require('../controllers/questionnaireController');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -45,6 +46,11 @@ router.get('/index', async (req, res, next) => {
 
 router.get('/modulos', async (req, res, next) => {
   let result = await userModuleController.index();
+  res.status(200).json(result);
+});
+
+router.get('/questions', async (req, res) => {
+  let result = await questionnaireController.index(1);
   res.status(200).json(result);
 });
 
