@@ -54,6 +54,25 @@ module.exports = {
            console.log(error);
            return { error: true, status: 422, msg: error.message };
        } 
+    },
+
+    destroy: async (userModule) => {
+        const transaction = await UserModule.sequelize.transaction();
+        try {
+            const userModuleExist = await UserModule.findOne({
+                where: {
+                    userId: userModule.userId,
+                    moduleId: userModule.moduleId
+                }
+            });
+            const result = await userModuleExist.destroy();
+            transaction.commit();
+            return result;
+        } catch (error) {
+            transaction.rollback();
+            console.log(error);
+            return { error: true, status: 422, msg: error.message };
+        }
     }
 
 };
