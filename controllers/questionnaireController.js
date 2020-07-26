@@ -81,6 +81,29 @@ module.exports = {
             console.log(error);
             return { error: true, status: 422, msg: error.message }; 
         }
+    },
+
+    show: async (id) => {
+        try {
+            const result = await Questionnaire.findByPk(id, {
+                include:[{
+                    model: Question,
+                    as: 'questions_questionnaires',
+                    required: true,
+                    include: [
+                        {
+                            model: Answer,
+                            as: 'question_answers',
+                            required: true,
+                        }
+                    ]
+                }]
+            });
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error: true, status: 422, msg: error.message }; 
+        }
     }
     
 };
