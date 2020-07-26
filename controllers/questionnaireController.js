@@ -44,6 +44,23 @@ module.exports = {
             console.log(error);
             return { error: true, status: 422, msg: error.message };
         }
+    },
+
+    destroy: async (id) => {
+        const transaction = await Questionnaire.sequelize.transaction();
+        try {
+            const questionnaireExist = await Questionnaire.findByPk(id);
+            if (!questionnaireExist) {
+                return { error: true, status: 422, msg: 'O questionário informado não está disponível' };
+            }
+            const result = questionnaireExist.destroy();
+            transaction.commit();
+            return result;
+        } catch (error) {
+            transaction.rollback();
+            console.log(error);
+            return { error: true, status: 422, msg: error.message }; 
+        }
     }
     
 };
