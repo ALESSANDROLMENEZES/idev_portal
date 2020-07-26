@@ -53,6 +53,21 @@ module.exports = {
             console.log(error);
             return { error: true, status:422, msg:error.message};
         }
+    },
+
+    index: async (limit = 7, page = 1) => {
+        limit = parseInt(limit);
+        page = parseInt(page) - 1;
+        try {
+            const result = await Answer.findAndCountAll({
+                limit,
+                offset: page * limit
+            });
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { error: true, status:422, msg:error.message};
+        }
     }
     
 };
