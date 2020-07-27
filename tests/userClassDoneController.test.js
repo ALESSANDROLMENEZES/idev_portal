@@ -8,7 +8,6 @@ test('Deve salvar uma nova aula concluida ', async () => {
     await userClassDoneController.store(userClassDoneA);
     await userClassDoneController.store(userClassDoneB);
     const result = await userClassDoneController.store(userClassDoneC);
-    console.log(result);
     expect(result.id).toBeGreaterThan(1);
 });
 

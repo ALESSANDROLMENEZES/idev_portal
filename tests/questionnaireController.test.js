@@ -6,6 +6,34 @@ const newQuestionnaire = {
     avaliable:true
 };
 
+const questionnaire = {
+    classId: 2,
+    title: 'Questionário de fixação',
+    avaliable:true
+};
+
+const answers = [
+    {
+        description:'Branco'
+    },
+    {
+        description:'Marron'
+    },
+    {
+        description:'Preto'
+    },
+    {
+        description:'Vermelho'
+    },
+    {
+        description:'Rocho'
+    }
+];
+
+const question = {
+    text: 'Qual é a cor do cavalor de São Jorge?'
+};
+
 test('Deve salvar um novo questionário ', async () => {
     const result = await questionnaireController.store(newQuestionnaire);
     newQuestionnaire.id = result.id;
@@ -15,15 +43,13 @@ test('Deve salvar um novo questionário ', async () => {
 test('Deve atualizar o questionário que foi salvo anteriormente ', async () => {
     newQuestionnaire.title = 'Titulo atualizado';
     const result = await questionnaireController.update(newQuestionnaire);
-    console.log(result);
     expect(result.title).toBe('Titulo atualizado');
 });
 
-test('Deve exibir o questionário que foi salvo ', async() => {
-    //Escrever test após criar o controller de respostas 
-});
 
-test('Deve excluir um questionário ', async () => {
-    const result = await questionnaireController.destroy(newQuestionnaire.id);
-    //Escrever test após criar o controller de respostas 
+test('Deve salvar um novo questionário ', async () => {
+    const result = await questionnaireController.storeAnswersAndLinkAllToQuestionAndQuestionnaire(
+        answers, question, questionnaire, 0
+    );
+    expect(result.questionId).toBeGreaterThan(5);
 });

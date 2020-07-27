@@ -1,4 +1,4 @@
-const { Questionnaire, Question, Answer, Class } = require('../models');
+const { Questionnaire, Question, Answer, Class, QuestionAnswer, QuestionnaireQuestion } = require('../models');
 
 module.exports = {
     
@@ -104,6 +104,45 @@ module.exports = {
             console.log(error);
             return { error: true, status: 422, msg: error.message }; 
         }
-    }
+    },
+
+    storeAnswersAndLinkAllToQuestionAndQuestionnaire: async (answers, question, questionnaire, rigthAnswerIndex=0) => {
+        const transaction = await Answer.sequelize.transaction();
+        try {
+
+            if (!answers[0]) {
+                return 'Informe as perguntas em formato de array';
+            }
+            const createdAnswers = await Answer.bulkCreate(answers);
+
+            question.rightAnswerId = createdAnswers[rigthAnswerIndex].id;
+
+            const createdQuestion = await Question.create(question);
+
+            const answersToQuestion = createdAnswers.map((q) => {
+                return { questionId: createdQuestion.id, answerId: q.id };
+            });
+
+            await QuestionAnswer.bulkCreate(answersToQuestion);
+
+            const createdQuestionnaire = await Questionnaire.create(questionnaire);
+
+            const result = await QuestionnaireQuestion.create({
+                questionnaireId: createdQuestionnaire.id,
+                questionId: createdQuestion.id
+            });
+
+            await transaction.commit();
+
+            return result;
+
+        } catch (error) {
+            await transaction.rollback();
+            console.log(error);
+            return {
+                error: true, status: 422, msg: error.message
+            };
+        }
+    },
     
 };

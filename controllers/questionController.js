@@ -62,6 +62,16 @@ module.exports = {
             console.log(error);
             return { error:true, status:422, msg:error.message};
         }
-    }
+    },
+
+    store: async (question) => {
+      try {
+          const result = await Question.create(question);
+          return result;
+      } catch (error) {
+        console.log(error);
+        return { error:true, status:422, msg:error.message}; 
+      }  
+    },
     
 };

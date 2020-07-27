@@ -18,9 +18,7 @@ module.exports = {
             if (!answerExist) {
                 return { error: true, status:422, msg:'A resposta informada não foi encontrada'};    
             }
-            answerExist.description = answer.description;
-            answerExist.avaliable = answer.avaliable;
-            const result = await answerExist.save();
+            const result = await Answer.update(answer, { where: { id: answer.id } });
             return result;
         } catch (error) {
             console.log(error);
@@ -59,11 +57,11 @@ module.exports = {
         limit = parseInt(limit);
         page = parseInt(page) - 1;
         try {
-            const result = await Answer.findAndCountAll({
+            const { count: size, rows: result } = await Answer.findAndCountAll({
                 limit,
                 offset: page * limit
             });
-            return result;
+            return { size, result };
         } catch (error) {
             console.log(error);
             return { error: true, status:422, msg:error.message};

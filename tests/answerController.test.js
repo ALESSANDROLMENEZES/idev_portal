@@ -1,8 +1,7 @@
 const answerController = require('../controllers/answerController');
 
 const answer = {
-    description: 'This is the right answer',
-    avaliable:true
+    description: 'This is the right answer'
 };
 
 test('Deve salvar uma nova resposta ', async () => {
@@ -13,8 +12,9 @@ test('Deve salvar uma nova resposta ', async () => {
 
 test('Deve atualizar a descricao da resposta aterior ', async () => {
     answer.description = 'This isnt the right answer';
-    const result = await answerController.update(answer);
-    expect(result.description).toBe('This isnt the right answer');
+    await answerController.update(answer);
+    const exist = await answerController.show(answer.id);
+    expect(exist.description).toBe('This isnt the right answer');
 });
 
 test('Deve excluir a resposta ', async () => {
@@ -25,6 +25,6 @@ test('Deve excluir a resposta ', async () => {
 
 test('Deve listar as respostas ', async () => {
     const list = await answerController.index(10);
-    expect(list.length).toBeGreaterThan(3);
+    expect(list.size).toBeGreaterThan(3);
 });
 

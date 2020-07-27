@@ -75,7 +75,6 @@ test('deve excluir o feedback ', async () => {
 
 test('Deve trazer um objeto vazio ', async () => {
     const result = await feedbackController.show(feedback.id);
-    console.log(result)
     expect(result).toEqual({});
 });
 
