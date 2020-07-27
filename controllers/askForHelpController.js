@@ -35,6 +35,8 @@ module.exports = {
     
     index: async (limit = 7, page=1, avaliable=1) => {
         try {
+            limit = parseInt(limit);
+            page = parseInt(page) - 1;
             const { rows: result, size: count } = await AskForHelp.findAndCountAll({
                 include: [
                     {
@@ -44,7 +46,8 @@ module.exports = {
                     }
                 ],
                 where: { avaliable },
-                limit   
+                limit,
+                offset:limit*page
             });
             return result;
         } catch (error) {

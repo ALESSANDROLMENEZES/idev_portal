@@ -1,0 +1,24 @@
+✔ Inicializar projeto @done (27/07/2020 01:03:50)
+✔ Configurar sequelize @done (27/07/2020 01:03:53)
+✔ Criar models @done (27/07/2020 01:03:55)
+✔ Criar migrations @done (27/07/2020 01:03:57)
+✔ Criar seeders @done (27/07/2020 01:03:58)
+✔ Criar testes @done (27/07/2020 01:04:01)
+✔ Criar controllers @done (27/07/2020 01:04:02)
+☐ Criar rotas 
+- Index (Public)
+- Users
+- Challenges
+- Modules
+- Classes
+- Teams
+- Feedbacks
+- Questionnaires
+- Timeline
+☐ Validar compos obrigatórios
+☐ Implementar upload de imagens 
+☐ Implementar exclusão de arquivo ao alterar um avatar
+☐ Implementar cors 
+☐ Implementar JWT
+☐ Implementar middleware para autenticar rotas
+☐ Implementar helmet

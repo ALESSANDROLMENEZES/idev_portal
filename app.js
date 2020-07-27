@@ -1,13 +1,20 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const challengesRouter = require('./routes/challenges');
+const classesRouter = require('./routes/classes');
+const feedbacksRouter = require('./routes/feedbacks');
+const modulesRouter = require('./routes/modules');
+const questionnairesRouter = require('./routes/questionnaires');
+const teamsRouter = require('./routes/teams');
+const timelineRouter = require('./routes/timeline');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,8 +26,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api', indexRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/challenges', challengesRouter);
+app.use('/api/classes', classesRouter);
+app.use('/api/feedbacks', feedbacksRouter);
+app.use('/api/modules', modulesRouter);
+app.use('/api/questionnaires', questionnairesRouter);
+app.use('/api/teams', teamsRouter);
+app.use('/api/timeline', timelineRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
