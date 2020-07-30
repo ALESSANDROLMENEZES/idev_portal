@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-
-// router.get('/', controller...);
-// router.get('/', controller...);
-// router.post('/', controller...);
-// router.patch('/', controller...);
-// router.delete('/', controller...);
-// router.put('/', controller...);
+const classController = require('../controllers/classController');
+router.get('/:id', classController.show);
+router.get('/:moduleId', classController.index);
+router.post('/', classController.store);
+router.patch('/', classController.update);
+router.put('/', classController.update);
+router.delete('/:id', classController.destroy);
 
 module.exports = router;
