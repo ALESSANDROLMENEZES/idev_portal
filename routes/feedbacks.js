@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-
-// router.get('/', controller...);
-// router.get('/', controller...);
-// router.post('/', controller...);
-// router.patch('/', controller...);
-// router.delete('/', controller...);
-// router.put('/', controller...);
+const feedbackController = require('../controllers/feedbackController');
+router.get('/', feedbackController.index);
+router.get('/:id', feedbackController.show);
+router.post('/', feedbackController.store);
+router.patch('/', feedbackController.store);
+router.delete('/:id', feedbackController.destroy);
+router.put('/', feedbackController.store);
 
 module.exports = router;
