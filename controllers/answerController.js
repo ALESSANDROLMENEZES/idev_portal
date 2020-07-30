@@ -2,69 +2,74 @@ const { Answer } = require('../models');
 
 module.exports = {
   
-    store: async (answer) => {
+    store: async (req, res) => {
         try {
-            const result = await Answer.create(answer);
-            return result;
+            const { description, avaliable } = req.body;
+            const result = await Answer.create({ description, avaliable });
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
-            return { error: true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
-    update: async (answer) => {
+    update: async (req, res) => {
         try {
-            const answerExist = await Answer.findByPk(answer.id);
-            if (!answerExist) {
-                return { error: true, status:422, msg:'A resposta informada não foi encontrada'};    
-            }
-            const result = await Answer.update(answer, { where: { id: answer.id } });
-            return result;
-        } catch (error) {
-            console.log(error);
-            return { error: true, status:422, msg:error.message};
-        }
-    },
-
-    destroy: async (id) => {
-        try {
+            const { id, description, avaliable } = req.body;
             const answerExist = await Answer.findByPk(id);
             if (!answerExist) {
-                return { error: true, status:422, msg:'A resposta informada não foi encontrada'};    
+                return res.status(422).json({ error: true, msg:'A resposta informada não foi encontrada'});
+            }
+            const result = await Answer.update({ description, avaliable }, { where: { id: answer.id } });
+            return res.status(200).json({ result });
+        } catch (error) {
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
+        }
+    },
+
+    destroy: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const answerExist = await Answer.findByPk(id);
+            if (!answerExist) {
+                return res.status(422).json({ error: true, msg:'A resposta informada não foi encontrada'});    
             }
             const result = await answerExist.destroy();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
-            return { error: true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
-    show: async (id) => {
+    show: async (req, res) => {
         try {
+            const { id } = req.params;
             const result = await Answer.findByPk(id);
             if (!result) {
-                return { error: true, status:422, msg:'A resposta informada não foi encontrada'};    
+                return res.status(422).json({ error: true, msg:'A resposta informada não foi encontrada'});    
             }
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
-            return { error: true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
-    index: async (limit = 7, page = 1) => {
-        limit = parseInt(limit);
-        page = parseInt(page) - 1;
+    index: async (req, res) => {
         try {
+            let { limit = 7, page = 1 } = req.query;
+            limit = parseInt(limit);
+            page = parseInt(page) - 1;
             const { count: size, rows: result } = await Answer.findAndCountAll({
                 limit,
                 offset: page * limit
             });
-            return { size, result };
+            return res.status(200).json({size, result });
         } catch (error) {
             console.log(error);
-            return { error: true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
         }
     }
     
