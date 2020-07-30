@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const questionnaireController = require('../controllers/questionnaireController');
 
-// router.get('/', controller...);
-// router.get('/', controller...);
-// router.post('/', controller...);
-// router.patch('/', controller...);
-// router.delete('/', controller...);
-// router.put('/', controller...);
+router.get('/all/:classId/:questionId', questionnaireController.index());
+router.get('/:id', questionnaireController.show);
+router.post('/complete', questionnaireController.storeAnswersAndLinkAllToQuestionAndQuestionnaire);
+router.post('/', questionnaireController.store);
+router.patch('/', questionnaireController.update);
+router.delete('/:id', questionnaireController.destroy);
+router.put('/', questionnaireController.update);
 
 module.exports = router;
