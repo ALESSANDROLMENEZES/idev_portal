@@ -1,11 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const moduleController = require('../controllers/moduleClassesController');
 
-// router.get('/', controller...);
-// router.get('/', controller...);
-// router.post('/', controller...);
-// router.patch('/', controller...);
-// router.delete('/', controller...);
-// router.put('/', controller...);
+router.post('/', moduleController.store);
+router.delete('/', moduleController.destroy);
 
 module.exports = router;
