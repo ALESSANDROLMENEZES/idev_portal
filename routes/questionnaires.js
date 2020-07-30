@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const questionnaireController = require('../controllers/questionnaireController');
+const aswerController = require('../controllers/answerController');
 
 router.get('/all/:classId/:questionId', questionnaireController.index);
 router.get('/:id', questionnaireController.show);
@@ -9,5 +10,11 @@ router.post('/', questionnaireController.store);
 router.patch('/', questionnaireController.update);
 router.delete('/:id', questionnaireController.destroy);
 router.put('/', questionnaireController.update);
+router.get('/aswers/all', aswerController.index);
+router.get('/aswers/:id', aswerController.show);
+router.delete('/aswers/:id', aswerController.destroy);
+router.post('/aswers', aswerController.store);
+router.put('/aswers', aswerController.update);
+router.patch('/aswers', aswerController.update);
 
 module.exports = router;
