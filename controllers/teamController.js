@@ -12,18 +12,12 @@ const validateId = (id) => {
 
 
 module.exports = {
-    store: async (team) => {
+    store: async (req, res) => {
         try {
             
-            if (!team) {
-                return res.status(422).json({ error: true, msg:'Informe um id válido'});
-            }
+            const { challengeId, statusId, github } = req.body;
             
-            if (validateId(team.challengeId)) {
-                return res.status(422).json({ error: true, msg:'Informe um id válido'});
-            }
-            
-            const avaliableChallenge = await Challenge.findByPk(team.challengeId);
+            const avaliableChallenge = await Challenge.findByPk(challengeId, {where:{statusId:1}});
             if (!avaliableChallenge) {
                 return res.status(422).json({ error: true, msg:'Este desafio não está mais disponível'});
             }
@@ -33,10 +27,12 @@ module.exports = {
             const expiresAt = moment(avaliableChallenge.expiresAt);
             
             if (expiresAt < currentDate) {
+                avaliableChallenge.statusId = 3;
+                await avaliableChallenge.save();
                 return res.status(422).json({ error: true, msg:'Este desafio expirou'});   
             }
             
-            const result = await Team.create(team);
+            const result = await Team.create({ challengeId, statusId, github });
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
@@ -45,23 +41,21 @@ module.exports = {
     },
     
     
-    update: async (team) => {
+    update: async (req, res) => {
         try {
             
-            if (!team) {
-                return res.status(422).json({ error: true, msg:'Informe um id válido'});
-            }
+            const { id } = req.params;
+            const { challengeId, statusId, github } = req.body;
             
-            if (validateId(team.id)) {
-                return res.status(422).json({ error: true, msg:'Informe um id válido'});
-            }
-            
-            const teamExist = await Team.findByPk(team.id);
+            const teamExist = await Team.findByPk(id);
             if (!teamExist) {
                 return res.status(422).json({ error: true, msg:'O time informado não está disponível'});
             }
             
-            const result = await Team.update(team, { where: { id:team.id } });
+            teamExist.challengeId = challengeId;
+            teamExist.statusId = statusId;
+            teamExist.github = github;
+            const result = await teamExist.save();
             
             return res.status(200).json({ result });
             
@@ -72,15 +66,12 @@ module.exports = {
     },
     
     
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         try {
-            if (validateId(id)) {
-            return res.status(422).json({ error: true, msg:'Informe um id válido'});
-            }
-            
+            const { id } = req.params;
             const teamExist = await Team.findByPk(id);
             if (!teamExist) {
-            return res.status(422).json({ error: true, msg:'O time informado não está disponível'});
+            return res.status(422).json({ error: true, msg:'Não foi encontrado o time informado'});
             }
             
             const result = await Team.destroy({ where: { id } });
@@ -95,8 +86,9 @@ module.exports = {
     },
     
     
-    show: async (id) => {
+    show: async (req, res) => {
         try {
+            const { id } = req.params;
             let coins;
             (connectedUser.admin) ? coins = 0 : coins = 1;
             
@@ -135,11 +127,14 @@ module.exports = {
     },
     
     
-    index: async (limit=14, page = 1) => {
+    index: async (req, res) => {
         try {
             let coins;
+            let { limit = 14, page = 1 } = req.query;
+            limit = parseInt(limit);
+            page = parseInt(page) - 1;
             (connectedUser.admin) ? coins = minCoinsToFeedback.admin : coins = minCoinsToFeedback.user;
-            const result = await Team.findAll({
+            const { rows: result, count:size } = await Team.findAndCountAll({
                 include: [
                     {
                         model: User,
@@ -158,10 +153,13 @@ module.exports = {
                         as: 'feedback_status',
                         required: true,
                     },
-                ]
+                ],
+                limit,
+                offset:limit*page
             });
             
-            return res.status(200).json({ result });
+            return res.status(200).json({ size, result });
+            
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg: error.message });
