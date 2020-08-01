@@ -5,11 +5,11 @@ const validateId = (id) => {
 };
 
 module.exports = {
-    store: async (teamUser) => {
+    store: async (req, res) => {
         const transaction = await Team.sequelize.transaction();
         try {
-            
-            if (validateId(teamUser.teamId) || validateId(teamUser.userId) || validateId(teamUser.challengeId)) {
+            const { teamId, userId, challengeId } = req.body;
+            if (validateId(teamId) || validateId(userId) || validateId(challengeId)) {
                 transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'informe um id válido'});
             }
@@ -20,11 +20,11 @@ module.exports = {
                         model: User,
                         as: 'members',
                         required: true,
-                        where: { id: teamUser.userId }
+                        where: { id: userId }
                     }
                 ],
                 where: {
-                    challengeId:teamUser.challengeId
+                    challengeId
                 }
             });
             
@@ -33,18 +33,15 @@ module.exports = {
                 return res.status(422).json({ error: true, msg: 'Este usuário já está cadastrado em outro time'});
             }
             
-            if (teamUser.teamId === undefined || ((parseInt(teamUser.teamId)) === 0)) {
+            if (teamId === undefined || ((parseInt(teamId)) === 0)) {
                 const newTeam = await Team.create({
-                    challengeId: teamUser.challengeId,
-                    statusId:teamUser.statusId
+                    challengeId,
+                    statusId:1 //Em desenvolvimento
                 });
                 teamUser.teamId = newTeam.id;
             }
             
-            const result = await TeamUser.create({
-                teamId: parseInt(teamUser.teamId),
-                userId: parseInt(teamUser.userId)
-            });
+            const result = await TeamUser.create({ teamId, userId });
             
             transaction.commit();
             return res.status(200).json({ result });
@@ -57,24 +54,23 @@ module.exports = {
     },
     
     
-    update: async (teamUser) => {
+    update: async (req, res) => {
         try {
-            if (validateId(teamUser.teamId) || validateId(teamUser.userId)) {
+
+            const { teamId, userId } = req.body;
+
+            if (validateId(teamId) || validateId(userId)) {
                 return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
             
-            const teamExist = await TeamUser.findByPk(teamUser.id);
+            const teamExist = await TeamUser.findOne({where:{teamId, userId}});
             if (!teamExist) {
                 return res.status(422).json({ error: true, msg:'O time informado não está disponível'});
             }
             
-            const result = await TeamUser.update({
-                teamId:teamUser.teamId,
-                userId:teamUser.userId
-            },
-            {
-                where: { id: teamUser.id }
-            });
+            teamExist.teamId = teamId;
+            teamExist.userId = userId;
+            await teamExist.save();
             
             return res.status(200).json({ result });
             
@@ -86,16 +82,19 @@ module.exports = {
     },
     
     
-    destroy: async (teamUser) => {
+    destroy: async (req, res) => {
         try {
-            if (validateId(teamUser.teamId) || validateId(teamUser.userId)) {
+
+            const { teamId, userId } = req.params;
+
+            if (validateId(teamId) || validateId(userId)) {
                 return res.status(422).json({ error: true, msg:'informe um id válido'});
             }
             
             const foundTeamUser = await TeamUser.findOne({
                 where: {
-                    teamId: teamUser.teamId,
-                    userId: teamUser.userId
+                    teamId,
+                    userId
                 }
             });
             
@@ -110,11 +109,12 @@ module.exports = {
         }  
     },   
     
-    index: async (limit=14, page = 1) => {
+    index: async (req, res) => {
         try {
+            let { limit = 14, page = 1 } = req.query;
             limit = parseInt(limit);
             page = parseInt(page) - 1;
-            const result = await Team.findAll({
+            const { rows: result, count: size } = await Team.findAll({
                 include: [
                     {
                         model: User,
@@ -126,7 +126,7 @@ module.exports = {
                 offset:limit*page
             });
             
-            return res.status(200).json({ result });
+            return res.status(200).json({ size, result });
             
         } catch (error) {
             console.log(error);
