@@ -1,27 +1,29 @@
 const { QuestionnaireQuestion, Question, Questionnaire } = require('../models');
 
 module.exports = {
-
-    store: async (questionnaireQuestion) => {
+    
+    store: async (req, res) => {
         try {
-            const questionnaireExist = await Questionnaire.findByPk(questionnaireQuestion.questionnaireId);
+            const { questionnaireId, questionId } = req.body;
+            const questionnaireExist = await Questionnaire.findByPk(questionnaireId);
             if (!questionnaireExist) {
                 return res.status(422).json({ error: true, msg: 'O questionário não está mais disponível' });
             }
-            const questionExist = await Questionnaire.findByPk(questionnaireQuestion.questionId);
+            const questionExist = await Questionnaire.findByPk(questionId);
             if (!questionExist) {
                 return res.status(422).json({ error: true, msg: 'O questão não está mais disponível' });
             }
-            const result = await QuestionnaireQuestion.create(questionnaireQuestion);
+            const result = await QuestionnaireQuestion.create({ questionnaireId, questionId });
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }
     },
-
-    destroy: async (id) => {
+    
+    destroy: async (req, res) => {
         try {
+            const { id } = req.body;
             const questionnaireQuestionExist = await QuestionnaireQuestion.findByPk(id);
             const result = await questionnaireQuestionExist.destroy();
             return res.status(200).json({ result });
@@ -30,5 +32,5 @@ module.exports = {
             return res.status(422).json({ error: true, msg:error.message});
         }
     }
-
+    
 };
