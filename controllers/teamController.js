@@ -37,7 +37,7 @@ module.exports = {
             }
             
             const result = await Team.create(team);
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -63,7 +63,7 @@ module.exports = {
             
             const result = await Team.update(team, { where: { id:team.id } });
             
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
@@ -85,7 +85,7 @@ module.exports = {
             
             const result = await Team.destroy({ where: { id } });
             
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
@@ -126,7 +126,7 @@ module.exports = {
                 ]
             });
             
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
@@ -161,7 +161,7 @@ module.exports = {
                 ]
             });
             
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg: error.message });

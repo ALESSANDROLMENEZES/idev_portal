@@ -9,7 +9,7 @@ module.exports = {
             }
             askForHelp.userId = conectedUser.id;
             const result = await AskForHelp.create(askForHelp);
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -26,7 +26,7 @@ module.exports = {
             askForHelpExist.title = askForHelp.title;
             askForHelpExist.description = askForHelp.description;
             const result = await askForHelpExist.save();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -49,7 +49,7 @@ module.exports = {
                 limit,
                 offset:limit*page
             });
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -70,7 +70,7 @@ module.exports = {
             if (!result) {
                 return {};
             }
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -84,7 +84,7 @@ module.exports = {
                 return { error: true, status: 422, msg: 'Não foi encontrado dados para o id' };
             }
             const result = await askForHelpExist.destroy();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});

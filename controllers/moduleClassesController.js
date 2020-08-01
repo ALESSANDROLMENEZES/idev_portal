@@ -25,7 +25,7 @@ module.exports = {
             const invalid = await validateData(moduleClass);
             if (invalid.classExists && invalid.moduleExists) {
                 const result = await ModuleClass.create(moduleClass);
-                return result;
+                return res.status(200).json({ result });
             }
         } catch (error) {
             console.log(error);
@@ -37,7 +37,7 @@ module.exports = {
         try {
             const moduleClassExist = await ModuleClass.findByPk(id);
             const result = await moduleClassExist.destroy();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return { error: true, msg: error.message, status: 422 };  

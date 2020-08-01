@@ -101,7 +101,7 @@ module.exports = {
 
             await transaction.commit();
 
-            return result;
+            return res.status(200).json({ result });
 
         } catch (error) {
             await transaction.rollback();
@@ -122,7 +122,7 @@ module.exports = {
         
             await transaction.commit();
         
-            return result;
+            return res.status(200).json({ result });
         
         } catch (error) {
             await transaction.rollback();

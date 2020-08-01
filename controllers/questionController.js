@@ -14,7 +14,7 @@ module.exports = {
                 ],
                 where:{id}
             });
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -32,7 +32,7 @@ module.exports = {
             questionExist.text = question.text;
             questionExist.rightAnswerId = question.rightAnswerId;
             const result = await questionExist.save();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -47,7 +47,7 @@ module.exports = {
                 
             }
             const result = await questionExist.destroy();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -61,7 +61,7 @@ module.exports = {
             if (!result) {
                 return { };
             }
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -72,7 +72,7 @@ module.exports = {
     store: async (question) => {
         try {
             const result = await Question.create(question);
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});

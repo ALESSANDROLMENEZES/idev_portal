@@ -78,7 +78,7 @@ module.exports = {
                 await validTeam.save();
 
                 await transaction.commit();
-                return result;
+                return res.status(200).json({ result });
                 
             }
 
@@ -158,7 +158,7 @@ module.exports = {
             await isValidTeam.save();
             
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             await transaction.rollback();
@@ -176,7 +176,7 @@ module.exports = {
             const result = await Feedback.findByPk(id);
             result.destroy();
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);
@@ -192,7 +192,7 @@ module.exports = {
             if (!result) {
                 return {};
             }
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);
@@ -203,13 +203,17 @@ module.exports = {
 
     index: async (limit=14, page=1, statusId=2) => {
         try {
+            limit = parseInt(limit);
+            page = parseInt(page) - 1;
             const result = await Feedback.findAll({
-                limit
+                where:{statusId},
+                limit,
+                offset:limit*page
             });
             if (!result) {
                 return [];
             }
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);

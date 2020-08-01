@@ -47,7 +47,7 @@ module.exports = {
             let result = await Challenge.create(challenge);
             
             transaction.commit();
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
@@ -75,7 +75,7 @@ module.exports = {
             }
             
             const result = await Challenge.update(challenge, { where: { id: challenge.id } });
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             transaction.rollback();
@@ -101,7 +101,7 @@ module.exports = {
             
             const result = await Challenge.destroy({ where: { id } });
             transaction.commit();
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             transaction.rollback();
@@ -127,7 +127,7 @@ module.exports = {
                     limit,
                     offset: limit * page
                 });
-                return result;
+                return res.status(200).json({ size, result });
             }
 
             const userModules = await UserModule.findAll({
@@ -153,7 +153,7 @@ module.exports = {
                 offset: limit * page
             });
 
-            return result;
+            return res.status(200).json({ size, result });
 
         } catch (error) {
             console.log(error);
@@ -170,7 +170,7 @@ module.exports = {
             }
 
             const result = await Challenge.findByPk(id);
-            return result;
+            return res.status(200).json({ result });
 
         } catch (error) {
             console.log(error);

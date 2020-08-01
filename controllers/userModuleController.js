@@ -24,8 +24,7 @@ module.exports = {
             
             const [result, created ]= await UserModule.findOrCreate({ where: { userId: userModule.userId,
                 moduleId:userModule.moduleId } });
-                return { result, created };
-                
+                return res.status(200).json({ result, created });
             } catch (error) {
                 console.log(error);
                 return res.status(422).json({ error: true, msg:error.message});
@@ -49,7 +48,7 @@ module.exports = {
                     attributes: ['id', 'title', 'avaliable'],
                     where:{avaliable:true}
                 });
-                return { result, size };
+                return res.status(200).json({size, result });
             } catch (error) {
                 console.log(error);
                 return res.status(422).json({ error: true, msg:error.message});
@@ -67,7 +66,7 @@ module.exports = {
                 });
                 const result = await userModuleExist.destroy();
                 transaction.commit();
-                return result;
+                return res.status(200).json({ result });
             } catch (error) {
                 transaction.rollback();
                 console.log(error);

@@ -47,7 +47,7 @@ module.exports = {
             });
             
             transaction.commit();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             transaction.rollback();
             console.log(error);
@@ -76,7 +76,7 @@ module.exports = {
                 where: { id: teamUser.id }
             });
             
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
@@ -101,7 +101,7 @@ module.exports = {
             
             const result = await foundTeamUser.destroy();
             
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
@@ -112,7 +112,8 @@ module.exports = {
     
     index: async (limit=14, page = 1) => {
         try {
-            
+            limit = parseInt(limit);
+            page = parseInt(page) - 1;
             const result = await Team.findAll({
                 include: [
                     {
@@ -121,10 +122,11 @@ module.exports = {
                         required: true,
                     }
                 ],
-                limit
+                limit,
+                offset:limit*page
             });
             
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);

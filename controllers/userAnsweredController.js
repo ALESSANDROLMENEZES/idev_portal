@@ -56,7 +56,7 @@ module.exports = {
 
             const message = await validateCorretlyAnswer(userAnswered.answerId, questionExist.rightAnswerId);
 
-            return { result, message };
+            return res.status(200).json({ result, message });
             
         } catch (error) {
             await transaction.rollback();
@@ -79,7 +79,7 @@ module.exports = {
                     userId: userAnswered.userId,
                 }
             });
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);

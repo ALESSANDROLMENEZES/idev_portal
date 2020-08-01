@@ -10,7 +10,7 @@ module.exports = {
         try {
             (!user.email) ? user.email = '' : user.email;
             (!user.name) ? user.name = '' : user.name;
-            const users = await User.findAll({
+            const result = await User.findAll({
                 where: {
                     [Op.or]: [
                         { email: { [Op.like]:`%${user.email}%`} },
@@ -19,7 +19,7 @@ module.exports = {
                 },
                 limit:7
             });
-            return users;   
+            return res.status(200).json({ result });   
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -42,7 +42,7 @@ module.exports = {
             }
             user.email = user.email.toLowerCase();
             const result = await User.create(user);
-            return result;               
+            return res.status(200).json({ result });              
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});  
@@ -63,7 +63,7 @@ module.exports = {
             if (!result) {
                 return res.status(422).json({ error: true, msg: 'Email inválido' });
             }
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -84,7 +84,7 @@ module.exports = {
             }
             let result = await User.update(user, {where:{id:user.id}});
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);
@@ -115,7 +115,7 @@ module.exports = {
             }
             let result = await User.destroy({ where: { id } });
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             await transaction.rollback();
@@ -143,7 +143,7 @@ module.exports = {
             if (!passMatch) {
                 return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
             }
-            return 'Logado!';
+            return res.status(200).json({ conected:true });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});            

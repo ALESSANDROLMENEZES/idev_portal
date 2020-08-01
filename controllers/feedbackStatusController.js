@@ -22,7 +22,7 @@ module.exports = {
             feedbackStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
             
             const result = await FeedbackStatus.create(feedbackStatus);
-            return result;  
+            return res.status(200).json({ result }); 
             
         } catch (error) {
             console.log(error);
@@ -50,7 +50,7 @@ module.exports = {
             let result = await FeedbackStatus.destroy({ where: { id } });
             
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
 
         } catch (error) {
             console.log(error);
@@ -63,7 +63,7 @@ module.exports = {
     index: async (limit=7) => {
         try {
             let result = await FeedbackStatus.findAll({ limit });
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -77,7 +77,7 @@ module.exports = {
                 return res.status(422).json({ error: true, msg:'Informe um id'});
             }
             let result = await FeedbackStatus.findByPk(id);
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -115,7 +115,7 @@ module.exports = {
             }
 
             let result = await FeedbackStatus.update(feedbackStatus, { where: { id: feedbackStatus.id } });
-            return result;
+            return res.status(200).json({ result });
 
         } catch (error) {
             console.log(error);

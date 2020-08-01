@@ -25,7 +25,7 @@ module.exports = {
                     avaliable:true
                 }
             });
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -39,7 +39,7 @@ module.exports = {
                 return res.status(422).json({ error: true, msg: 'A aula informada não está disponível' });
             }
             const result = await Questionnaire.create(questionnaire);
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -56,7 +56,7 @@ module.exports = {
             }
             const result = questionnaireExist.destroy();
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);
@@ -78,7 +78,7 @@ module.exports = {
             questionnaireExist.avaliable = questionnaire.avaliable;
             const result = await questionnaireExist.save();
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);
@@ -103,7 +103,7 @@ module.exports = {
                     ]
                 }]
             });
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -139,7 +139,7 @@ module.exports = {
             
             await transaction.commit();
             
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             await transaction.rollback();

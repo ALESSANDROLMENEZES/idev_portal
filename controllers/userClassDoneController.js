@@ -5,8 +5,10 @@ const connectedUser = { id: 1 };
 
 
 
-const list = async (id, limit, page) => {
+const list = async (id, limit=14, page=1) => {
     try {
+        limit = parseInt(limit);
+        page = parseInt(page) - 1;
         const { count:size, rows:result } = await UserClassDone.findAndCountAll(
             {
                 include: [
@@ -39,7 +41,7 @@ const list = async (id, limit, page) => {
                 offset: limit * page
             });
             
-            return { result, size };
+            return res.status(200).json({size, result });
             
         } catch (error) {
             console.log(error);
@@ -96,7 +98,7 @@ const list = async (id, limit, page) => {
                 userClassDone.userId = connectedUser.id;
                 const result = await UserClassDone.create(userClassDone);
                 await transaction.commit();
-                return result;
+                return res.status(200).json({ result });
                 
             } catch (error) {
                 await transaction.rollback();
@@ -111,8 +113,8 @@ const list = async (id, limit, page) => {
                 const post = await UserClassDone.findByPk(id);
                 post.likes++;
                 const result = await post.save();
-                transaction.commit();
-                return result;
+                await transaction.commit();
+                return res.status(200).json({ result });
             } catch (error) {
                 await transaction.rollback();
                 console.log(error);
@@ -130,25 +132,24 @@ const list = async (id, limit, page) => {
                     case 'my':
                     id = connectedUser.id;
                     result = await list(id, limit, page);
-                    return result;
+                    return res.status(200).json({ result });
                     
                     case 'all':
                     id = '';
                     result = await list(id, limit, page);
-                    return result;
+                    return res.status(200).json({ result });
                     
                     case 'user':
                     if (!id) {
                         return res.status(422).json({ error: true, msg:'Informe o id do usuário'});
-                        
                     }
                     result = await list(id, limit, page);
-                    return result;
+                    return res.status(200).json({ result });
                     
                     default:
                     id = '';
                     result = await list(id, limit, page);
-                    return result;
+                    return res.status(200).json({ result });
                 }
                 
                 

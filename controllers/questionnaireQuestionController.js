@@ -13,7 +13,7 @@ module.exports = {
                 return res.status(422).json({ error: true, msg: 'O questão não está mais disponível' });
             }
             const result = await QuestionnaireQuestion.create(questionnaireQuestion);
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -24,7 +24,7 @@ module.exports = {
         try {
             const questionnaireQuestionExist = await QuestionnaireQuestion.findByPk(id);
             const result = await questionnaireQuestionExist.destroy();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});

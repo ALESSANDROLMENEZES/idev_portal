@@ -13,7 +13,7 @@ module.exports = {
                 return res.status(422).json({ error: true, msg:'Informe um titulo menor que 80 caracteres'});
             }  
             const result = await Module.create(mod);
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -30,7 +30,7 @@ module.exports = {
             }
             if (user.admin) {
                 result = await Module.findAll();
-                return result;
+                return res.status(200).json({ result });
             } else {
                 const moulesAvaliableForUser = await UserModule.findAll({
                     where: {
@@ -49,7 +49,7 @@ module.exports = {
                         }
                     }
                 });
-                return result;
+                return res.status(200).json({ result });
                 
             }
         } catch (error) {
@@ -74,7 +74,7 @@ module.exports = {
             }
             let result = await Module.update(mod, { where: { id: mod.id } });
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
             console.log(error);
@@ -111,7 +111,7 @@ module.exports = {
             let result = await Module.destroy({ where: { id } });
             
             await transaction.commit();
-            return result;
+            return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
