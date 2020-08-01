@@ -1,4 +1,4 @@
-const { Questionnaire, Question, Answer } = require('../models');
+const { Question, Answer } = require('../models');
 
 module.exports = {
     
@@ -17,15 +17,17 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error:true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
+            
         }  
     },
-
+    
     update: async (question) => {
         try {
             const questionExist = await Question.findByPk(question.id);
             if (!questionExist) {
-                return { error:true, status:422, msg:'Não foi encontrada a questão informada'};
+                return res.status(422).json({ error: true, msg:'Não foi encontrada a questão informada'});
+                
             }
             questionExist.text = question.text;
             questionExist.rightAnswerId = question.rightAnswerId;
@@ -33,24 +35,26 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error:true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
-
+    
     destroy: async (id) => {
         try {
             const questionExist = await Question.findByPk(id);
             if (!questionExist) {
-                return { error:true, status:422, msg:'Não foi encontrada a questão informada'};
+                return res.status(422).json({ error: true, msg:'Não foi encontrada a questão informada'});
+                
             }
             const result = await questionExist.destroy();
             return result;
         } catch (error) {
             console.log(error);
-            return { error:true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
+            
         }
     },
-
+    
     show: async (id) => {
         try {
             const result = await Question.findByPk(id);
@@ -60,18 +64,20 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error:true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg:error.message});
+            
         }
     },
-
+    
     store: async (question) => {
-      try {
-          const result = await Question.create(question);
-          return result;
-      } catch (error) {
-        console.log(error);
-        return { error:true, status:422, msg:error.message}; 
-      }  
+        try {
+            const result = await Question.create(question);
+            return result;
+        } catch (error) {
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
+            
+        }  
     },
     
 };

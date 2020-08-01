@@ -42,7 +42,8 @@ const list = async (id, limit, page) => {
             return { result, size };
             
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
         }  
     };
     
@@ -55,7 +56,7 @@ const list = async (id, limit, page) => {
             try {
                 
                 if (!userClassDone) {
-                    return { error: true, msg:'Informe os valores a serem salvos', status: 422 }; 
+                    return res.status(422).json({ error: true, msg:'Informe os valores a serem salvos'});
                 }
                 
                 const classExist = await Class.findByPk(userClassDone.classId, {
@@ -63,7 +64,7 @@ const list = async (id, limit, page) => {
                 });
                 
                 if (!classExist) {
-                    return { error: true, msg:'Esta aula não está mais disponível', status: 422 }; 
+                    return res.status(422).json({ error: true, msg:'Esta aula não está mais disponível'});
                 }
                 
                 const totalClassesInModule = await ModuleClass.count({
@@ -100,7 +101,7 @@ const list = async (id, limit, page) => {
             } catch (error) {
                 await transaction.rollback();
                 console.log(error);
-                return { error: true, msg: error.message, status: 422 };
+                return res.status(422).json({ error: true, msg:error.message});
             }
         },
         
@@ -115,7 +116,7 @@ const list = async (id, limit, page) => {
             } catch (error) {
                 await transaction.rollback();
                 console.log(error);
-                return { error: true, msg: error.message, status: 422 };  
+                return res.status(422).json({ error: true, msg:error.message}); 
             }
         },
         
@@ -138,7 +139,8 @@ const list = async (id, limit, page) => {
                     
                     case 'user':
                     if (!id) {
-                        return { error: true, msg: 'Informe o id do usuário', status: 422 };
+                        return res.status(422).json({ error: true, msg:'Informe o id do usuário'});
+                        
                     }
                     result = await list(id, limit, page);
                     return result;
@@ -153,7 +155,7 @@ const list = async (id, limit, page) => {
             }  catch (error) {
                 await transaction.rollback();
                 console.log(error);
-                return { error: true, msg: error.message, status: 422 };  
+                return res.status(422).json({ error: true, msg:error.message});  
             }      
         }
         

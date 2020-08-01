@@ -42,12 +42,12 @@ module.exports = {
         try {
             const questionExist = await Question.findByPk(userAnswered.questionId);
             if (!questionExist) {
-                return { error: true, status: 422, msg: 'Não foi encontrado o questionário informado' };
+                return res.status(422).json({ error: true, msg:'Não foi encontrado o questionário informado'});
             }
             const answerExist = await Answer.findByPk(userAnswered.answerId);
             
             if (!answerExist) {
-                return { error: true, status: 422, msg: 'Não foi encontrado a resposta informada' };
+                return res.status(422).json({ error: true, msg:'Não foi encontrado a resposta informada'});
             }
             
             userAnswered.userId = connectedUser.id;
@@ -61,7 +61,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -70,7 +70,7 @@ module.exports = {
         try {
             const userAnswerExist = await UserAnswered.findByPk(userAnswered.id);
             if (!userAnswerExist) {
-                return { error: true, status: 422, msg: 'Não foi encontrado a resposta informada' };
+                return res.status(422).json({ error: true, msg:'Não foi encontrado a resposta informada'});
             }
             userAnswered.userId = connectedUser.id;
             const result = await UserAnswered.update(userAnswered, {
@@ -83,7 +83,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     }
     

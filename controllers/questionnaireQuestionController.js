@@ -6,17 +6,17 @@ module.exports = {
         try {
             const questionnaireExist = await Questionnaire.findByPk(questionnaireQuestion.questionnaireId);
             if (!questionnaireExist) {
-                return { error: true, status: 422, msg: 'O questionário não está mais disponível' };
+                return res.status(422).json({ error: true, msg: 'O questionário não está mais disponível' });
             }
             const questionExist = await Questionnaire.findByPk(questionnaireQuestion.questionId);
             if (!questionExist) {
-                return { error: true, status: 422, msg: 'O questão não está mais disponível' };
+                return res.status(422).json({ error: true, msg: 'O questão não está mais disponível' });
             }
             const result = await QuestionnaireQuestion.create(questionnaireQuestion);
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
@@ -27,7 +27,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     }
 

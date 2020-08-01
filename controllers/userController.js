@@ -21,7 +21,8 @@ module.exports = {
             });
             return users;   
         } catch (error) {
-            return [];
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -29,37 +30,44 @@ module.exports = {
     store: async (user) => {
         try {
             if (!user.email || !user.password) {
-                return 'Informe, email e senha';
+            return res.status(422).json({ error: true, msg:'Informe, email e senha'});
+
             }
             if (!(validator.isEmail(user.email))) {
-                return 'Email inválido'; 
+                return res.status(422).json({ error: true, msg: 'Email inválido' });
             }
             const alreadyExistis = await User.findOne({ where: { email: user.email } });
             if (alreadyExistis) {
-                return 'Email já cadastrado'; 
+                return res.status(422).json({ error: true, msg: 'Email já cadastrado' });
             }
             user.email = user.email.toLowerCase();
             const result = await User.create(user);
             return result;               
         } catch (error) {
-            return 'Ocorreu um erro';   
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});  
         }
     },
     
     
     show: async (user) => {
-        if (!user.email) {
-            return 'Informe um email';
+        try {
+            if (!user.email) {
+                return res.status(422).json({ error: true, msg: 'Informe um email' });
+            }
+            if(!(validator.isEmail(user.email))){
+                return res.status(422).json({ error: true, msg: 'Email inválido' });
+            }
+            user.email = user.email.toLowerCase();
+            const result = await User.findOne({ where: { email: user.email } });
+            if (!result) {
+                return res.status(422).json({ error: true, msg: 'Email inválido' });
+            }
+            return result;
+        } catch (error) {
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
         }
-        if(!(validator.isEmail(user.email))){
-            return 'Email inválido';
-        }
-        user.email = user.email.toLowerCase();
-        const result = await User.findOne({ where: { email: user.email } });
-        if (!result) {
-            return 'Email inválido';
-        }
-        return result;
     },
     
     
@@ -68,11 +76,11 @@ module.exports = {
         try {
             if (!user) {
                 await transaction.rollback();
-                return 'Informe um usuário';
+                return res.status(422).json({ error: true, msg: 'Informe um usuário' });
             }
             if (!user.id) {
                 await transaction.rollback();
-                return 'Informe um usuário';
+                return res.status(422).json({ error: true, msg: 'Informe um usuário' });
             }
             let result = await User.update(user, {where:{id:user.id}});
             await transaction.commit();
@@ -80,7 +88,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return 'Ocorreu um erro';
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -90,19 +98,20 @@ module.exports = {
         try {
             if (!id) {
                 await transaction.rollback();
-                return 'Informe um id'; 
+                return res.status(422).json({ error: true, msg: 'Informe um id' });
+
             }
             
             if (isNaN(id)) {
                 transaction.rollback();
-                return 'Informe um id válido';
+                return res.status(422).json({ error: true, msg: 'Informe um id válido' });
             }
             
             let userExists = await User.findByPk(id);
             
             if (!userExists) {
                 await transaction.rollback();
-                return 'O usuário já foi excluido'; 
+                return res.status(422).json({ error: true, msg: 'O usuário já foi excluido' });
             }
             let result = await User.destroy({ where: { id } });
             await transaction.commit();
@@ -110,29 +119,34 @@ module.exports = {
         } catch (error) {
             console.log(error);
             await transaction.rollback();
-            return 'Ocorreu um erro';
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
     login: async (user) => {
-        if (!user.email) {
-            return 'Informe um email';
+        try {
+            if (!user.email) {
+                return res.status(422).json({ error: true, msg: 'Informe um email' });
+            }
+            if (!user.password) {
+                return res.status(422).json({ error: true, msg: 'Informe sua senha' });
+            }
+            if(!(validator.isEmail(user.email))){
+                return res.status(422).json({ error: true, msg: 'Email inválido' });
+            }
+            user.email = user.email.toLowerCase();
+            const result = await User.scope('withPassword').findOne({ where: { email: user.email } });
+            if (!result) {
+                return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
+            }
+            const passMatch = bk.compareSync(user.password, result.password);
+            if (!passMatch) {
+                return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
+            }
+            return 'Logado!';
+        } catch (error) {
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});            
         }
-        if (!user.password) {
-            return 'Informe sua senha';
-        }
-        if(!(validator.isEmail(user.email))){
-            return 'Email inválido';
-        }
-        user.email = user.email.toLowerCase();
-        const result = await User.scope('withPassword').findOne({ where: { email: user.email } });
-        if (!result) {
-            return 'Email ou senha inválido';
-        }
-        const passMatch = bk.compareSync(user.password, result.password);
-        if (!passMatch) {
-            return 'Email ou senha inválido';
-        }
-        return 'Logado!';
     },
 };

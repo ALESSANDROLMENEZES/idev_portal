@@ -21,7 +21,7 @@ module.exports = {
             return { classes, size };
         } catch (error) {
             console.log(error);
-            return { error: true, msg: error.message, status: 422 };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -43,7 +43,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, msg: error.message, status: 422 };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -52,17 +52,17 @@ module.exports = {
         try {
             let msg;
             if (!_class) {
-                return { error: true, msg: 'informe uma classe', status: 422 };
+                return res.status(422).json({ error: true, msg:'informe uma classe'});
             }
             
             if (!_class.slides.includes('/embed?') || !_class.slides.includes('https://docs')) {
                 msg = 'Informe um link válido do google slides com a propriedade: /embed?';
-                return { status: 422, msg };
+                return res.status(422).json({ error: true, msg});
             }
         
             if (!_class.video.includes('/embed') || !_class.video.includes('https://www.youtube')) {
                 msg = 'Informe um link válido do youtube com a propriedade: /embed?';
-                return { status: 422, msg };
+                return res.status(422).json({ error: true, msg});
             }
     
             const result = await Class.create(_class);
@@ -70,7 +70,7 @@ module.exports = {
     
         } catch (error) {
             console.log(error);
-            return { error: true, msg: error.message, status: 422 };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
@@ -79,22 +79,22 @@ module.exports = {
         const transaction = await Class.sequelize.transaction();
         try {
             if (!_class) {
-                return { error: true, msg: 'informe uma classe', status: 422 };
+                return res.status(422).json({ error: true, msg:'informe uma classe'});
             }
         
             const foundClass = await Class.findByPk(_class.id);
             if (!foundClass) {
-                return { error: true, msg: 'Não foi encontrada uma aula com o id especificado', status: 422 };
+                return res.status(422).json({ error: true, msg:'Não foi encontrada uma aula com o id especificado'});
             }
         
             if (!_class.slides.includes('/embed?') || !_class.slides.includes('https://docs')) {
                 msg = 'Informe um link válido do google slides com a propriedade: /embed?';
-                return { status: 422, msg };
+                return res.status(422).json({ error: true, msg});
             }
     
             if (!_class.video.includes('/embed') || !_class.video.includes('https://www.youtube')) {
                 msg = 'Informe um link válido do youtube com a propriedade: /embed?';
-                return { status: 422, msg };
+                return res.status(422).json({ error: true, msg});
             }
 
             const result = await Class.update(_class, { where: { id: _class.id } });
@@ -106,7 +106,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, msg: error.message, status: 422 };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
@@ -116,7 +116,7 @@ module.exports = {
         try {
             const foundClass = await Class.findByPk(id);
             if (!foundClass) {
-                return { error: true, msg: 'Não foi encontrada uma aula com o id especificado', status: 422 };
+                return res.status(422).json({ error: true, msg:'Não foi encontrada uma aula com o id especificado'});
             }
             const result = await foundClass.destroy();
         
@@ -127,7 +127,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, msg: error.message, status: 422 };
+            return res.status(422).json({ error: true, msg: error.message});
         }
     }
 

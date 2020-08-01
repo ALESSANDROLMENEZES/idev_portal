@@ -58,7 +58,7 @@ module.exports = {
 
                 if (!validTeam) {
                     await transaction.rollback();
-                    return { error: true, status: 422, msg: 'Não foi encontrado o time do desafio' };
+                    return res.status(422).json({ error: true, msg:'Não foi encontrado o time do desafio'});
                 }
                 
                 const promises = validTeam.members.map((user) => {
@@ -119,7 +119,7 @@ module.exports = {
             
             if (!isValidTeam) {
                 await transaction.rollback();
-                return { error: true, status: 422, msg: 'O time não concluiu o desafio ou não possui moedas suficiente' };
+                return res.status(422).json({ error: true, msg:'O time não concluiu o desafio ou não possui moedas suficiente'});
             }
             
             
@@ -128,7 +128,7 @@ module.exports = {
             for (let index = 0; index < isValidTeam.members.length; index++) {
                 if (isValidTeam.members[index].id === connectedUser.id) {
                     await transaction.rollback();
-                    return { error: true, status: 422, msg: 'Outro usuário deve avaliar seu time' }; 
+                    return res.status(422).json({ error: true, msg:'Outro usuário deve avaliar seu time'});
                 }
                 dataToUpdateProfiles.push({
                     id:isValidTeam.members[index].id,
@@ -163,7 +163,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, status: 422, msg: 'Ocorreu um erro' };
+            return res.status(422).json({ error: true, msg:error.message});
         }
         
     },
@@ -180,7 +180,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, status: 422, msg: 'Ocorreu um erro' };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
@@ -196,7 +196,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, status: 422, msg: 'Ocorreu um erro' };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
@@ -213,7 +213,7 @@ module.exports = {
         } catch (error) {
             await transaction.rollback();
             console.log(error);
-            return { error: true, status: 422, msg: 'Ocorreu um erro' }; 
+            return res.status(422).json({ error: true, msg:error.message});
         }
     }
     

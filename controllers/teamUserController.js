@@ -11,7 +11,7 @@ module.exports = {
             
             if (validateId(teamUser.teamId) || validateId(teamUser.userId) || validateId(teamUser.challengeId)) {
                 transaction.rollback();
-                return { error: true, status:422, msg:'Informe um id válido'};
+                return res.status(422).json({ error: true, msg: 'informe um id válido'});
             }
             
             const userAlredyInTeam = await Team.findAll({
@@ -27,10 +27,10 @@ module.exports = {
                     challengeId:teamUser.challengeId
                 }
             });
-
+            
             if (userAlredyInTeam[0] !== undefined) {
                 transaction.rollback();
-                return { error: true, status:422, msg:'Este usuário já está cadastrado em outro time'};
+                return res.status(422).json({ error: true, msg: 'Este usuário já está cadastrado em outro time'});
             }
             
             if (teamUser.teamId === undefined || ((parseInt(teamUser.teamId)) === 0)) {
@@ -45,13 +45,14 @@ module.exports = {
                 teamId: parseInt(teamUser.teamId),
                 userId: parseInt(teamUser.userId)
             });
-
+            
             transaction.commit();
             return result;
         } catch (error) {
             transaction.rollback();
             console.log(error);
-            return { error: true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg: error.message});
+            
         }  
     },
     
@@ -59,12 +60,12 @@ module.exports = {
     update: async (teamUser) => {
         try {
             if (validateId(teamUser.teamId) || validateId(teamUser.userId)) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+                return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
             
             const teamExist = await TeamUser.findByPk(teamUser.id);
             if (!teamExist) {
-                return { error: true, status:422, msg:'O time informado não está disponível'};
+                return res.status(422).json({ error: true, msg:'O time informado não está disponível'});
             }
             
             const result = await TeamUser.update({
@@ -79,7 +80,8 @@ module.exports = {
             
         } catch (error) {
             console.log(error);
-            return { error: true, status:422, msg:error.message};
+            return res.status(422).json({ error: true, msg: error.message});
+            
         }  
     },
     
@@ -87,7 +89,7 @@ module.exports = {
     destroy: async (teamUser) => {
         try {
             if (validateId(teamUser.teamId) || validateId(teamUser.userId)) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+                return res.status(422).json({ error: true, msg:'informe um id válido'});
             }
             
             const foundTeamUser = await TeamUser.findOne({
@@ -96,13 +98,15 @@ module.exports = {
                     userId: teamUser.userId
                 }
             });
-
+            
             const result = await foundTeamUser.destroy();
-           
+            
             return result;
             
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg: error.message});
+            
         }  
     },   
     
@@ -123,7 +127,8 @@ module.exports = {
             return result;
             
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg: error.message});
         }  
     },
 };

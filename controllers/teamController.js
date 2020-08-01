@@ -14,90 +14,94 @@ const validateId = (id) => {
 module.exports = {
     store: async (team) => {
         try {
-
+            
             if (!team) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+                return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
             
             if (validateId(team.challengeId)) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+                return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
-
+            
             const avaliableChallenge = await Challenge.findByPk(team.challengeId);
             if (!avaliableChallenge) {
-                return { error: true, status:422, msg:'Este desafio não está mais disponível'};
+                return res.status(422).json({ error: true, msg:'Este desafio não está mais disponível'});
             }
             
             const NOW = new Date();
             const currentDate = moment(NOW);
             const expiresAt = moment(avaliableChallenge.expiresAt);
-
+            
             if (expiresAt < currentDate) {
-                return { error: true, status:422, msg:'Este desafio expirou'};
+                return res.status(422).json({ error: true, msg:'Este desafio expirou'});   
             }
-
+            
             const result = await Team.create(team);
             return result;
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
         }  
     },
     
-
+    
     update: async (team) => {
         try {
-
+            
             if (!team) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+                return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
-
+            
             if (validateId(team.id)) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+                return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
             
             const teamExist = await Team.findByPk(team.id);
             if (!teamExist) {
-                return { error: true, status:422, msg:'O time informado não está disponível'};
+                return res.status(422).json({ error: true, msg:'O time informado não está disponível'});
             }
-
+            
             const result = await Team.update(team, { where: { id:team.id } });
-
+            
             return result;
-
+            
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
         }  
     },
     
-
+    
     destroy: async (id) => {
         try {
             if (validateId(id)) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+            return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
             
             const teamExist = await Team.findByPk(id);
             if (!teamExist) {
-                return { error: true, status:422, msg:'O time informado não está disponível'};
+            return res.status(422).json({ error: true, msg:'O time informado não está disponível'});
             }
-
+            
             const result = await Team.destroy({ where: { id } });
-
+            
             return result;
-
+            
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
+
         }  
     },
-
+    
     
     show: async (id) => {
         try {
             let coins;
             (connectedUser.admin) ? coins = 0 : coins = 1;
-
+            
             if (validateId(id)) {
-                return { error: true, status:422, msg:'Informe um id válido'};
+            return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
             
             const result = await Team.findByPk(id, {
@@ -121,15 +125,16 @@ module.exports = {
                     },
                 ]
             });
-
+            
             return result;
-
+            
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg: error.message});
         }  
     },
     
-
+    
     index: async (limit=14, page = 1) => {
         try {
             let coins;
@@ -158,7 +163,8 @@ module.exports = {
             
             return result;
         } catch (error) {
-            return error;
+            console.log(error);
+            return res.status(422).json({ error: true, msg: error.message });
         }  
     },
 };

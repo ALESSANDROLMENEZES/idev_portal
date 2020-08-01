@@ -6,17 +6,17 @@ module.exports = {
         try {
             
             if (!challengeStatus) {
-                return 'Informe uma descrição';
+                return res.status(422).json({ error: true, msg:'Informe uma descrição'});
             }
             
             let description = challengeStatus.description;
             if (!description) {
-                return 'Informe uma descrição';
+                return res.status(422).json({ error: true, msg:'Informe uma descrição'});
             }
             
             const alreadyExistis = await ChallengeStatus.findOne({ where: { description } });
             if (alreadyExistis) {
-                return 'Já existe um status com essa descrição'; 
+                return res.status(422).json({ error: true, msg:'Já existe um status com essa descrição'});
             }
             
             challengeStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
@@ -26,7 +26,7 @@ module.exports = {
             
         } catch (error) {
             console.log(error);
-            return 'Ocorreu um erro';   
+            return res.status(422).json({ error: true, msg:'Ocorreu um erro'});
         }
     },
  
@@ -37,14 +37,14 @@ module.exports = {
             
             if (isNaN(id)) {
                 transaction.rollback();
-                return 'Informe um id válido';
+                return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
 
             let statusExists = await ChallengeStatus.findByPk(id);
 
             if (!statusExists) {
                 await transaction.rollback();
-                return 'O status já foi excluido'; 
+                return res.status(422).json({ error: true, msg:'O status já foi excluido'});
             }
 
             let result = await ChallengeStatus.destroy({ where: { id } });
@@ -55,7 +55,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             await transaction.rollback();
-            return 'Ocorreu um erro';
+            return res.status(422).json({ error: true, msg:'Ocorreu um erro'});
         }
     },
 
@@ -66,7 +66,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return error;
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
@@ -74,13 +74,13 @@ module.exports = {
     show: async (id) => {
         try {
             if (!id) {
-                return 'Informe um id';
+                return res.status(422).json({ error: true, msg:'Informe um id'});
             }
             let result = await ChallengeStatus.findByPk(id);
             return result;
         } catch (error) {
             console.log(error);
-            return error;
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
@@ -90,16 +90,16 @@ module.exports = {
         try {
             if (!challengeStatus) {
                 await transaction.rollback();
-                return 'Informe um status';
+                return res.status(422).json({ error: true, msg:'Informe um status'});
             }
             if (!challengeStatus.id) {
                 await transaction.rollback();
-                return 'Informe um id para o status';
+                return res.status(422).json({ error: true, msg:'Informe um id para o status'});
             }
             let description = challengeStatus.description || false;
             if (!description) {
                 await transaction.rollback();
-                return 'Informe um id para o status';
+                return res.status(422).json({ error: true, msg:'Informe um id para o status'});
             }
             
             challengeStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
@@ -108,7 +108,7 @@ module.exports = {
             
             if (!statusExists) {
                 await transaction.rollback();
-                return 'O status não existe'; 
+                return res.status(422).json({ error: true, msg:'O status não existe'});
             }
 
             let result = await ChallengeStatus.update(challengeStatus, { where: { id: challengeStatus.id } });
@@ -117,7 +117,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             transaction.rollback();
-            return error;
+            return res.status(422).json({ error: true, msg:error.message});
         }
     }
 

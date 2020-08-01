@@ -12,7 +12,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -29,7 +29,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -52,7 +52,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
@@ -73,7 +73,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
         
@@ -87,7 +87,7 @@ module.exports = {
             return result;
         } catch (error) {
             console.log(error);
-            return { error: true, status: 422, msg: error.message };
+            return res.status(422).json({ error: true, msg:error.message});
         }
     },
     
