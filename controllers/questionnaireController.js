@@ -2,8 +2,9 @@ const { Questionnaire, Question, Answer, Class, QuestionAnswer, QuestionnaireQue
 
 module.exports = {
     
-    index: async (classId, questionId) => {
+    index: async (req, res) => {
         try {
+            const { classId, questionId } = req.params;
             const result = await Questionnaire.findAndCountAll({
                 include: [
                     {
@@ -32,24 +33,25 @@ module.exports = {
         }  
     },
     
-    store: async (questionnaire) => {
+    store: async (req, res) => {
         try {
-            const classExist = await Class.findByPk(questionnaire.classId);
+            const { classId, title, avaliable =1 } = req.body;
+            const classExist = await Class.findByPk(classId);
             if (!classExist) {
                 return res.status(422).json({ error: true, msg: 'A aula informada não está disponível' });
             }
-            const result = await Questionnaire.create(questionnaire);
+            const result = await Questionnaire.create({ classId, title, avaliable });
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
-            
         }
     },
     
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await Questionnaire.sequelize.transaction();
         try {
+            const { id } = req.prams;
             const questionnaireExist = await Questionnaire.findByPk(id);
             if (!questionnaireExist) {
                 return res.status(422).json({ error: true, msg:'O questionário informado não está disponível'});
@@ -65,17 +67,19 @@ module.exports = {
         }
     },
     
-    update: async (questionnaire) => {
+    update: async (req, res) => {
         const transaction = await Questionnaire.sequelize.transaction();      
         try {
-            const questionnaireExist = await Questionnaire.findByPk(questionnaire.id);
+            const { id } = req.params;
+            const { title, classId, avaliable = 1 } = req.body;
+            const questionnaireExist = await Questionnaire.findByPk(id);
             if (!questionnaireExist) {
             return res.status(422).json({ error: true, msg:'O questionário informado não está disponível'});
 
             }
-            questionnaireExist.classId = questionnaire.classId;
-            questionnaireExist.title = questionnaire.title;
-            questionnaireExist.avaliable = questionnaire.avaliable;
+            questionnaireExist.classId = classId;
+            questionnaireExist.title = title;
+            questionnaireExist.avaliable = avaliable;
             const result = await questionnaireExist.save();
             await transaction.commit();
             return res.status(200).json({ result });
@@ -87,8 +91,9 @@ module.exports = {
         }
     },
     
-    show: async (id) => {
+    show: async (req, res) => {
         try {
+            const { id } = req.params;
             const result = await Questionnaire.findByPk(id, {
                 include:[{
                     model: Question,
@@ -107,14 +112,15 @@ module.exports = {
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
-            
         }
     },
     
-    storeAnswersAndLinkAllToQuestionAndQuestionnaire: async (answers, question, questionnaire, rigthAnswerIndex=0) => {
+    storeAnswersAndLinkAllToQuestionAndQuestionnaire: async (req, res) => {
         const transaction = await Answer.sequelize.transaction();
         try {
             
+            const { answers, question, questionnaire, rigthAnswerIndex = 0 } = req.body;
+
             if (!answers[0]) {
                 return res.status(422).json({ error: true, msg: 'Informe as perguntas em formato de array' });
             }
