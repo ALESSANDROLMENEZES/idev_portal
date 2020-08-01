@@ -3,12 +3,10 @@ const { Class, Module } = require('../models');
 
 module.exports = {
     
-    index: async (moduleId) => {
+    index: async (req, res) => {
         try {
-            if (!moduleId) {
-                return 'Informe o id do módulo';
-            }
-            const { rows: classes, count: size } = await Class.findAndCountAll({
+            const { moduleId } = req.params;
+            const { rows: result, count: size } = await Class.findAndCountAll({
                 include: [
                     {
                         model: Module,
@@ -18,7 +16,7 @@ module.exports = {
                     }
                 ]
             });
-            return { classes, size };
+            return res.status(200).json({ size, result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -26,8 +24,9 @@ module.exports = {
     },
     
     
-    show: async (id) => {
+    show: async (req, res) => {
         try {
+            const { id } = req.params;
             const result = await Class.findByPk(id, {
                 include: [
                     {
@@ -40,7 +39,7 @@ module.exports = {
             if (!result) {
                 return {};
             }
-            return result;
+            return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -48,25 +47,24 @@ module.exports = {
     },
     
     
-    store: async (_class) => {
+    store: async (req, res) => {
         try {
             let msg;
-            if (!_class) {
-                return res.status(422).json({ error: true, msg:'informe uma classe'});
-            }
+            const { title, subtitle, resume, text, code, slides, video, score, xp } = req.body;
+            let _class = { title, subtitle, resume, text, code, slides, video, score, xp };
             
-            if (!_class.slides.includes('/embed?') || !_class.slides.includes('https://docs')) {
+            if (!slides.includes('/embed?') || !slides.includes('https://docs')) {
                 msg = 'Informe um link válido do google slides com a propriedade: /embed?';
                 return res.status(422).json({ error: true, msg});
             }
         
-            if (!_class.video.includes('/embed') || !_class.video.includes('https://www.youtube')) {
+            if (!video.includes('/embed') || !video.includes('https://www.youtube')) {
                 msg = 'Informe um link válido do youtube com a propriedade: /embed?';
                 return res.status(422).json({ error: true, msg});
             }
     
             const result = await Class.create(_class);
-            return result;
+            return res.status(200).json({ result });
     
         } catch (error) {
             console.log(error);
@@ -75,29 +73,29 @@ module.exports = {
     },
 
 
-    update: async (_class) => {
+    update: async (req, res) => {
         const transaction = await Class.sequelize.transaction();
         try {
-            if (!_class) {
-                return res.status(422).json({ error: true, msg:'informe uma classe'});
-            }
+            const { id } = req.params;
+            const { title, subtitle, resume, text, code, slides, video, score, xp } = req.body;
+            let _class = { title, subtitle, resume, text, code, slides, video, score, xp };
         
-            const foundClass = await Class.findByPk(_class.id);
+            const foundClass = await Class.findByPk(id);
             if (!foundClass) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrada uma aula com o id especificado'});
             }
         
-            if (!_class.slides.includes('/embed?') || !_class.slides.includes('https://docs')) {
+            if (!slides.includes('/embed?') || !slides.includes('https://docs')) {
                 msg = 'Informe um link válido do google slides com a propriedade: /embed?';
                 return res.status(422).json({ error: true, msg});
             }
     
-            if (!_class.video.includes('/embed') || !_class.video.includes('https://www.youtube')) {
+            if (!video.includes('/embed') || !video.includes('https://www.youtube')) {
                 msg = 'Informe um link válido do youtube com a propriedade: /embed?';
                 return res.status(422).json({ error: true, msg});
             }
 
-            const result = await Class.update(_class, { where: { id: _class.id } });
+            const result = await Class.update(_class, { where: { id } });
 
             await transaction.commit();
 
@@ -111,9 +109,10 @@ module.exports = {
     },
 
 
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await Class.sequelize.transaction();
         try {
+            let { id } = req.params;
             const foundClass = await Class.findByPk(id);
             if (!foundClass) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrada uma aula com o id especificado'});

@@ -20,11 +20,12 @@ const validateData = async moduleClass => {
 
 module.exports = {
 
-    store: async (moduleClass) => {
+    store: async (req, res) => {
         try {
-            const invalid = await validateData(moduleClass);
+            let { moduleId, classId } = req.body;
+            const invalid = await validateData({ moduleId, classId });
             if (invalid.classExists && invalid.moduleExists) {
-                const result = await ModuleClass.create(moduleClass);
+                const result = await ModuleClass.create({ moduleId, classId });
                 return res.status(200).json({ result });
             }
         } catch (error) {
@@ -33,8 +34,9 @@ module.exports = {
         }
     },
 
-    destroy: async (id)=>{
+    destroy: async (req, res)=>{
         try {
+            let { id } = req.params;
             const moduleClassExist = await ModuleClass.findByPk(id);
             const result = await moduleClassExist.destroy();
             return res.status(200).json({ result });

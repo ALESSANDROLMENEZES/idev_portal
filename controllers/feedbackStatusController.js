@@ -2,14 +2,11 @@ const { FeedbackStatus } = require('../models');
 
 module.exports = {
 
-    store: async (feedbackStatus) => {
+    store: async (req, res) => {
         try {
             
-            if (!feedbackStatus) {
-                return res.status(422).json({ error: true, msg:'Informe uma descrição'});
-            }
+            let { description } = req.body;
             
-            let description = feedbackStatus.description;
             if (!description) {
                 return res.status(422).json({ error: true, msg:'Informe uma descrição'});
             }
@@ -19,9 +16,9 @@ module.exports = {
                 return res.status(422).json({ error: true, msg:'Já existe um status com essa descrição'});
             }
             
-            feedbackStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
+            description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
             
-            const result = await FeedbackStatus.create(feedbackStatus);
+            const result = await FeedbackStatus.create({ description });
             return res.status(200).json({ result }); 
             
         } catch (error) {
@@ -31,14 +28,11 @@ module.exports = {
     },
  
 
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await FeedbackStatus.sequelize.transaction();
         try {
             
-            if (isNaN(id)) {
-                transaction.rollback();
-                return res.status(422).json({ error: true, msg:'informe um id válido'});
-            }
+            let { id } = req.params;
 
             let statusExists = await FeedbackStatus.findByPk(id);
 
@@ -47,7 +41,7 @@ module.exports = {
                 return res.status(422).json({ error: true, msg:'O status já foi excluido'});
             }
 
-            let result = await FeedbackStatus.destroy({ where: { id } });
+            let result = await statusExists.destroy();
             
             await transaction.commit();
             return res.status(200).json({ result });
@@ -60,8 +54,9 @@ module.exports = {
     },
 
 
-    index: async (limit=7) => {
+    index: async (req, res) => {
         try {
+            let { limit } = req.query;
             let result = await FeedbackStatus.findAll({ limit });
             return res.status(200).json({ result });
         } catch (error) {
@@ -71,11 +66,11 @@ module.exports = {
     },
 
 
-    show: async (id) => {
+    show: async (req, res) => {
         try {
-            if (!id) {
-                return res.status(422).json({ error: true, msg:'Informe um id'});
-            }
+            
+            let { id } = req.params;
+
             let result = await FeedbackStatus.findByPk(id);
             return res.status(200).json({ result });
         } catch (error) {
@@ -85,28 +80,22 @@ module.exports = {
     },
 
     
-    update: async (feedbackStatus) => {
+    update: async (req, res) => {
         const transaction = await FeedbackStatus.sequelize.transaction();
         try {
-            if (!feedbackStatus) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um status'});
-            }
-            if (!feedbackStatus.id) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um id para o status'});
+            
+            let { id } = req.params;
+            let { description } = req.body;
 
-            }
-            let description = feedbackStatus.description || false;
+            description = description || false;
             if (!description) {
                 await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Informe um id para o status'});
-
             }
             
-            feedbackStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
+            description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
 
-            let statusExists = await FeedbackStatus.findByPk(feedbackStatus.id);
+            let statusExists = await FeedbackStatus.findByPk(id);
             
             if (!statusExists) {
                 await transaction.rollback();
@@ -114,7 +103,7 @@ module.exports = {
                 
             }
 
-            let result = await FeedbackStatus.update(feedbackStatus, { where: { id: feedbackStatus.id } });
+            let result = await FeedbackStatus.update(feedbackStatus, { where: { id } });
             return res.status(200).json({ result });
 
         } catch (error) {

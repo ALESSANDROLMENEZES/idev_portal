@@ -2,26 +2,19 @@ const { ChallengeStatus } = require('../models');
 
 module.exports = {
 
-    store: async (challengeStatus) => {
+    store: async (req, res) => {
         try {
-            
-            if (!challengeStatus) {
-                return res.status(422).json({ error: true, msg:'Informe uma descrição'});
-            }
-            
-            let description = challengeStatus.description;
-            if (!description) {
-                return res.status(422).json({ error: true, msg:'Informe uma descrição'});
-            }
+
+            let { description } = req.body;
             
             const alreadyExistis = await ChallengeStatus.findOne({ where: { description } });
             if (alreadyExistis) {
                 return res.status(422).json({ error: true, msg:'Já existe um status com essa descrição'});
             }
             
-            challengeStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
+            description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
             
-            const result = await ChallengeStatus.create(challengeStatus);
+            const result = await ChallengeStatus.create({description});
             return res.status(200).json({ result });  
             
         } catch (error) {
@@ -31,10 +24,12 @@ module.exports = {
     },
  
 
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await ChallengeStatus.sequelize.transaction();
         try {
             
+            const { id } = req.params;
+
             if (isNaN(id)) {
                 transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Informe um id válido'});
@@ -60,8 +55,9 @@ module.exports = {
     },
 
 
-    index: async (limit=7) => {
+    index: async (req, res) => {
         try {
+            const { limit = 7 } = req.query;
             let result = await ChallengeStatus.findAll({ limit });
             return res.status(200).json({ result });
         } catch (error) {
@@ -71,8 +67,9 @@ module.exports = {
     },
 
 
-    show: async (id) => {
+    show: async (req, res) => {
         try {
+            const { id } = req.params;
             if (!id) {
                 return res.status(422).json({ error: true, msg:'Informe um id'});
             }
@@ -85,24 +82,19 @@ module.exports = {
     },
 
     
-    update: async (challengeStatus) => {
+    update: async (req, res) => {
         const transaction = await ChallengeStatus.sequelize.transaction();
         try {
-            if (!challengeStatus) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um status'});
-            }
-            if (!challengeStatus.id) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um id para o status'});
-            }
-            let description = challengeStatus.description || false;
-            if (!description) {
+
+            let { description } = req.body;
+            const { id } = req.params;
+
+            if (isNaN(id)) {
                 await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Informe um id para o status'});
             }
             
-            challengeStatus.description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
+            description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
 
             let statusExists = await ChallengeStatus.findByPk(challengeStatus.id);
             
@@ -111,7 +103,7 @@ module.exports = {
                 return res.status(422).json({ error: true, msg:'O status não existe'});
             }
 
-            let result = await ChallengeStatus.update(challengeStatus, { where: { id: challengeStatus.id } });
+            let result = await ChallengeStatus.update(challengeStatus, { where: { id } });
             return res.status(200).json({ result });
 
         } catch (error) {

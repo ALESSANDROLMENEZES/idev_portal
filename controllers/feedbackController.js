@@ -14,17 +14,18 @@ const validateId = (id) => {
 
 module.exports = {
     
-    store: async (feedback) => {
+    store: async (req, res) => {
         const transaction = await Team.sequelize.transaction();
         try {
-            
+            let userId = connectedUser.id;
+            const { comment, score, teamId } = req.body;
+            const feedback = { comment, score, teamId };
             let minCoins;
             (connectedUser.admin) ? minCoins = minCoinsToFeedback.admin : minCoins = minCoinsToFeedback.user;
             
-
             const alreadyFeedback = await Feedback.findOne({
                 where: {
-                    userId: feedback.userId,
+                    userId,
                     teamId: feedback.teamId
                 }
             });
@@ -169,9 +170,10 @@ module.exports = {
     },
 
 
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await Feedback.sequelize.transaction();
         try {
+            const { id } = req.params;
             validateId(id);
             const result = await Feedback.findByPk(id);
             result.destroy();
@@ -184,9 +186,10 @@ module.exports = {
         }
     },
 
-    show: async (id) => {
+    show: async (req, res) => {
         const transaction = await Feedback.sequelize.transaction();
         try {
+            const { id } = req.params;
             validateId(id);
             const result = await Feedback.findByPk(id);
             if (!result) {
@@ -201,8 +204,9 @@ module.exports = {
     },
 
 
-    index: async (limit=14, page=1, statusId=2) => {
+    index: async (req, res) => {
         try {
+            let { limit = 14, page = 1, statusId = 2 } = req.body;
             limit = parseInt(limit);
             page = parseInt(page) - 1;
             const result = await Feedback.findAll({

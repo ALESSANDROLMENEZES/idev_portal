@@ -33,10 +33,14 @@ const validateChallenge = async (challenge) => {
 
 module.exports = {
     
-    store: async (challenge) => {
+    store: async (req, res) => {
         const transaction = await Challenge.sequelize.transaction();
         try {
-            
+
+            const { title, subtitle, slides, text, score, xp, moduleId, statusId } = req.body;
+
+            const challenge = { title, subtitle, slides, text, score, xp, moduleId, statusId };
+
             const validate = await validateChallenge(challenge);
             
             if (validate.status != 200) {
@@ -57,9 +61,14 @@ module.exports = {
     },
     
     
-    update: async (challenge) => {
+    update: async (req, res) => {
         const transaction = await Challenge.sequelize.transaction();
         try {
+
+            const { title, subtitle, slides, text, score, xp, moduleId, statusId } = req.body;
+
+            const challenge = { title, subtitle, slides, text, score, xp, moduleId, statusId };
+
             const validate = await validateChallenge(challenge);
             
             if (validate.status != 200) {
@@ -85,9 +94,12 @@ module.exports = {
     },
     
 
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await Challenge.sequelize.transaction();
         try {
+
+            let { id } = req.params;
+
             if (isNaN(id)) {
                 transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Informe um id válido'});
@@ -111,9 +123,9 @@ module.exports = {
     },
 
     
-    index: async (conectedUser, status = 1, page = 1, limit = 14) => {
+    index: async (req, res) => {
         try {
-
+            let { status = 1, page = 1, limit = 14 } = req.query;
             limit = parseInt(limit);
             page = parseInt(page - 1);
 
@@ -162,9 +174,9 @@ module.exports = {
     },
 
     
-    show: async (id) => {
+    show: async (req, res) => {
         try {
-
+            const { id } = req.params;
             if (isNaN(id)) {
                 return 'Informe um id válido';
             }
