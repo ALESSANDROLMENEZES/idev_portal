@@ -4,30 +4,21 @@ const { Module, UserModule } = require('../models');
 
 module.exports = {
     
-    store: async (mod) => {
+    store: async (req, res) => {
         try {
-            if (!mod.title) {
-                return res.status(422).json({ error: true, msg:'Informe um titulo'});
-            }  
-            if (mod.title.length > 80) {
-                return res.status(422).json({ error: true, msg:'Informe um titulo menor que 80 caracteres'});
-            }  
-            const result = await Module.create(mod);
+            const { title, avaliable } = req.body;
+            const result = await Module.create({ title, avaliable });
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
-            
         }
     },
     
     
-    index: async (user) => {
+    index: async (req, res) => {
         try {
-            let result;
-            if (!user) {
-                return res.status(422).json({ error: true, msg:'Você precisa realizar o login'});
-            }
+            const user = conectedUser;
             if (user.admin) {
                 result = await Module.findAll();
                 return res.status(200).json({ result });
@@ -41,7 +32,7 @@ module.exports = {
                     return [];
                 }
                 
-                const ids = moulesAvaliableForUser.map((item) => item.dataValues.userId);
+                const ids = moulesAvaliableForUser.map((item) => item.userId);
                 result = await Module.findAll({
                     where: {
                         id: {
@@ -50,7 +41,6 @@ module.exports = {
                     }
                 });
                 return res.status(200).json({ result });
-                
             }
         } catch (error) {
             console.log(error);
@@ -59,20 +49,14 @@ module.exports = {
     },
     
     
-    update: async (mod) => {
+    update: async (req, res) => {
         const transaction = await Module.sequelize.transaction();
         try {
-            if (!mod) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um módulo'});
-                
-            }
-            if (!mod.id) {
-                await transaction.rollback(); 
-                return res.status(422).json({ error: true, msg:'Informe um módulo'});
-                
-            }
-            let result = await Module.update(mod, { where: { id: mod.id } });
+
+            let { id } = req.params;
+            const {title,  avaliable = 1} = req.body;
+
+            let result = await Module.update({ title, avaliable }, { where: { id } });
             await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
@@ -84,31 +68,19 @@ module.exports = {
     },
     
     
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await Module.sequelize.transaction();
         try {
             
-            if (!id) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'informe um id'});
-                
-            }
-            
-            if (isNaN(id)) {
-                transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um id válido'});
-
-            }
-            
+            let { id } = req.params;
             let moduleExists = await Module.findByPk(id);
             
             if (!moduleExists) {
                 await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'O módulo já foi excluido'});
-
+                return res.status(422).json({ error: true, msg:'O módulo não foi encontrado'});
             }
             
-            let result = await Module.destroy({ where: { id } });
+            let result = await moduleExists.destroy();
             
             await transaction.commit();
             return res.status(200).json({ result });
