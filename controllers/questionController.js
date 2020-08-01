@@ -2,7 +2,7 @@ const { Question, Answer } = require('../models');
 
 module.exports = {
     
-    index: async (id) => {
+    index: async (req, res) => {
         try {
             const result = await Question.findAll({
                 include: [
@@ -12,7 +12,6 @@ module.exports = {
                         required: true,
                     }
                 ],
-                where:{id}
             });
             return res.status(200).json({ result });
         } catch (error) {
@@ -22,15 +21,16 @@ module.exports = {
         }  
     },
     
-    update: async (question) => {
+    update: async (req, res) => {
         try {
-            const questionExist = await Question.findByPk(question.id);
+            const { id } = req.params;
+            const { text, rightAnswerId } = req.body;
+            const questionExist = await Question.findByPk(id);
             if (!questionExist) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrada a questão informada'});
-                
             }
-            questionExist.text = question.text;
-            questionExist.rightAnswerId = question.rightAnswerId;
+            questionExist.text = text;
+            questionExist.rightAnswerId = rightAnswerId;
             const result = await questionExist.save();
             return res.status(200).json({ result });
         } catch (error) {
@@ -39,12 +39,12 @@ module.exports = {
         }
     },
     
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         try {
+            let { id } = req.params;
             const questionExist = await Question.findByPk(id);
             if (!questionExist) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrada a questão informada'});
-                
             }
             const result = await questionExist.destroy();
             return res.status(200).json({ result });
@@ -55,12 +55,10 @@ module.exports = {
         }
     },
     
-    show: async (id) => {
+    show: async (req, res) => {
         try {
+            const { id } = req.params;
             const result = await Question.findByPk(id);
-            if (!result) {
-                return { };
-            }
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
@@ -69,14 +67,14 @@ module.exports = {
         }
     },
     
-    store: async (question) => {
+    store: async (req, res) => {
         try {
-            const result = await Question.create(question);
+            let { text, rightAnswerId } = req.body;
+            const result = await Question.create({ text, rightAnswerId });
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
-            
         }  
     },
     
