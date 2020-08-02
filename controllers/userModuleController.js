@@ -1,20 +1,20 @@
 const { UserModule, User, Module } = require('../models');
+const { Op } = require('sequelize/types');
 const connectedUser = { id: 1 };
 module.exports = {
     
-    store: async (userModule) => {
+    store: async (req, res) => {
         try {
-            if (!userModule) {
-                return res.status(422).json({ error: true, msg:'Informe os dados a serem salvos'});
-            }
-            const moduleExist = await Module.findByPk(userModule.moduleId);
+            const { moduleId, userId } = req.body;
+
+            const moduleExist = await Module.findByPk(moduleId);
             if (!moduleExist) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrado o módulo informado'});
             }
             if (!moduleExist.avaliable) {
                 return res.status(422).json({ error: true, msg:'O módulo informado não está ativo'});
             }
-            const userExist = await User.findByPk(userModule.userId);
+            const userExist = await User.findByPk(userId);
             if (!userExist) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrado o usuário informado'});
             }
@@ -22,8 +22,7 @@ module.exports = {
                 return res.status(422).json({ error: true, msg:'O usuário informado não está ativo'});
             }
             
-            const [result, created ]= await UserModule.findOrCreate({ where: { userId: userModule.userId,
-                moduleId:userModule.moduleId } });
+            const [result, created ]= await UserModule.findOrCreate({ where: { userId, moduleId } });
                 return res.status(200).json({ result, created });
             } catch (error) {
                 console.log(error);
@@ -31,8 +30,9 @@ module.exports = {
             }
         },
         
-        index: async () => {
+        index: async (req, res) => {
             try {
+                const id = (connectedUser.admin) ? '' : connectedUser.id;
                 const { count: size, rows: result } = await Module.findAndCountAll({
                     include: [
                         {
@@ -41,7 +41,7 @@ module.exports = {
                             required: true,
                             attributes:['id'],
                             where: {
-                                id:connectedUser.id
+                                id: { [Op.like]: `%${id}%` }
                             }      
                         }
                     ],
@@ -55,13 +55,14 @@ module.exports = {
             } 
         },
         
-        destroy: async (userModule) => {
+        destroy: async (req, res) => {
             const transaction = await UserModule.sequelize.transaction();
             try {
+                const { userId, moduleId } = req.params;
                 const userModuleExist = await UserModule.findOne({
                     where: {
-                        userId: userModule.userId,
-                        moduleId: userModule.moduleId
+                        userId,
+                        moduleId
                     }
                 });
                 const result = await userModuleExist.destroy();
