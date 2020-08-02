@@ -4,7 +4,7 @@ const Op = Sequelize.Op;
 const connectedUser = { id: 1 };
 
 
-
+//Método não exportado (util)
 const list = async (id, limit=14, page=1) => {
     try {
         limit = parseInt(limit);
@@ -53,15 +53,14 @@ const list = async (id, limit=14, page=1) => {
     
     module.exports = {
         
-        store: async (userClassDone) => {
+        store: async (req, res) => {
             const transaction = await UserClassDone.sequelize.transaction();
             try {
                 
-                if (!userClassDone) {
-                    return res.status(422).json({ error: true, msg:'Informe os valores a serem salvos'});
-                }
+                let { classId, percentDone } = req.body;
+                const userId = connectedUser.id;
                 
-                const classExist = await Class.findByPk(userClassDone.classId, {
+                const classExist = await Class.findByPk(classId, {
                     include:[{model:Module, as:'class_module', required:true}]
                 });
                 
@@ -89,14 +88,14 @@ const list = async (id, limit=14, page=1) => {
                             ]
                         }
                     ],
-                    where: { userId:connectedUser.id}
+                    where: { userId}
                 });
                 
                 const percent = (((totalClassesUserAttended + 1) / totalClassesInModule) * 100).toFixed(2);
                 
-                userClassDone.percentDone = percent;
-                userClassDone.userId = connectedUser.id;
-                const result = await UserClassDone.create(userClassDone);
+                percentDone = percent;
+                
+                const result = await UserClassDone.create({ classId, percentDone, userId });
                 await transaction.commit();
                 return res.status(200).json({ result });
                 
@@ -107,9 +106,12 @@ const list = async (id, limit=14, page=1) => {
             }
         },
         
-        update: async (id) => {
+        update: async (req, res) => {
             const transaction = await UserClassDone.sequelize.transaction();
             try {
+
+                const { id } = req.params;
+
                 const post = await UserClassDone.findByPk(id);
                 post.likes++;
                 const result = await post.save();
@@ -122,34 +124,35 @@ const list = async (id, limit=14, page=1) => {
             }
         },
         
-        index: async (param, id, limit = 14, page = 1) => {
+        index: async () => {
             try {
                 let result;
+                let { id, param='all', limit = 14, page = 1 } = req.query;
                 limit = parseInt(limit);
-                page = parseInt(page - 1);
+                page = parseInt(page) - 1;
                 
                 switch (param) {
                     case 'my':
                     id = connectedUser.id;
                     result = await list(id, limit, page);
-                    return res.status(200).json({ result });
+                    return res.status(200).json( result );
                     
                     case 'all':
                     id = '';
                     result = await list(id, limit, page);
-                    return res.status(200).json({ result });
+                    return res.status(200).json( result );
                     
                     case 'user':
                     if (!id) {
                         return res.status(422).json({ error: true, msg:'Informe o id do usuário'});
                     }
                     result = await list(id, limit, page);
-                    return res.status(200).json({ result });
+                    return res.status(200).json( result );
                     
                     default:
                     id = '';
                     result = await list(id, limit, page);
-                    return res.status(200).json({ result });
+                    return res.status(200).json( result );
                 }
                 
                 
