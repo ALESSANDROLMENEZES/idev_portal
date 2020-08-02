@@ -2,19 +2,22 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const bk = require('bcrypt');
 const { User } = require('../models');
-const validator = require('validator');
+const conectedUser = { id: 1, admin: false };
 
 module.exports = {
     
-    index: async (user) => {
+    index: async (req, res) => {
         try {
-            (!user.email) ? user.email = '' : user.email;
-            (!user.name) ? user.name = '' : user.name;
+
+            let { email, name } = req.query;
+
+            (!email) ? email = '' : email;
+            (!name) ? name = '' : name;
             const result = await User.findAll({
                 where: {
                     [Op.or]: [
-                        { email: { [Op.like]:`%${user.email}%`} },
-                        { name:{[Op.like]:`%${user.name}%`}}
+                        { email: { [Op.like]:`%${email}%`} },
+                        { name:{[Op.like]:`%${name}%`}}
                     ]
                 },
                 limit:7
@@ -27,21 +30,17 @@ module.exports = {
     },
     
     
-    store: async (user) => {
+    store: async (req, res) => {
         try {
-            if (!user.email || !user.password) {
-            return res.status(422).json({ error: true, msg:'Informe, email e senha'});
+            
+            let { email, password } = req.body;
 
-            }
-            if (!(validator.isEmail(user.email))) {
-                return res.status(422).json({ error: true, msg: 'Email inválido' });
-            }
-            const alreadyExistis = await User.findOne({ where: { email: user.email } });
+            const alreadyExistis = await User.findOne({ where: { email } });
             if (alreadyExistis) {
                 return res.status(422).json({ error: true, msg: 'Email já cadastrado' });
             }
-            user.email = user.email.toLowerCase();
-            const result = await User.create(user);
+            email = email.toLowerCase();
+            const result = await User.create({ email, password });
             return res.status(200).json({ result });              
         } catch (error) {
             console.log(error);
@@ -50,19 +49,10 @@ module.exports = {
     },
     
     
-    show: async (user) => {
+    show: async (req, res) => {
         try {
-            if (!user.email) {
-                return res.status(422).json({ error: true, msg: 'Informe um email' });
-            }
-            if(!(validator.isEmail(user.email))){
-                return res.status(422).json({ error: true, msg: 'Email inválido' });
-            }
-            user.email = user.email.toLowerCase();
-            const result = await User.findOne({ where: { email: user.email } });
-            if (!result) {
-                return res.status(422).json({ error: true, msg: 'Email inválido' });
-            }
+            const { id } = req.params;
+            const result = await User.findByPk(id);
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
@@ -71,18 +61,19 @@ module.exports = {
     },
     
     
-    update: async (user) => {
+    update: async (req, res) => {
         const transaction = await User.sequelize.transaction();
         try {
-            if (!user) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg: 'Informe um usuário' });
+            let encryptedPass;
+            const { id } = req.params;
+            let { name, avatar, password, linkedin, github, telegram, whatsapp } = req.body;
+            if (password) {
+                encryptedPass = bk.hashSync(password, 10);
             }
-            if (!user.id) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg: 'Informe um usuário' });
-            }
-            let result = await User.update(user, {where:{id:user.id}});
+            let result = await User.update({
+                name, avatar, encryptedPass, linkedin, github, telegram, whatsapp
+            }, { where: { id } });
+
             await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
@@ -93,27 +84,23 @@ module.exports = {
     },
     
     
-    destroy: async (id) => {
+    destroy: async (req, res) => {
         const transaction = await User.sequelize.transaction();
         try {
-            if (!id) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg: 'Informe um id' });
-
-            }
             
-            if (isNaN(id)) {
-                transaction.rollback();
-                return res.status(422).json({ error: true, msg: 'Informe um id válido' });
+            const { id } = req.params;
+
+            if (!conectedUser.admin) {
+                return res.status(422).json({ error: true, msg:'Apenas administrador pode excluir usuário'});
             }
             
             let userExists = await User.findByPk(id);
             
             if (!userExists) {
                 await transaction.rollback();
-                return res.status(422).json({ error: true, msg: 'O usuário já foi excluido' });
+                return res.status(422).json({ error: true, msg: 'O usuário informado não foi encontrado' });
             }
-            let result = await User.destroy({ where: { id } });
+            let result = await userExists.destroy();
             await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
@@ -123,23 +110,17 @@ module.exports = {
         }
     },
     
-    login: async (user) => {
+    login: async (req, res) => {
         try {
-            if (!user.email) {
-                return res.status(422).json({ error: true, msg: 'Informe um email' });
-            }
-            if (!user.password) {
-                return res.status(422).json({ error: true, msg: 'Informe sua senha' });
-            }
-            if(!(validator.isEmail(user.email))){
-                return res.status(422).json({ error: true, msg: 'Email inválido' });
-            }
-            user.email = user.email.toLowerCase();
-            const result = await User.scope('withPassword').findOne({ where: { email: user.email } });
+
+            let { email, password } = req.body;
+
+            email = email.toLowerCase();
+            const result = await User.scope('withPassword').findOne({ where: { email } });
             if (!result) {
                 return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
             }
-            const passMatch = bk.compareSync(user.password, result.password);
+            const passMatch = bk.compareSync(password, result.password);
             if (!passMatch) {
                 return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
             }
