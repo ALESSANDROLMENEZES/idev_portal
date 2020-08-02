@@ -40,21 +40,24 @@ module.exports = {
     store: async (userAnswered) => {
         const transaction = await UserAnswered.sequelize.transaction();
         try {
-            const questionExist = await Question.findByPk(userAnswered.questionId);
+
+            const userId = connectedUser.id;
+            const { questionId, answerId } = req.body;
+
+            const questionExist = await Question.findByPk(questionId);
             if (!questionExist) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrado o questionário informado'});
             }
-            const answerExist = await Answer.findByPk(userAnswered.answerId);
+            const answerExist = await Answer.findByPk(answerId);
             
             if (!answerExist) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrado a resposta informada'});
             }
             
-            userAnswered.userId = connectedUser.id;
-            const result = await UserAnswered.create(userAnswered);
+            const result = await UserAnswered.create({ questionId, answerId, userId });
             await transaction.commit();
 
-            const message = await validateCorretlyAnswer(userAnswered.answerId, questionExist.rightAnswerId);
+            const message = await validateCorretlyAnswer(answerId, questionExist.rightAnswerId);
 
             return res.status(200).json({ result, message });
             
@@ -65,21 +68,30 @@ module.exports = {
         }
     },
     
-    update: async (userAnswered) => {
+    update: async (req, res) => {
         const transaction = await UserAnswered.sequelize.transaction();
         try {
-            const userAnswerExist = await UserAnswered.findByPk(userAnswered.id);
+            
+            const userId = connectedUser.id;
+            const { id } = req.params;
+            const { questionId, answerId } = req.body;
+
+            const userAnswerExist = await UserAnswered.findByPk(id);
             if (!userAnswerExist) {
                 return res.status(422).json({ error: true, msg:'Não foi encontrado a resposta informada'});
             }
-            userAnswered.userId = connectedUser.id;
-            const result = await UserAnswered.update(userAnswered, {
+            const result = await UserAnswered.update({ questionId, answerId }, {
                 where: {
-                    questionId: userAnswered.questionId,
-                    userId: userAnswered.userId,
+                    questionId,
+                    userId
                 }
             });
-            return res.status(200).json({ result });
+
+            const questionExist = await Question.findByPk(questionId);
+            const message = await validateCorretlyAnswer(answerId, questionExist.rightAnswerId);
+
+            return res.status(200).json({ result, message });
+            
         } catch (error) {
             await transaction.rollback();
             console.log(error);
