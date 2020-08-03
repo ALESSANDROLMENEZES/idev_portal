@@ -6,8 +6,8 @@ const userClassDoneController = require('../controllers/userClassDoneController'
 router.get('/helps', askForHelpController.index);
 router.get('/classdone/:param/:id', userClassDoneController.index);
 router.post('/', askForHelpController.store);
-router.patch('/', askForHelpController.update);
-router.put('/', askForHelpController.update);
+router.patch('/:id', askForHelpController.update);
+router.put('/:id', askForHelpController.update);
 router.delete('/:id', askForHelpController.destroy);
 
 module.exports = router;

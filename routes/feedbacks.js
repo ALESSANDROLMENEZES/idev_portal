@@ -6,9 +6,9 @@ const feedbackStatusController = require('../controllers/feedbackStatusControlle
 router.get('/all', feedbackController.index);
 router.get('/:id', feedbackController.show);
 router.post('/', feedbackController.store);
-router.patch('/', feedbackController.store);
+router.patch('/:id', feedbackController.store);
 router.delete('/:id', feedbackController.destroy);
-router.put('/', feedbackController.store);
+router.put('/:id', feedbackController.store);
 router.post('/status', feedbackStatusController.store);
 router.get('/status/all', feedbackStatusController.index);
 router.get('/status/:id', feedbackStatusController.show);

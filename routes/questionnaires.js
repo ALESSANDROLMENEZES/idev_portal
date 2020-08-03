@@ -7,14 +7,14 @@ router.get('/all/:classId/:questionId', questionnaireController.index);
 router.get('/:id', questionnaireController.show);
 router.post('/complete', questionnaireController.storeAnswersAndLinkAllToQuestionAndQuestionnaire);
 router.post('/', questionnaireController.store);
-router.patch('/', questionnaireController.update);
+router.patch('/:id', questionnaireController.update);
 router.delete('/:id', questionnaireController.destroy);
-router.put('/', questionnaireController.update);
+router.put('/:id', questionnaireController.update);
 router.get('/aswers/all', aswerController.index);
 router.get('/aswers/:id', aswerController.show);
 router.delete('/aswers/:id', aswerController.destroy);
 router.post('/aswers', aswerController.store);
-router.put('/aswers', aswerController.update);
-router.patch('/aswers', aswerController.update);
+router.put('/aswers/:id', aswerController.update);
+router.patch('/aswers/:id', aswerController.update);
 
 module.exports = router;

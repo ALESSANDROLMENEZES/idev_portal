@@ -5,7 +5,7 @@ module.exports = {
     index: async (req, res) => {
         try {
             const { classId, questionId } = req.params;
-            const result = await Questionnaire.findAndCountAll({
+            const { rows:result, count:size } = await Questionnaire.findAndCountAll({
                 include: [
                     {
                         model: Question,
@@ -26,7 +26,7 @@ module.exports = {
                     avaliable:true
                 }
             });
-            return res.status(200).json({ result });
+            return res.status(200).json({ size, result });
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
@@ -119,14 +119,29 @@ module.exports = {
         const transaction = await Answer.sequelize.transaction();
         try {
             
-            const { answers, question, questionnaire, rigthAnswerIndex = 0 } = req.body;
+            const { answers = [], question = {}, questionnaire = {} } = req.body;
+            let rightAnswerIndex = parseInt(question.rightAnswerId) || 0;
 
             if (!answers[0]) {
                 return res.status(422).json({ error: true, msg: 'Informe as perguntas em formato de array' });
             }
+
+            if (rightAnswerIndex < 1 || rightAnswerIndex > answers.length) {
+                return res.status(422).json({ error: true, msg:`A resposta correta para a questão deve ser de 1 à ${answers.length}`});
+            }
+            --rightAnswerIndex;
+
+            if (!question.text || !question.rightAnswerId) {
+                return res.status(422).json({ error: true, msg: 'Informe uma pergunta para o questionário' });  
+            }
+
+            if (!questionnaire.title || !questionnaire.classId) {
+                return res.status(422).json({ error: true, msg: 'Informe os dados do questionário' }); 
+            }
+
             const createdAnswers = await Answer.bulkCreate(answers);
             
-            question.rightAnswerId = createdAnswers[rigthAnswerIndex].id;
+            question.rightAnswerId = createdAnswers[rightAnswerIndex].id;
             
             const createdQuestion = await Question.create(question);
             

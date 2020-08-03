@@ -1,5 +1,5 @@
 const { UserModule, User, Module } = require('../models');
-const { Op } = require('sequelize/types');
+const { Op } = require('sequelize');
 const connectedUser = { id: 1 };
 module.exports = {
     

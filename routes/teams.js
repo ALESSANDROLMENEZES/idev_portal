@@ -5,8 +5,8 @@ const teamController = require('../controllers/teamController');
 router.get('/all', teamController.index);
 router.get('/:id', teamController.show);
 router.post('/', teamController.store);
-router.patch('/', teamController.update);
+router.patch('/:id', teamController.update);
 router.delete('/:id', teamController.destroy);
-router.put('/', teamController.update);
+router.put('/:id', teamController.update);
 
 module.exports = router;
