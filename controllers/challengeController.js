@@ -1,6 +1,8 @@
 const { Challenge, Module, ChallengeStatus, UserModule } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
+const conectedUser = { id: 1, admin: false };
+const { validationResult } = require('express-validator');
 
 const validateChallenge = async (challenge) => {
     let msg;
@@ -37,6 +39,11 @@ module.exports = {
         const transaction = await Challenge.sequelize.transaction();
         try {
 
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+              return res.status(400).json({ errors: errors.array() });
+            }
+
             const { title, subtitle, slides, text, score, xp, moduleId, statusId } = req.body;
 
             const challenge = { title, subtitle, slides, text, score, xp, moduleId, statusId };
@@ -64,6 +71,11 @@ module.exports = {
     update: async (req, res) => {
         const transaction = await Challenge.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+              return res.status(400).json({ errors: errors.array() });
+            }
 
             const { title, subtitle, slides, text, score, xp, moduleId, statusId } = req.body;
 
