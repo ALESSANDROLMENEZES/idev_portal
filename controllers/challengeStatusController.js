@@ -1,9 +1,15 @@
 const { ChallengeStatus } = require('../models');
+const { validationResult } = require('express-validator');
 
 module.exports = {
 
     store: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
             let { description } = req.body;
             
@@ -28,12 +34,12 @@ module.exports = {
         const transaction = await ChallengeStatus.sequelize.transaction();
         try {
             
-            const { id } = req.params;
-
-            if (isNaN(id)) {
-                transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um id válido'});
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+              return res.status(400).json({ errors: errors.array() });
             }
+
+            const { id } = req.params;
 
             let statusExists = await ChallengeStatus.findByPk(id);
 
@@ -70,9 +76,12 @@ module.exports = {
     show: async (req, res) => {
         try {
             const { id } = req.params;
-            if (!id) {
-                return res.status(422).json({ error: true, msg:'Informe um id'});
+            
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+              return res.status(400).json({ errors: errors.array() });
             }
+
             let result = await ChallengeStatus.findByPk(id);
             return res.status(200).json({ result });
         } catch (error) {
@@ -86,6 +95,11 @@ module.exports = {
         const transaction = await ChallengeStatus.sequelize.transaction();
         try {
 
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+              return res.status(400).json({ errors: errors.array() });
+            }
+
             let { description } = req.body;
             const { id } = req.params;
 
@@ -96,14 +110,14 @@ module.exports = {
             
             description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
 
-            let statusExists = await ChallengeStatus.findByPk(challengeStatus.id);
+            let statusExists = await ChallengeStatus.findByPk(id);
             
             if (!statusExists) {
                 await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'O status não existe'});
             }
 
-            let result = await ChallengeStatus.update(challengeStatus, { where: { id } });
+            let result = await ChallengeStatus.update({ description }, { where: { id } });
             return res.status(200).json({ result });
 
         } catch (error) {

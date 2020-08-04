@@ -78,7 +78,7 @@ module.exports = {
             }
 
             const { title, subtitle, slides, text, score, xp, moduleId, statusId } = req.body;
-
+            const { id } = req.params;
             const challenge = { title, subtitle, slides, text, score, xp, moduleId, statusId };
 
             const validate = await validateChallenge(challenge);
@@ -88,14 +88,14 @@ module.exports = {
                 return res.status(422).json({ error: true, msg:validate.msg});
             }
             
-            const challengeExist = await Challenge.findByPk(challenge.id);
+            const challengeExist = await Challenge.findByPk(id);
             
             if (!challengeExist) {
                 transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Não encontrei o desafio informado'});
             }
             
-            const result = await Challenge.update(challenge, { where: { id: challenge.id } });
+            const result = await Challenge.update(challenge, { where: { id } });
             return res.status(200).json({ result });
             
         } catch (error) {
@@ -109,6 +109,11 @@ module.exports = {
     destroy: async (req, res) => {
         const transaction = await Challenge.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+              return res.status(400).json({ errors: errors.array() });
+            }
 
             let { id } = req.params;
 
@@ -188,10 +193,13 @@ module.exports = {
     
     show: async (req, res) => {
         try {
-            const { id } = req.params;
-            if (isNaN(id)) {
-                return 'Informe um id válido';
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+              return res.status(400).json({ errors: errors.array() });
             }
+
+            const { id } = req.params;
 
             const result = await Challenge.findByPk(id);
             return res.status(200).json({ result });
