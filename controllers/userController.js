@@ -1,7 +1,8 @@
+const { User } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const bk = require('bcrypt');
-const { User } = require('../models');
+const { validationResult } = require('express-validator');
 const conectedUser = { id: 1, admin: false };
 
 module.exports = {
@@ -9,10 +10,15 @@ module.exports = {
     index: async (req, res) => {
         try {
 
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { email, name } = req.query;
 
-            (!email) ? email = '' : email;
-            (!name) ? name = '' : name;
+            email = (!email) ? '' : email;
+            name = (!name) ? '' : name;
             const result = await User.findAll({
                 where: {
                     [Op.or]: [
@@ -33,6 +39,11 @@ module.exports = {
     store: async (req, res) => {
         try {
             
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { email, password } = req.body;
 
             const alreadyExistis = await User.findOne({ where: { email } });
@@ -40,7 +51,11 @@ module.exports = {
                 return res.status(422).json({ error: true, msg: 'Email já cadastrado' });
             }
             email = email.toLowerCase();
-            const result = await User.create({ email, password });
+
+            const encryptedPass = bk.hashSync(password, 10);
+
+            const result = await User.create({ email, password:encryptedPass });
+            result.password = undefined;
             return res.status(200).json({ result });              
         } catch (error) {
             console.log(error);
@@ -51,6 +66,12 @@ module.exports = {
     
     show: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const result = await User.findByPk(id);
             return res.status(200).json({ result });
@@ -64,6 +85,12 @@ module.exports = {
     update: async (req, res) => {
         const transaction = await User.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let encryptedPass;
             const { id } = req.params;
             let { name, avatar, password, linkedin, github, telegram, whatsapp } = req.body;
@@ -88,6 +115,12 @@ module.exports = {
         const transaction = await User.sequelize.transaction();
         try {
             
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
 
             if (!conectedUser.admin) {
@@ -112,6 +145,11 @@ module.exports = {
     
     login: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
             let { email, password } = req.body;
 

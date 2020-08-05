@@ -238,6 +238,12 @@ module.exports = {
 
     update: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const userId = connectedUser.id;
             const { id } = req.params;
             const { comment, score } = req.body;
