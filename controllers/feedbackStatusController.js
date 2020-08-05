@@ -12,11 +12,7 @@ module.exports = {
             }
 
             let { description } = req.body;
-            
-            if (!description) {
-                return res.status(422).json({ error: true, msg:'Informe uma descrição'});
-            }
-            
+
             const alreadyExistis = await FeedbackStatus.findOne({ where: { description } });
             if (alreadyExistis) {
                 return res.status(422).json({ error: true, msg:'Já existe um status com essa descrição'});
@@ -107,12 +103,6 @@ module.exports = {
 
             let { id } = req.params;
             let { description } = req.body;
-
-            description = description || false;
-            if (!description) {
-                await transaction.rollback();
-                return res.status(422).json({ error: true, msg:'Informe um id para o status'});
-            }
             
             description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
 
@@ -124,12 +114,16 @@ module.exports = {
                 
             }
 
-            let result = await FeedbackStatus.update(feedbackStatus, { where: { id } });
+            statusExists.description = description;
+            let result = await statusExists.save();
+
+            await transaction.commit();
+
             return res.status(200).json({ result });
 
         } catch (error) {
             console.log(error);
-            transaction.rollback();
+            await transaction.rollback();
             return res.status(422).json({ error: true, msg:error.message});
 
         }

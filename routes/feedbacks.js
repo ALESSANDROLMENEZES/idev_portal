@@ -32,11 +32,11 @@ router.delete('/:id',[
     param('id', 'Informe o id numérico do feedback').isNumeric()
 ], feedbackController.destroy);
 
-router.post('/status', [
+router.post('/status/store', [
     check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
 ], feedbackStatusController.store);
 
-router.get('/status/all', feedbackStatusController.index);
+router.get('/status/list/all', feedbackStatusController.index);
 
 router.get('/status/:id',[
     param('id', 'Informe o id numérico do status').isNumeric()
@@ -47,11 +47,13 @@ router.delete('/status/:id',[
 ], feedbackStatusController.destroy);
 
 router.put('/status/:id',[
-    param('id', 'Informe o id numérico do status').isNumeric()
+    param('id', 'Informe o id numérico do status').isNumeric(),
+    check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
 ], feedbackStatusController.update);
 
 router.patch('/status/:id',[
-    param('id', 'Informe o id numérico do status').isNumeric()
+    param('id', 'Informe o id numérico do status').isNumeric(),
+    check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
 ], feedbackStatusController.update);
 
 module.exports = router;
