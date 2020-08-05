@@ -2,17 +2,17 @@ const { ModuleClass, Class, Module } = require('../models');
 
 const validateData = async moduleClass => {
     if (!moduleClass) {
-        return res.status(422).json({ error: true, msg:'Informe um modulo a ser salvo'});
+        return { error: true, msg:'Informe um modulo a ser salvo'};
     }   
 
     const classExists = await Class.findByPk(moduleClass.classId);
     if (!classExists) {
-        return res.status(422).json({ error: true, msg:'A aula não existe'});
+        return { error: true, msg:'A aula não existe'};
     }
     const moduleExists = await Module.findByPk(moduleClass.moduleId);
 
     if (!moduleExists) {
-        return res.status(422).json({ error: true, msg:'A modulo não existe'});
+        return { error: true, msg:'A modulo não existe'};
     }
 
     return {classExists, moduleExists};

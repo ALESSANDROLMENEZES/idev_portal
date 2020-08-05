@@ -1,11 +1,19 @@
+const { Module, UserModule } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const { Module, UserModule } = require('../models');
+const { validationResult } = require('express-validator');
+const conectedUser = { id: 6, admin: true };
 
 module.exports = {
     
     store: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { title, avaliable } = req.body;
             const result = await Module.create({ title, avaliable });
             return res.status(200).json({ result });
@@ -18,10 +26,16 @@ module.exports = {
     
     index: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const user = conectedUser;
             if (user.admin) {
-                result = await Module.findAll();
-                return res.status(200).json({ result });
+                let { rows: result, count:size } = await Module.findAndCountAll();
+                return res.status(200).json({ size, result });
             } else {
                 const moulesAvaliableForUser = await UserModule.findAll({
                     where: {
@@ -33,14 +47,14 @@ module.exports = {
                 }
                 
                 const ids = moulesAvaliableForUser.map((item) => item.userId);
-                result = await Module.findAll({
+                let { rows: result, count:size } = await Module.findAndCountAll({
                     where: {
                         id: {
                             [Op.in]: ids
                         }
                     }
                 });
-                return res.status(200).json({ result });
+                return res.status(200).json({ size, result });
             }
         } catch (error) {
             console.log(error);
@@ -52,6 +66,11 @@ module.exports = {
     update: async (req, res) => {
         const transaction = await Module.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
             let { id } = req.params;
             const {title,  avaliable = 1} = req.body;
@@ -72,6 +91,15 @@ module.exports = {
         const transaction = await Module.sequelize.transaction();
         try {
             
+            if (!conectedUser.admin) {
+                return res.status(422).json({ error: true, msg:'Você não tem autorização para exclusão'});
+            }
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { id } = req.params;
             let moduleExists = await Module.findByPk(id);
             
