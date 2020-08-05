@@ -4,29 +4,30 @@ const Op = Sequelize.Op;
 const connectedUser = { id: 6, admin: true };
 const minCoinsToFeedback = { admin:0, user:1};
 const statusToFeedback = [2, 3];
-
-const validateId = (id) => {
-    id = parseInt(id);
-    if (isNaN(id)) {
-        return { error: true, status: 422, msg: 'Informe um id válido' };
-    }
-};
+const { validationResult } = require('express-validator');
 
 module.exports = {
     
     store: async (req, res) => {
         const transaction = await Team.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let userId = connectedUser.id;
-            const { comment, score, teamId } = req.body;
-            const feedback = { comment, score, teamId };
+            const { teamId } = req.params;
+            const { comment = '', score = 0, statusId = 0 } = req.body;
+            const status = (statusId == 0) ? 4 : 3;
             let minCoins;
-            (connectedUser.admin) ? minCoins = minCoinsToFeedback.admin : minCoins = minCoinsToFeedback.user;
+            minCoins = (connectedUser.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
             
             const alreadyFeedback = await Feedback.findOne({
                 where: {
                     userId,
-                    teamId: feedback.teamId
+                    teamId
                 }
             });
             if (alreadyFeedback) {
@@ -53,7 +54,7 @@ module.exports = {
                         statusId: {
                             [Op.in]: statusToFeedback
                         },
-                        id:feedback.teamId
+                        id:teamId
                     }
                 });
 
@@ -63,19 +64,20 @@ module.exports = {
                 }
                 
                 const promises = validTeam.members.map((user) => {
-                    let score = parseInt(user.score) + parseInt(feedback.score);
+                    let _score = parseInt(user.score) + parseInt(score);
                     return new Promise((resolve, reject) => {
-                        resolve(User.update({ score }, { where: { id: user.id } }));
+                        resolve(User.update({ score:_score }, { where: { id: user.id } }));
                     });
                 });
                 
                 await Promise.all(promises);
 
-                alreadyFeedback.comment = feedback.comment;
-                alreadyFeedback.score = feedback.score;
+                alreadyFeedback.comment = comment;
+                alreadyFeedback.score = score;
                 let result = await alreadyFeedback.save();
 
-                validTeam.statusId = feedback.statusId;
+                //4 = Status avaliado
+                validTeam.statusId = status;
                 await validTeam.save();
 
                 await transaction.commit();
@@ -114,7 +116,7 @@ module.exports = {
                     statusId: {
                         [Op.in]: statusToFeedback
                     },
-                    id:feedback.teamId
+                    id:teamId
                 }
             });
             
@@ -133,7 +135,7 @@ module.exports = {
                 }
                 dataToUpdateProfiles.push({
                     id:isValidTeam.members[index].id,
-                    score: parseInt(isValidTeam.challenge_team.score) + parseInt(isValidTeam.members[index].score) + parseInt(feedback.score),
+                    score: parseInt(isValidTeam.challenge_team.score) + parseInt(isValidTeam.members[index].score) + parseInt(score),
                     xp: parseInt(isValidTeam.challenge_team.xp) + parseInt(isValidTeam.members[index].xp),
                     coins:parseInt(isValidTeam.members[index].coins) - parseInt(minCoinsToFeedback.user)
                 });
@@ -148,14 +150,14 @@ module.exports = {
             await Promise.all(promises);
             
             
-            const userGiveFeedback = await User.findByPk(connectedUser.id);
+            const userGiveFeedback = await User.findByPk(userId);
             
             userGiveFeedback.coins += parseInt(minCoinsToFeedback.user) * dataToUpdateProfiles.length;
             await userGiveFeedback.save();
             
-            const result = await Feedback.create({comment:feedback.comment, score:feedback.score, userId:feedback.userId,teamId:feedback.teamId});
+            const result = await Feedback.create({comment, score, userId, teamId});
             
-            isValidTeam.statusId = feedback.statusId;
+            isValidTeam.statusId = status;
             await isValidTeam.save();
             
             await transaction.commit();
@@ -173,8 +175,13 @@ module.exports = {
     destroy: async (req, res) => {
         const transaction = await Feedback.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
-            validateId(id);
             const result = await Feedback.findByPk(id);
             result.destroy();
             await transaction.commit();
@@ -189,12 +196,15 @@ module.exports = {
     show: async (req, res) => {
         const transaction = await Feedback.sequelize.transaction();
         try {
-            const { id } = req.params;
-            validateId(id);
-            const result = await Feedback.findByPk(id);
-            if (!result) {
-                return {};
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
             }
+
+            const { id } = req.params;
+            const result = await Feedback.findByPk(id);
+
             return res.status(200).json({ result });
         } catch (error) {
             await transaction.rollback();
@@ -206,20 +216,42 @@ module.exports = {
 
     index: async (req, res) => {
         try {
-            let { limit = 14, page = 1, statusId = 2 } = req.body;
+
+            const { teamId='' } = req.query;
+
+            let { limit = 14, page = 1 } = req.body;
             limit = parseInt(limit);
             page = parseInt(page) - 1;
             const result = await Feedback.findAll({
-                where:{statusId},
+                where:{teamId:{[Op.like]:`%${teamId}%`}},
                 limit,
                 offset:limit*page
             });
-            if (!result) {
-                return [];
-            }
+
             return res.status(200).json({ result });
+            
         } catch (error) {
-            await transaction.rollback();
+            console.log(error);
+            return res.status(422).json({ error: true, msg:error.message});
+        }
+    },
+
+    update: async (req, res) => {
+        try {
+            const userId = connectedUser.id;
+            const { id } = req.params;
+            const { comment, score } = req.body;
+            const feedbackExists = await Feedback.findOne({ where: { id, userId } });
+            if (!feedbackExists) {
+                return res.status(422).json({ error: true, msg:'Não foi encontrado o feedback para o id informado'});
+            }
+            feedbackExists.comment = comment;
+            feedbackExists.score = score;
+            const result = await feedbackExists.save();
+
+            return res.status(200).json({ result });
+
+        } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }

@@ -1,10 +1,16 @@
 const { FeedbackStatus } = require('../models');
+const { validationResult } = require('express-validator');
 
 module.exports = {
 
     store: async (req, res) => {
         try {
             
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { description } = req.body;
             
             if (!description) {
@@ -32,6 +38,11 @@ module.exports = {
         const transaction = await FeedbackStatus.sequelize.transaction();
         try {
             
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { id } = req.params;
 
             let statusExists = await FeedbackStatus.findByPk(id);
@@ -56,7 +67,7 @@ module.exports = {
 
     index: async (req, res) => {
         try {
-            let { limit } = req.query;
+            let { limit = 7 } = req.query;
             let result = await FeedbackStatus.findAll({ limit });
             return res.status(200).json({ result });
         } catch (error) {
@@ -69,6 +80,11 @@ module.exports = {
     show: async (req, res) => {
         try {
             
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { id } = req.params;
 
             let result = await FeedbackStatus.findByPk(id);
@@ -84,6 +100,11 @@ module.exports = {
         const transaction = await FeedbackStatus.sequelize.transaction();
         try {
             
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { id } = req.params;
             let { description } = req.body;
 
