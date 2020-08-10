@@ -1,9 +1,17 @@
 const { Questionnaire, Question, Answer, Class, QuestionAnswer, QuestionnaireQuestion } = require('../models');
+const { validationResult } = require('express-validator');
 
 module.exports = {
     
     index: async (req, res) => {
         try {
+
+            
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { classId, questionId } = req.params;
             const { rows:result, count:size } = await Questionnaire.findAndCountAll({
                 include: [
@@ -35,6 +43,12 @@ module.exports = {
     
     store: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { classId, title, avaliable =1 } = req.body;
             const classExist = await Class.findByPk(classId);
             if (!classExist) {
@@ -51,12 +65,19 @@ module.exports = {
     destroy: async (req, res) => {
         const transaction = await Questionnaire.sequelize.transaction();
         try {
-            const { id } = req.prams;
+
+            
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { id } = req.params;
             const questionnaireExist = await Questionnaire.findByPk(id);
             if (!questionnaireExist) {
                 return res.status(422).json({ error: true, msg:'O questionário informado não está disponível'});
             }
-            const result = questionnaireExist.destroy();
+            const result = await questionnaireExist.destroy();
             await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
@@ -70,6 +91,13 @@ module.exports = {
     update: async (req, res) => {
         const transaction = await Questionnaire.sequelize.transaction();      
         try {
+
+            
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const { title, classId, avaliable = 1 } = req.body;
             const questionnaireExist = await Questionnaire.findByPk(id);
@@ -93,6 +121,13 @@ module.exports = {
     
     show: async (req, res) => {
         try {
+
+            
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const result = await Questionnaire.findByPk(id, {
                 include:[{
@@ -119,6 +154,12 @@ module.exports = {
         const transaction = await Answer.sequelize.transaction();
         try {
             
+            
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { answers = [], question = {}, questionnaire = {} } = req.body;
             let rightAnswerIndex = parseInt(question.rightAnswerId) || 0;
 

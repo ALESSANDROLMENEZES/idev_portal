@@ -1,13 +1,32 @@
-const { Answer } = require('../models');
+const { Answer, QuestionAnswer, Question } = require('../models');
+const { validationResult } = require('express-validator');
 
 module.exports = {
   
     store: async (req, res) => {
+        const transaction = await Answer.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            let { questionId } = req.params;
+
             const { description, avaliable } = req.body;
+
+            const questionExist = await Question.findByPk(questionId);
+            if (!questionExist) {
+                return res.status(422).json({ error: true, msg:'Não foi encontrada uma questão para o id informado'});
+            }
+
             const result = await Answer.create({ description, avaliable });
+
+            await QuestionAnswer.create({questionId, answerId:result.id});
+            await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }
@@ -15,12 +34,20 @@ module.exports = {
 
     update: async (req, res) => {
         try {
-            const { id, description, avaliable } = req.body;
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            const { id } = req.params;
+            const { description, avaliable } = req.body;
             const answerExist = await Answer.findByPk(id);
             if (!answerExist) {
                 return res.status(422).json({ error: true, msg:'A resposta informada não foi encontrada'});
             }
-            const result = await Answer.update({ description, avaliable }, { where: { id: answer.id } });
+            answerExist.description = description;
+            answerExist.avaliable = avaliable;
+            const result = await answerExist.save();
             return res.status(200).json({ result });
         } catch (error) {
             console.log(error);
@@ -30,6 +57,12 @@ module.exports = {
 
     destroy: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const answerExist = await Answer.findByPk(id);
             if (!answerExist) {
@@ -45,6 +78,12 @@ module.exports = {
 
     show: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const result = await Answer.findByPk(id);
             if (!result) {
@@ -59,6 +98,12 @@ module.exports = {
 
     index: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { limit = 7, page = 1 } = req.query;
             limit = parseInt(limit);
             page = parseInt(page) - 1;
