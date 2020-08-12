@@ -17,6 +17,7 @@
 - Timeline
 ☐ Validar compos obrigatórios
 ☐ Implementar controle de acesso para usuários comuns 
+☐ Validar transaction nos métodos do controller 
 ☐ Implementar upload de imagens 
 ☐ Implementar exclusão de arquivo ao alterar um avatar
 ☐ Implementar cors 
