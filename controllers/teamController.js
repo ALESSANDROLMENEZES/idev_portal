@@ -3,7 +3,8 @@ const moment = require('moment');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const connectedUser = { id: 6, admin: true };
-const minCoinsToFeedback = { admin:0, user:1};
+const minCoinsToFeedback = { admin: 0, user: 1 };
+const { validationResult } = require('express-validator');
 
 const validateId = (id) => {
     id = parseInt(id);
@@ -15,6 +16,11 @@ module.exports = {
     store: async (req, res) => {
         try {
             
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { challengeId, statusId, github } = req.body;
             
             const avaliableChallenge = await Challenge.findByPk(challengeId, {where:{statusId:1}});
@@ -42,13 +48,21 @@ module.exports = {
     
     
     update: async (req, res) => {
+        const transaction = await Team.sequelize.transaction();
         try {
             
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                await transaction.rollback();
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const { challengeId, statusId, github } = req.body;
             
             const teamExist = await Team.findByPk(id);
             if (!teamExist) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'O time informado não está disponível'});
             }
             
@@ -56,10 +70,11 @@ module.exports = {
             teamExist.statusId = statusId;
             teamExist.github = github;
             const result = await teamExist.save();
-            
+            await transaction.commit();
             return res.status(200).json({ result });
             
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }  
@@ -67,18 +82,28 @@ module.exports = {
     
     
     destroy: async (req, res) => {
+        const transaction = await Team.sequelize.transaction();
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                await transaction.rollback();
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const teamExist = await Team.findByPk(id);
             if (!teamExist) {
+                await transaction.rollback();
             return res.status(422).json({ error: true, msg:'Não foi encontrado o time informado'});
             }
             
-            const result = await Team.destroy({ where: { id } });
-            
+            const result = await teamExist.destroy();
+            await transaction.commit();
             return res.status(200).json({ result });
             
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
 
@@ -88,15 +113,20 @@ module.exports = {
     
     show: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
-            let coins;
-            (connectedUser.admin) ? coins = 0 : coins = 1;
+            let coins = (connectedUser.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
             
             if (validateId(id)) {
             return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
-            
-            const result = await Team.findByPk(id, {
+            console.log(coins)
+            const result = await Team.findOne({
                 include: [
                     {
                         model: User,
@@ -115,7 +145,8 @@ module.exports = {
                         as: 'feedback_status',
                         required: true,
                     },
-                ]
+                ],
+                where:{id}
             });
             
             return res.status(200).json({ result });
@@ -129,11 +160,16 @@ module.exports = {
     
     index: async (req, res) => {
         try {
-            let coins;
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { limit = 14, page = 1 } = req.query;
             limit = parseInt(limit);
             page = parseInt(page) - 1;
-            (connectedUser.admin) ? coins = minCoinsToFeedback.admin : coins = minCoinsToFeedback.user;
+            let coins = (connectedUser.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
             const { rows: result, count:size } = await Team.findAndCountAll({
                 include: [
                     {
