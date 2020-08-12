@@ -1,11 +1,18 @@
 const { AskForHelp, User } = require('../models');
-const conectedUser = {id:1};
+const { validationResult } = require('express-validator');
+const conectedUser = { id: 1 };
 module.exports = {
     
     store: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { title, description, avaliable } = req.body;
-            const { userId } = conectedUser.id;
+            const  userId  = conectedUser.id;
             if (!req.body) {
                 return { error: true, status: 422, msg: 'Informe os dados' };
             }
@@ -20,11 +27,18 @@ module.exports = {
     
     update: async (req, res) => {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const { id } = req.params;
             const {avaliable, title,description} = req.body;
             let askForHelpExist = await AskForHelp.findByPk(id);
+
+            console.log(askForHelpExist)
             if (!askForHelpExist) {
-                return { error: true, status: 422, msg: 'Não foi encontrado dados para o id' };
+                return res.status(400).json({ error: true, status: 422, msg: 'Não foi encontrado dados para o id' });
             }
             askForHelpExist.avaliable = avaliable;
             askForHelpExist.title = title;
@@ -39,6 +53,11 @@ module.exports = {
     
     index: async (req, res) => {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { limit = 7, page = 1, avaliable = 1 } = req.query;
             limit = parseInt(limit);
             page = parseInt(page) - 1;
@@ -63,6 +82,12 @@ module.exports = {
     
     show: async (req, res) => {
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { id } = req.params;
             const result = await AskForHelp.findByPk(id, {
                 include: [
@@ -84,15 +109,28 @@ module.exports = {
     },
         
     destroy: async (req, res) => {
+
+        const transaction = await AskForHelp.sequelize.transaction();
+
         try {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                await transaction.rollback();
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let { id } = req.params;
             let askForHelpExist = await AskForHelp.findByPk(id);
             if (!askForHelpExist) {
-                return { error: true, status: 422, msg: 'Não foi encontrado dados para o id' };
+                await transaction.rollback();
+                return res.status(422).json({ error: true, status: 422, msg: 'Não foi encontrado dados para o id' });
             }
             const result = await askForHelpExist.destroy();
+            await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }

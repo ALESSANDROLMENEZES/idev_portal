@@ -1,14 +1,13 @@
 const { UserClassDone, Class, ModuleClass, Module, User } = require('../models');
 const Sequelize = require('sequelize');
+const { validationResult } = require('express-validator');
 const Op = Sequelize.Op;
 const connectedUser = { id: 1 };
 
 
 //Método não exportado (util)
-const list = async (id, limit=14, page=1) => {
+const list = async (id, limit, page) => {
     try {
-        limit = parseInt(limit);
-        page = parseInt(page) - 1;
         const { count:size, rows:result } = await UserClassDone.findAndCountAll(
             {
                 include: [
@@ -41,11 +40,11 @@ const list = async (id, limit=14, page=1) => {
                 offset: limit * page
             });
             
-            return res.status(200).json({size, result });
+            return {size, result };
             
         } catch (error) {
             console.log(error);
-            return res.status(422).json({ error: true, msg:error.message});
+            return { error: true, msg:error.message};
         }  
     };
     
@@ -56,6 +55,11 @@ const list = async (id, limit=14, page=1) => {
         store: async (req, res) => {
             const transaction = await UserClassDone.sequelize.transaction();
             try {
+                
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    return res.status(400).json({ errors: errors.array() });
+                }
                 
                 let { classId, percentDone } = req.body;
                 const userId = connectedUser.id;
@@ -109,9 +113,14 @@ const list = async (id, limit=14, page=1) => {
         update: async (req, res) => {
             const transaction = await UserClassDone.sequelize.transaction();
             try {
-
+                
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    return res.status(400).json({ errors: errors.array() });
+                }
+                
                 const { id } = req.params;
-
+                
                 const post = await UserClassDone.findByPk(id);
                 post.likes++;
                 const result = await post.save();
@@ -124,14 +133,20 @@ const list = async (id, limit=14, page=1) => {
             }
         },
         
-        index: async () => {
+        index: async (req, res) => {
             try {
+                
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    return res.status(400).json({ errors: errors.array() });
+                }
+                
                 let result;
-                let { id, param='all', limit = 14, page = 1 } = req.query;
+                let { id, listBy='all', limit = 14, page = 1 } = req.query;
                 limit = parseInt(limit);
                 page = parseInt(page) - 1;
                 
-                switch (param) {
+                switch (listBy) {
                     case 'my':
                     id = connectedUser.id;
                     result = await list(id, limit, page);
@@ -157,7 +172,6 @@ const list = async (id, limit=14, page=1) => {
                 
                 
             }  catch (error) {
-                await transaction.rollback();
                 console.log(error);
                 return res.status(422).json({ error: true, msg:error.message});  
             }      

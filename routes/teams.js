@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const teamController = require('../controllers/teamController');
-const { check, param } = require('express-validator');
 const teamUserController = require('../controllers/teamUserController');
+const { check, param } = require('express-validator');
 
 router.get('/all', teamController.index);
 
