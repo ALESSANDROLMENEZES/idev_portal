@@ -27,4 +27,3 @@ test('Deve listar as respostas ', async () => {
     const list = await answerController.index(10);
     expect(list.size).toBeGreaterThan(3);
 });
-

@@ -31,7 +31,7 @@ module.exports = {
             return res.status(422).json({ error: true, msg:error.message});
         }
     },
-
+    
     update: async (req, res) => {
         try {
 
