@@ -19,7 +19,7 @@
 ✔ Implementar controle de acesso para usuários comuns @done (13/08/2020 00:19:43)
 ✔ Validar transaction nos métodos do controller @done (13/08/2020 01:02:35)
 ☐ Implementar JWT
-☐ Implementar cors 
+✔ Implementar cors @done (13/08/2020 01:08:11)
 ☐ Implementar upload de imagens 
 ☐ Implementar exclusão de arquivo ao alterar um avatar
 ☐ Implementar middleware para autenticar rotas
