@@ -28,7 +28,7 @@ const wrongMessages = [
 ];
 
 const validateCorretlyAnswer = async(userAnswer, correctAnswer)=>{
-    const right = userAnswer === correctAnswer;
+    const right = parseInt(userAnswer) ===  parseInt(correctAnswer);
     if (right) {
         return { right, msg: rightMessages[parseInt(Math.random() * rightMessages.length - 1)] };
     }
@@ -37,7 +37,7 @@ const validateCorretlyAnswer = async(userAnswer, correctAnswer)=>{
 
 module.exports = {
     
-    store: async (userAnswered) => {
+    store: async (req, res) => {
         const transaction = await UserAnswered.sequelize.transaction();
         try {
 
@@ -46,15 +46,30 @@ module.exports = {
 
             const questionExist = await Question.findByPk(questionId);
             if (!questionExist) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Não foi encontrado o questionário informado'});
             }
             const answerExist = await Answer.findByPk(answerId);
             
             if (!answerExist) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Não foi encontrado a resposta informada'});
             }
             
-            const result = await UserAnswered.create({ questionId, answerId, userId });
+            const userAlreadyAnswerThisQuestion = await UserAnswered.findOne({ where: {questionId, userId} });
+
+            let result;
+
+            if (!userAlreadyAnswerThisQuestion) {
+               result = await UserAnswered.create({ questionId, answerId, userId });
+            } else {
+                result = await UserAnswered.update({ answerId }, {
+                    where: {
+                        id:userAlreadyAnswerThisQuestion.id
+                    }
+                });
+            }
+
             await transaction.commit();
 
             const message = await validateCorretlyAnswer(answerId, questionExist.rightAnswerId);

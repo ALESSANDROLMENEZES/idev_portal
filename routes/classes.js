@@ -3,13 +3,21 @@ const router = express.Router();
 const classController = require('../controllers/classController');
 const { check, param } = require('express-validator');
 
-router.get('/all/:moduleId', [
+
+
+router.get('/index/:moduleId', [
     param('moduleId', 'Informe o id numérico de um módulo').isNumeric()
 ], classController.index);
 
 router.get('/:id', [
     param('id', 'Informe o id numérico da aula').isNumeric()
 ], classController.show);
+
+
+
+
+
+
 
 router.post('/:moduleId', [
     param('moduleId', 'Informe o id do módulo para vincular a aula').isNumeric(),

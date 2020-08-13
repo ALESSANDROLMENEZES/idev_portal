@@ -134,7 +134,7 @@ module.exports = {
             }
 
             const result = await foundTeamUser.destroy();
-            
+            await transaction.commit();
             return res.status(200).json({ result });
             
         } catch (error) {

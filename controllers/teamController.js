@@ -14,10 +14,12 @@ const validateId = (id) => {
 
 module.exports = {
     store: async (req, res) => {
+        const transaction = await Team.sequelize.transaction()
         try {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -25,6 +27,7 @@ module.exports = {
             
             const avaliableChallenge = await Challenge.findByPk(challengeId, {where:{statusId:1}});
             if (!avaliableChallenge) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Este desafio não está mais disponível'});
             }
             
@@ -35,12 +38,15 @@ module.exports = {
             if (expiresAt < currentDate) {
                 avaliableChallenge.statusId = 3;
                 await avaliableChallenge.save();
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Este desafio expirou'});   
             }
             
             const result = await Team.create({ challengeId, statusId, github });
+            await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }  

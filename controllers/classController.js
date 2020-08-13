@@ -60,10 +60,12 @@ module.exports = {
     
     
     store: async (req, res) => {
+        const transaction = await Module.sequelize.transaction();
         try {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
             
@@ -73,17 +75,20 @@ module.exports = {
             
             if (!slides.includes('/embed?') || !slides.includes('https://docs')) {
             msg = 'Informe um link válido do google slides com a propriedade: /embed?';
+            await transaction.rollback();
             return res.status(422).json({ error: true, msg});
         }
         
         if (!video.includes('/embed') || !video.includes('youtube')) {
             msg = 'Informe um link válido do youtube com a propriedade: /embed?';
+            await transaction.rollback();
             return res.status(422).json({ error: true, msg});
         }
         
         const moduleExist = await Module.findByPk(moduleId);
         
         if (!moduleExist) {
+            await transaction.rollback();
             return res.status(422).json({ error: true, msg:'Não foi encontrado um módulo com o id informado'});
         }
         
@@ -91,9 +96,11 @@ module.exports = {
         
         const result = await ModuleClass.create({ moduleId, classId: savedClass.id });
         
+        await transaction.commit();
         return res.status(200).json({ result, savedClass });
         
     } catch (error) {
+        await transaction.rollback();
         console.log(error);
         return res.status(422).json({ error: true, msg:error.message});
     }
@@ -106,6 +113,7 @@ update: async (req, res) => {
         
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            await transaction.rollback();
             return res.status(400).json({ errors: errors.array() });
         }
         
@@ -114,16 +122,19 @@ update: async (req, res) => {
         
         const foundClass = await Class.findByPk(id);
         if (!foundClass) {
+            await transaction.rollback();
             return res.status(422).json({ error: true, msg:'Não foi encontrada uma aula com o id especificado'});
         }
         
         if (!slides.includes('/embed?') || !slides.includes('https://docs')) {
         msg = 'Informe um link válido do google slides com a propriedade: /embed?';
+        await transaction.rollback();
         return res.status(422).json({ error: true, msg});
     }
     
     if (!video.includes('/embed') || !video.includes('youtube')) {
         msg = 'Informe um link válido do youtube com a propriedade: /embed?';
+        await transaction.rollback();
         return res.status(422).json({ error: true, msg});
     }
     
@@ -147,18 +158,19 @@ destroy: async (req, res) => {
         
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            await transaction.rollback();
             return res.status(400).json({ errors: errors.array() });
         }
         
         let { id } = req.params;
         const foundClass = await Class.findByPk(id);
         if (!foundClass) {
+            await transaction.rollback();
             return res.status(422).json({ error: true, msg:'Não foi encontrada uma aula com o id especificado'});
         }
         const result = await foundClass.destroy();
         
         await transaction.commit();
-        
         return res.status(200).json({ result });
         
     } catch (error) {

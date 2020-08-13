@@ -42,21 +42,26 @@ module.exports = {
     },
     
     store: async (req, res) => {
+        const transaction = await Questionnaire.sequelize.transaction();
         try {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
             const { classId, title, avaliable =1 } = req.body;
             const classExist = await Class.findByPk(classId);
             if (!classExist) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'A aula informada não está disponível' });
             }
             const result = await Questionnaire.create({ classId, title, avaliable });
+            await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }
@@ -69,12 +74,14 @@ module.exports = {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
             const { id } = req.params;
             const questionnaireExist = await Questionnaire.findByPk(id);
             if (!questionnaireExist) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'O questionário informado não está disponível'});
             }
             const result = await questionnaireExist.destroy();
@@ -92,9 +99,9 @@ module.exports = {
         const transaction = await Questionnaire.sequelize.transaction();      
         try {
 
-            
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -102,6 +109,7 @@ module.exports = {
             const { title, classId, avaliable = 1 } = req.body;
             const questionnaireExist = await Questionnaire.findByPk(id);
             if (!questionnaireExist) {
+                await transaction.rollback();
             return res.status(422).json({ error: true, msg:'O questionário informado não está disponível'});
 
             }
@@ -157,6 +165,7 @@ module.exports = {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -164,19 +173,23 @@ module.exports = {
             let rightAnswerIndex = parseInt(question.rightAnswerId) || 0;
 
             if (!answers[0]) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'Informe as perguntas em formato de array' });
             }
 
             if (rightAnswerIndex < 1 || rightAnswerIndex > answers.length) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:`A resposta correta para a questão deve ser de 1 à ${answers.length}`});
             }
             --rightAnswerIndex;
 
             if (!question.text || !question.rightAnswerId) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'Informe uma pergunta para o questionário' });  
             }
 
             if (!questionnaire.title || !questionnaire.classId) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'Informe os dados do questionário' }); 
             }
 

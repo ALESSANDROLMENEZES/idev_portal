@@ -39,10 +39,12 @@ module.exports = {
     
     
     store: async (req, res) => {
+        const transaction = await User.sequelize.transaction();
         try {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -50,6 +52,7 @@ module.exports = {
 
             const alreadyExistis = await User.findOne({ where: { email } });
             if (alreadyExistis) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'Email já cadastrado' });
             }
             email = email.toLowerCase();
@@ -58,8 +61,10 @@ module.exports = {
 
             const result = await User.create({ email, password:encryptedPass });
             result.password = undefined;
+            await transaction.commit();
             return res.status(200).json({ result });              
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});  
         }
@@ -90,6 +95,7 @@ module.exports = {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -120,6 +126,7 @@ module.exports = {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -130,10 +137,12 @@ module.exports = {
 
             const credentials = await User.scope('withPassword').findOne({ where: { email } });
             if (!credentials) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
             }
             const passMatch = bk.compareSync(password, credentials.password);
             if (!passMatch) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
             }
             

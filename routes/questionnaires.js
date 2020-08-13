@@ -3,8 +3,9 @@ const router = express.Router();
 const questionnaireController = require('../controllers/questionnaireController');
 const answerController = require('../controllers/answerController');
 const { check, param } = require('express-validator');
+const userAnsweredController = require('../controllers/userAnsweredController');
 
-router.get('/all/:classId/:questionId', [
+router.get('/index/:classId/:questionId', [
     param('classId','Informe o id da aula para listar o questionário').isNumeric(),
     param('questionId','Informe o id da questão').isNumeric(),
 ], questionnaireController.index);
@@ -12,6 +13,20 @@ router.get('/all/:classId/:questionId', [
 router.get('/:id', [
     param('id', 'Informe um id numérico').isNumeric()
 ], questionnaireController.show);
+
+router.get('/aswers/index', answerController.index);
+
+router.get('/aswers/:id', [
+    param('id', 'Informe um id numérico').isNumeric()
+], answerController.show);
+
+router.post('/useranswers', userAnsweredController.store);
+
+
+
+
+
+
 
 router.post('/complete', questionnaireController.storeAnswersAndLinkAllToQuestionAndQuestionnaire);
 
@@ -38,12 +53,6 @@ router.put('/:id', [
     check('title', 'Informe um título de até 45 caracter').isLength({ min: 1, max: 45 }),
     check('avaliable', 'Informe um boleano com o valor true se a aula ficará disponível ou false').isBoolean()
 ], questionnaireController.update);
-
-router.get('/aswers/all', answerController.index);
-
-router.get('/aswers/:id', [
-    param('id', 'Informe um id numérico').isNumeric()
-], answerController.show);
 
 router.delete('/aswers/:id', [
     param('id', 'Informe um id numérico').isNumeric(),

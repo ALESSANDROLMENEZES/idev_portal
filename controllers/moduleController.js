@@ -5,19 +5,22 @@ const { validationResult } = require('express-validator');
 const conectedUser = { id: 6, admin: true };
 
 module.exports = {
-    
     store: async (req, res) => {
+        const transaction = await Module.sequelize.transaction();
         try {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
             const { title, avaliable } = req.body;
             const result = await Module.create({ title, avaliable });
+            await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }
@@ -69,6 +72,7 @@ module.exports = {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -92,11 +96,13 @@ module.exports = {
         try {
             
             if (!conectedUser.admin) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Você não tem autorização para exclusão'});
             }
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 

@@ -51,18 +51,18 @@ module.exports = {
             const validate = await validateChallenge(challenge);
             
             if (validate.status != 200) {
-                transaction.rollback();
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:validate.msg});
             }
             
             let result = await Challenge.create(challenge);
             
-            transaction.commit();
+            await transaction.commit();
             return res.status(200).json({ result });
             
         } catch (error) {
             console.log(error);
-            transaction.rollback();
+            await transaction.rollback();
             return res.status(422).json({ error: true, msg:error.message});
         }
     },
@@ -84,14 +84,14 @@ module.exports = {
             const validate = await validateChallenge(challenge);
             
             if (validate.status != 200) {
-                transaction.rollback();
+               await transaction.rollback();
                 return res.status(422).json({ error: true, msg:validate.msg});
             }
             
             const challengeExist = await Challenge.findByPk(id);
             
             if (!challengeExist) {
-                transaction.rollback();
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Não encontrei o desafio informado'});
             }
             
@@ -99,7 +99,7 @@ module.exports = {
             return res.status(200).json({ result });
             
         } catch (error) {
-            transaction.rollback();
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }
@@ -112,28 +112,29 @@ module.exports = {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
               return res.status(400).json({ errors: errors.array() });
             }
 
             let { id } = req.params;
 
             if (isNaN(id)) {
-                transaction.rollback();
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Informe um id válido'});
             }
             const challengeExist = await Challenge.findByPk(id);
             
             if (!challengeExist) {
-                transaction.rollback();
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Não encontrei o desafio informado'});
             }
             
             const result = await Challenge.destroy({ where: { id } });
-            transaction.commit();
+            await transaction.commit();
             return res.status(200).json({ result });
             
         } catch (error) {
-            transaction.rollback();
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }

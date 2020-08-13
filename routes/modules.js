@@ -5,9 +5,15 @@ const userModuleController = require('../controllers/userModuleController');
 const { check, param } = require('express-validator');
 
 
-router.get('/all', moduleController.index);
+router.get('/index', moduleController.index);
 
 router.get('/usermodules', userModuleController.index);
+
+
+
+
+
+
 
 router.post('/', [
     check('title', 'Informe um título para o módulo de até 80 caracteres').isLength({ min: 1, max: 80 }),

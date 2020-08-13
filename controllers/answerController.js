@@ -33,44 +33,54 @@ module.exports = {
     },
     
     update: async (req, res) => {
+        const transaction = await Answer.sequelize.transaction();
         try {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
             const { id } = req.params;
             const { description, avaliable } = req.body;
             const answerExist = await Answer.findByPk(id);
             if (!answerExist) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'A resposta informada não foi encontrada'});
             }
             answerExist.description = description;
             answerExist.avaliable = avaliable;
             const result = await answerExist.save();
+            await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }
     },
 
     destroy: async (req, res) => {
+        const transaction = await Answer.sequelize.transaction();
         try {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
             const { id } = req.params;
             const answerExist = await Answer.findByPk(id);
             if (!answerExist) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'A resposta informada não foi encontrada'});    
             }
             const result = await answerExist.destroy();
+            await transaction.commit();
             return res.status(200).json({ result });
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }

@@ -4,11 +4,22 @@ const challengeController = require('../controllers/challengeController');
 const challengeStatusController = require('../controllers/challengeStatusController');
 const { check, param } = require('express-validator');
 
-router.get('/all', challengeController.index);
+router.get('/index', challengeController.index);
+
+router.get('/status/index', challengeStatusController.index);
+
+router.get('/status/:id', [
+    param('id', 'Informe o id em formato numérico').isNumeric()
+], challengeStatusController.show);
 
 router.get('/:id', [
     param('id', 'Informe o id em formato numérico').isNumeric()
 ], challengeController.show);
+
+
+
+
+
 
 router.post('/', [
     check('title', 'Informe um título de até 80 caracter').isLength({min:1,max:80}),
@@ -52,12 +63,6 @@ router.delete('/:id', [
 router.post('/status', [
     check('description', 'Informe uma descrição de até 45 caracter').isLength({min:1, max:45}),
 ], challengeStatusController.store);
-
-router.get('/status/all', challengeStatusController.index);
-
-router.get('/status/:id', [
-    param('id', 'Informe o id em formato numérico').isNumeric()
-], challengeStatusController.show);
 
 router.delete('/status/:id', [
     param('id', 'Informe o id em formato numérico').isNumeric()

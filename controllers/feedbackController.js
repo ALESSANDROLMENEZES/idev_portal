@@ -14,6 +14,7 @@ module.exports = {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -178,6 +179,7 @@ module.exports = {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -237,10 +239,12 @@ module.exports = {
     },
 
     update: async (req, res) => {
+        const transaction = await Feedback.sequelize.transaction();
         try {
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -249,15 +253,17 @@ module.exports = {
             const { comment, score } = req.body;
             const feedbackExists = await Feedback.findOne({ where: { id, userId } });
             if (!feedbackExists) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Não foi encontrado o feedback para o id informado'});
             }
             feedbackExists.comment = comment;
             feedbackExists.score = score;
             const result = await feedbackExists.save();
-
+            await transaction.commit();
             return res.status(200).json({ result });
 
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }

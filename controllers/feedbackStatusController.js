@@ -4,10 +4,12 @@ const { validationResult } = require('express-validator');
 module.exports = {
 
     store: async (req, res) => {
+        const transaction = await FeedbackStatus.sequelize.transaction();
         try {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -15,15 +17,18 @@ module.exports = {
 
             const alreadyExistis = await FeedbackStatus.findOne({ where: { description } });
             if (alreadyExistis) {
+                await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Já existe um status com essa descrição'});
             }
             
             description = description[0].toUpperCase() + description.slice(1, description.length).toLowerCase();
             
             const result = await FeedbackStatus.create({ description });
+            await transaction.commit();
             return res.status(200).json({ result }); 
             
         } catch (error) {
+            await transaction.rollback();
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});
         }
@@ -36,6 +41,7 @@ module.exports = {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 
@@ -98,6 +104,7 @@ module.exports = {
             
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
 

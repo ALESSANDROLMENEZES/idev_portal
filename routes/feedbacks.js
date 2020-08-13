@@ -4,11 +4,13 @@ const feedbackController = require('../controllers/feedbackController');
 const feedbackStatusController = require('../controllers/feedbackStatusController');
 const { check, param } = require('express-validator');
 
-router.get('/all', feedbackController.index);
+router.get('/index', feedbackController.index);
 
 router.get('/:id', [
     param('id', 'Informe o id numérico do feedback').isNumeric()
 ], feedbackController.show);
+
+router.get('/status/list/index', feedbackStatusController.index);
 
 router.post('/:teamId', [
     check('teamId', 'Informe o id numérico do time').isNumeric(),
@@ -32,15 +34,18 @@ router.delete('/:id',[
     param('id', 'Informe o id numérico do feedback').isNumeric()
 ], feedbackController.destroy);
 
-router.post('/status/store', [
-    check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
-], feedbackStatusController.store);
-
-router.get('/status/list/all', feedbackStatusController.index);
-
 router.get('/status/:id',[
     param('id', 'Informe o id numérico do status').isNumeric()
 ], feedbackStatusController.show);
+
+
+
+
+
+
+router.post('/status/store', [
+    check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
+], feedbackStatusController.store);
 
 router.delete('/status/:id',[
     param('id', 'Informe o id numérico do status').isNumeric()

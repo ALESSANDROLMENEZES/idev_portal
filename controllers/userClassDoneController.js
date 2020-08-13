@@ -58,6 +58,7 @@ const list = async (id, limit, page) => {
                 
                 const errors = validationResult(req);
                 if (!errors.isEmpty()) {
+                    await transaction.rollback();
                     return res.status(400).json({ errors: errors.array() });
                 }
                 
@@ -69,6 +70,7 @@ const list = async (id, limit, page) => {
                 });
                 
                 if (!classExist) {
+                    await transaction.rollback();
                     return res.status(422).json({ error: true, msg:'Esta aula não está mais disponível'});
                 }
                 
@@ -116,6 +118,7 @@ const list = async (id, limit, page) => {
                 
                 const errors = validationResult(req);
                 if (!errors.isEmpty()) {
+                    await transaction.rollback();
                     return res.status(400).json({ errors: errors.array() });
                 }
                 

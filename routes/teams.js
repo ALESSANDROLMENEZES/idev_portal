@@ -4,7 +4,7 @@ const teamController = require('../controllers/teamController');
 const teamUserController = require('../controllers/teamUserController');
 const { check, param } = require('express-validator');
 
-router.get('/all', teamController.index);
+router.get('/index', teamController.index);
 
 router.get('/:id', [
     param('id', 'Informe um id numérico').isNumeric(),
