@@ -16,15 +16,17 @@ module.exports = {
             }
 
             let { email, name } = req.query;
-
-            email = (!email) ? '' : email;
-            name = (!name) ? '' : name;
+            const operationFilter = [];
+            const filterByEmail = (!email) ? { email: { [Op.like]:`%%`} } : { email: { [Op.like]:`%${email}%`} };
+            const filterByName = (!name) ? { name: { [Op.like]: `%%` } } : { name: { [Op.like]: `%${name}%` } };
+            if (!name) {
+                operationFilter.push(filterByEmail);
+            } else {
+                operationFilter.push(filterByName);
+            }
             const result = await User.findAll({
                 where: {
-                    [Op.or]: [
-                        { email: { [Op.like]:`%${email}%`} },
-                        { name:{[Op.like]:`%${name}%`}}
-                    ]
+                    [Op.or]: operationFilter
                 },
                 limit:7
             });
@@ -93,12 +95,12 @@ module.exports = {
 
             let encryptedPass;
             const { id } = req.params;
-            let { name, avatar, password, linkedin, github, telegram, whatsapp } = req.body;
+            let { email, name, avatar, password, linkedin, github, telegram, whatsapp } = req.body;
             if (password) {
                 encryptedPass = bk.hashSync(password, 10);
             }
             let result = await User.update({
-                name, avatar, encryptedPass, linkedin, github, telegram, whatsapp
+                email, name, avatar, password:encryptedPass, linkedin, github, telegram, whatsapp
             }, { where: { id } });
 
             await transaction.commit();
@@ -122,9 +124,17 @@ module.exports = {
             }
 
             const { id } = req.params;
+            let { email, password } = req.body;
 
-            if (!conectedUser.admin) {
-                return res.status(422).json({ error: true, msg:'Apenas administrador pode excluir usuário'});
+            email = email.toLowerCase();
+
+            const credentials = await User.scope('withPassword').findOne({ where: { email } });
+            if (!credentials) {
+                return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
+            }
+            const passMatch = bk.compareSync(password, credentials.password);
+            if (!passMatch) {
+                return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
             }
             
             let userExists = await User.findByPk(id);
