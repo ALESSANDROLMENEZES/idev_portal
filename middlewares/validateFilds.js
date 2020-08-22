@@ -83,6 +83,33 @@ module.exports = {
             check('password','Informe uma senha').isLength({min:1})
 
         ];
+    },
+
+    validateNewModule: () => {
+        return [
+
+            check('title', 'Informe um título para o módulo de até 80 caracteres').isLength({ min: 1, max: 80 }),
+            check('avaliable', 'Informe se o módulo ficará disponível').isBoolean(),
+
+        ];
+    },
+
+    validateAddModuleToUser: () => {
+        return [
+
+            check('userId','Informe um id numérico para o usuário').isNumeric(),
+            check('moduleId','Informe um id numérico para o módulo').isNumeric(),
+
+        ];
+    },
+
+    validateRemoveModuleToUser: () => {
+        return [
+
+            param('userId','Informe um id numérico para o usuário').isNumeric(),
+            param('moduleId','Informe um id numérico para o módulo').isNumeric(),
+
+        ];
     }
     
 };
