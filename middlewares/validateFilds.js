@@ -110,6 +110,34 @@ module.exports = {
             param('moduleId','Informe um id numérico para o módulo').isNumeric(),
 
         ];
+    },
+
+    validateGetQuestionnaire: () => {
+        return [
+            param('classId', 'Informe o id da aula para listar o questionário').isNumeric(),
+            param('questionId', 'Informe o id da questão').isNumeric(),
+        ];
+    },
+
+    validateQuestionnaire: () => {
+        return [
+            check('classId', 'Informe o id da aula').isNumeric(),
+            check('title', 'Informe um título de até 45 caracter').isLength({ min: 1, max: 45 }),
+            check('avaliable', 'Informe um boleano com o valor true se a aula ficará disponível ou false').isBoolean()
+        ];
+    },
+
+    validateAnswer: () => {
+        return [
+            check('description', 'Informe uma descrição para a resposta').isLength({ min: 1, max: 255 }),
+            check('avaliable', 'Informe se a resposta ficará disponível').isBoolean()
+        ];
+    },
+
+    validateQuestionidParam: () => {
+        return [
+            param('questionId', 'Informe um id numérico para a questão').isNumeric(),
+        ];
     }
     
 };
