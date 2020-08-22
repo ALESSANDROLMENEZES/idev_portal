@@ -2,63 +2,41 @@ const express = require('express');
 const router = express.Router();
 const feedbackController = require('../controllers/feedbackController');
 const feedbackStatusController = require('../controllers/feedbackStatusController');
-const { check, param } = require('express-validator');
+const {
+    validateIdParam,
+    validateNewFeedback,
+    validateTemIdParam,
+    validateUpdateFeedback,
+    validateStatus
+} = require('../middlewares/validateFilds');
 
 router.get('/index', feedbackController.index);
 
-router.get('/:id', [
-    param('id', 'Informe o id numérico do feedback').isNumeric()
-], feedbackController.show);
+router.get('/:id', validateIdParam(), feedbackController.show);
 
 router.get('/status/list/index', feedbackStatusController.index);
 
-router.post('/:teamId', [
-    check('teamId', 'Informe o id numérico do time').isNumeric(),
-    check('score', 'Score é campo obrigatório, se for avaliar mais tarde informe a nota 0').isNumeric(),
-    check('statusId', 'Informe o statusId, valor 0 ou 1, sendo 0 se for finalizar a avaliação e 1 se for continuar avaliando mais tarde').isNumeric(),
-], feedbackController.store);
+router.post('/:teamId', validateTemIdParam(), validateNewFeedback(), feedbackController.store);
 
-router.patch('/:id', [
-    param('id', 'Informe o id numérico do feedback').isNumeric(),
-    check('score', 'Score é um campo obrigatório').isNumeric(),
-    check('comment', 'Comentário é um campo obrigatório').isLength({min:5, max:500})
-], feedbackController.update);
+router.patch('/:id', validateIdParam(), validateUpdateFeedback(), feedbackController.update);
 
-router.put('/:id',[
-    param('id', 'Informe o id numérico do feedback').isNumeric(),
-    check('score', 'Score é um campo obrigatório').isNumeric(),
-    check('comment', 'Comentário é um campo obrigatório').isLength({min:5, max:500})
-], feedbackController.update);
+router.put('/:id', validateIdParam(), validateUpdateFeedback(), feedbackController.update);
 
-router.delete('/:id',[
-    param('id', 'Informe o id numérico do feedback').isNumeric()
-], feedbackController.destroy);
+router.delete('/:id', validateIdParam(), feedbackController.destroy);
 
-router.get('/status/:id',[
-    param('id', 'Informe o id numérico do status').isNumeric()
-], feedbackStatusController.show);
+router.get('/status/:id', validateIdParam(), feedbackStatusController.show);
 
 
 
+//Auth here to authenticate next routes
 
 
+router.post('/status/store', validateStatus(), feedbackStatusController.store);
 
-router.post('/status/store', [
-    check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
-], feedbackStatusController.store);
+router.delete('/status/:id', validateIdParam(), feedbackStatusController.destroy);
 
-router.delete('/status/:id',[
-    param('id', 'Informe o id numérico do status').isNumeric()
-], feedbackStatusController.destroy);
+router.put('/status/:id', validateIdParam(), validateStatus(), feedbackStatusController.update);
 
-router.put('/status/:id',[
-    param('id', 'Informe o id numérico do status').isNumeric(),
-    check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
-], feedbackStatusController.update);
-
-router.patch('/status/:id',[
-    param('id', 'Informe o id numérico do status').isNumeric(),
-    check('description', 'Informe uma descrição de até 45 caracteres').isLength({min:1, max:45})
-], feedbackStatusController.update);
+router.patch('/status/:id', validateIdParam(), validateStatus(), feedbackStatusController.update);
 
 module.exports = router;
