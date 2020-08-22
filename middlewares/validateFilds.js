@@ -74,6 +74,15 @@ module.exports = {
             check('score', 'Score é um campo obrigatório').isNumeric(),
             check('comment', 'Comentário é um campo obrigatório').isLength({ min: 5, max: 500 })
         ];
+    },
+
+    validateEmailAndPassword: () => {
+        return [
+
+            check('email','Informe um email válido').isEmail(),
+            check('password','Informe uma senha').isLength({min:1})
+
+        ];
     }
     
 };
