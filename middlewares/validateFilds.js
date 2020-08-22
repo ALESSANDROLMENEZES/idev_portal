@@ -138,6 +138,38 @@ module.exports = {
         return [
             param('questionId', 'Informe um id numérico para a questão').isNumeric(),
         ];
+    },
+
+    validateNewTeam: () => {
+        return [
+            check('challengeId', 'Informe um id do desafio').isNumeric(),
+            check('statusId', 'Informe um id do status de feedback').isNumeric()
+        ];
+    },
+
+    validateUpdateTeam: () => {
+        return [
+
+            check('challengeId', 'Informe um id do desafio').isNumeric(),
+            check('github', 'Informe o link do desafio').isURL(),
+            check('statusId', 'Informe um id do status de feedback').isNumeric()
+
+        ];
+    },
+
+    validateAddMemberOnTeam: () => {
+        return [
+            check('teamId', 'Informe o id do time ou 0 para ser criado um novo time').isNumeric(),
+            check('userId', 'Informe um id do usuário a ser adicionado no time').isNumeric(),
+            check('challengeId', 'Informe o id do desafio').isNumeric()
+        ];
+    },
+
+    validateRemoveUserFromTeam: () => {
+        return [
+            param('teamId', 'Informe o id do time ou 0 para ser criado um novo time').isNumeric(),
+            param('userId', 'Informe um id do usuário a ser adicionado no time').isNumeric()
+        ];
     }
     
 };
