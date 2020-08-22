@@ -170,6 +170,19 @@ module.exports = {
             param('teamId', 'Informe o id do time ou 0 para ser criado um novo time').isNumeric(),
             param('userId', 'Informe um id do usuário a ser adicionado no time').isNumeric()
         ];
+    },
+
+    validateHelps: () => {
+        return [
+            check('title', 'Informe um título que tenha entre 5 e 255 caracteres').isLength({ min: 5, max: 255 }),
+            check('description', 'Informe uma descrição que tenha entre 5 e 255 caracteres').isLength({ min: 5, max: 255 })
+        ];
+    },
+
+    validateAvaliableHelps: () => {
+        return [
+            check('avaliable', 'Informe um boleano para indicar se o pedido está em aberto').isBoolean()
+        ];
     }
     
 };
