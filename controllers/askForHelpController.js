@@ -1,6 +1,6 @@
 const { AskForHelp, User } = require('../models');
 const { validationResult } = require('express-validator');
-const conectedUser = { id: 1 };
+
 module.exports = {
     
     store: async (req, res) => {
@@ -14,7 +14,7 @@ module.exports = {
             }
 
             const { title, description, avaliable } = req.body;
-            const  userId  = conectedUser.id;
+            const  userId  = req.user.user_id;
             if (!req.body) {
                 await transaction.rollback();
                 return { error: true, status: 422, msg: 'Informe os dados' };

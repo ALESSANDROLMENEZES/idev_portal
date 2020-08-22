@@ -1,4 +1,4 @@
-const { QuestionnaireQuestion, Question, Questionnaire } = require('../models');
+const { QuestionnaireQuestion, Questionnaire } = require('../models');
 
 module.exports = {
     

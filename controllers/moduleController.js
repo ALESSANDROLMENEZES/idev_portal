@@ -2,7 +2,6 @@ const { Module, UserModule } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const { validationResult } = require('express-validator');
-const conectedUser = { id: 6, admin: true };
 
 module.exports = {
     store: async (req, res) => {
@@ -35,7 +34,7 @@ module.exports = {
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const user = conectedUser;
+            const { user } = req;
             if (user.admin) {
                 let { rows: result, count:size } = await Module.findAndCountAll();
                 return res.status(200).json({ size, result });
@@ -95,7 +94,7 @@ module.exports = {
         const transaction = await Module.sequelize.transaction();
         try {
             
-            if (!conectedUser.admin) {
+            if (!req.user.admin) {
                 await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Você não tem autorização para exclusão'});
             }

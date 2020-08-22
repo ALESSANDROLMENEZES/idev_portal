@@ -1,7 +1,6 @@
 const { Feedback, TeamUser, Challenge, Team, User, FeedbackStatus } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const connectedUser = { id: 6, admin: true };
 const minCoinsToFeedback = { admin:0, user:1};
 const statusToFeedback = [2, 3];
 const { validationResult } = require('express-validator');
@@ -17,17 +16,16 @@ module.exports = {
                 await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
-
-            let userId = connectedUser.id;
+            const { user } = req;
             const { teamId } = req.params;
             const { comment = '', score = 0, statusId = 0 } = req.body;
             const status = (statusId == 0) ? 4 : 3;
             let minCoins;
-            minCoins = (connectedUser.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
+            minCoins = (user.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
             
             const alreadyFeedback = await Feedback.findOne({
                 where: {
-                    userId,
+                    userId:user.user_id,
                     teamId
                 }
             });
@@ -130,7 +128,7 @@ module.exports = {
             const dataToUpdateProfiles = [];
             
             for (let index = 0; index < isValidTeam.members.length; index++) {
-                if (isValidTeam.members[index].id === connectedUser.id) {
+                if (isValidTeam.members[index].id === user.user_id) {
                     await transaction.rollback();
                     return res.status(422).json({ error: true, msg:'Outro usuário deve avaliar seu time'});
                 }
@@ -248,7 +246,7 @@ module.exports = {
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const userId = connectedUser.id;
+            const userId = user.user_id;
             const { id } = req.params;
             const { comment, score } = req.body;
             const feedbackExists = await Feedback.findOne({ where: { id, userId } });

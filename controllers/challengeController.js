@@ -1,7 +1,6 @@
 const { Challenge, Module, ChallengeStatus, UserModule } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const conectedUser = { id: 1, admin: false };
 const { validationResult } = require('express-validator');
 
 const validateChallenge = async (challenge) => {
@@ -150,7 +149,7 @@ module.exports = {
             if (isNaN(limit) || isNaN(page)) {
                 return [];
             }
-
+            const conectedUser = req.user;
             if (conectedUser.admin) {
                 let { count: size, rows: result } = await Challenge.findAndCountAll({
                     where: { statusId: status },
@@ -162,7 +161,7 @@ module.exports = {
 
             const userModules = await UserModule.findAll({
                 where: {
-                    userId: conectedUser.id
+                    userId: conectedUser.user_id
                 }
             });
 

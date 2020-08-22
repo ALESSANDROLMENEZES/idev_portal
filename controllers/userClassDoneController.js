@@ -2,7 +2,6 @@ const { UserClassDone, Class, ModuleClass, Module, User } = require('../models')
 const Sequelize = require('sequelize');
 const { validationResult } = require('express-validator');
 const Op = Sequelize.Op;
-const connectedUser = { id: 1 };
 
 
 //Método não exportado (util)
@@ -63,7 +62,7 @@ const list = async (id, limit, page) => {
                 }
                 
                 let { classId, percentDone } = req.body;
-                const userId = connectedUser.id;
+                const userId = req.user.user_id;
                 
                 const classExist = await Class.findByPk(classId, {
                     include:[{model:Module, as:'class_module', required:true}]
@@ -151,7 +150,7 @@ const list = async (id, limit, page) => {
                 
                 switch (listBy) {
                     case 'my':
-                    id = connectedUser.id;
+                    id = req.user.user_id;
                     result = await list(id, limit, page);
                     return res.status(200).json( result );
                     

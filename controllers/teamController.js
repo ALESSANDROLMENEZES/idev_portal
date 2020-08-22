@@ -2,7 +2,6 @@ const { Team, User, Challenge,FeedbackStatus } = require('../models');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const connectedUser = { id: 6, admin: true };
 const minCoinsToFeedback = { admin: 0, user: 1 };
 const { validationResult } = require('express-validator');
 
@@ -124,9 +123,9 @@ module.exports = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-
+            const { user } = req;
             const { id } = req.params;
-            let coins = (connectedUser.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
+            let coins = (user.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
             
             if (validateId(id)) {
             return res.status(422).json({ error: true, msg:'Informe um id válido'});
@@ -171,11 +170,11 @@ module.exports = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-
+            const { user } = req;
             let { limit = 14, page = 1 } = req.query;
             limit = parseInt(limit);
             page = parseInt(page) - 1;
-            let coins = (connectedUser.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
+            let coins = (user.admin) ? minCoinsToFeedback.admin : minCoinsToFeedback.user;
             const { rows: result, count:size } = await Team.findAndCountAll({
                 include: [
                     {

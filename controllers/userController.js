@@ -3,7 +3,6 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const bk = require('bcrypt');
 const { validationResult } = require('express-validator');
-const conectedUser = { id: 1, admin: false };
 
 module.exports = {
     

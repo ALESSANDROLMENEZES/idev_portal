@@ -1,6 +1,5 @@
 const { UserModule, User, Module } = require('../models');
 const { Op } = require('sequelize');
-const connectedUser = { id: 1, admin:true };
 const { validationResult } = require('express-validator');
 
 module.exports = {
@@ -14,8 +13,8 @@ module.exports = {
                 await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
-            
-            if (!connectedUser.admin) {
+            const { user } = req;
+            if (!user.admin) {
                 await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Você não tem acesso para vincular usuários'});
             }
@@ -58,8 +57,8 @@ module.exports = {
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            
-            const id = (connectedUser.admin) ? '' : connectedUser.id;
+            const { user } = req;
+            const id = (user.admin) ? '' : user.user_id;
             const { count: size, rows: result } = await Module.findAndCountAll({
                 include: [
                     {
@@ -91,7 +90,9 @@ module.exports = {
                 await transaction.rollback();
                 return res.status(400).json({ errors: errors.array() });
             }
-            if (!connectedUser.admin) {
+            const { user } = req;
+
+            if (!user.admin) {
                 await transaction.rollback();
                 return res.status(422).json({ error: true, msg:'Você não tem acesso para desvincular usuários'});
             }

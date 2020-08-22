@@ -1,5 +1,4 @@
 const { UserAnswered, Question, Answer } = require('../models');
-const connectedUser = { id: 1 };
 
 const rightMessages = [
     'Boa, Você acertou!!!',
@@ -41,7 +40,7 @@ module.exports = {
         const transaction = await UserAnswered.sequelize.transaction();
         try {
 
-            const userId = connectedUser.id;
+            const userId = req.user.user_id;
             const { questionId, answerId } = req.body;
 
             const questionExist = await Question.findByPk(questionId);
@@ -87,7 +86,7 @@ module.exports = {
         const transaction = await UserAnswered.sequelize.transaction();
         try {
             
-            const userId = connectedUser.id;
+            const userId = req.user.user_id;
             const { id } = req.params;
             const { questionId, answerId } = req.body;
 
