@@ -18,9 +18,9 @@
 ✔ Validar compos obrigatórios @done (12/08/2020 23:18:44)
 ✔ Implementar controle de acesso para usuários comuns @done (13/08/2020 00:19:43)
 ✔ Validar transaction nos métodos do controller @done (13/08/2020 01:02:35)
-☐ Implementar JWT
+✔ Implementar JWT @done (22/08/2020 23:25:28)
 ✔ Implementar cors @done (13/08/2020 01:08:11)
 ☐ Implementar upload de imagens 
 ☐ Implementar exclusão de arquivo ao alterar um avatar
-☐ Implementar middleware para autenticar rotas
+✔ Implementar middleware para autenticar rotas @done (22/08/2020 23:25:37)
 ✔ Implementar helmet @done (22/08/2020 18:54:26)
