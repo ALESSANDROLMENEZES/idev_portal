@@ -23,4 +23,4 @@
 ☐ Implementar upload de imagens 
 ☐ Implementar exclusão de arquivo ao alterar um avatar
 ☐ Implementar middleware para autenticar rotas
-☐ Implementar helmet
+✔ Implementar helmet @done (22/08/2020 18:54:26)
