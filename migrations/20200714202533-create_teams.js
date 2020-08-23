@@ -26,7 +26,7 @@ module.exports = {
         allowNull: false,
         comment: "null",
         references: {
-          model: 'Feedback_status',
+          model: 'feedback_status',
           key: 'id'
         },
         onUpdate: 'CASCADE',
