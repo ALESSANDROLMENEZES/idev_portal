@@ -8,6 +8,7 @@ const {
     validateAddModuleToUser,
     validateRemoveModuleToUser
 } = require('../middlewares/validateFilds');
+const { adminValidate } = require('../middlewares/auth');
 
 
 router.get('/index', moduleController.index);
@@ -18,7 +19,7 @@ router.get('/usermodules', userModuleController.index);
 
 
 //Auth here to authenticate next routes
-
+router.use(adminValidate);
 
 
 router.post('/', validateNewModule(), moduleController.store);

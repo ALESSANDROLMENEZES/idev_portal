@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { adminValidate } = require('../middlewares/auth');
 const challengeController = require('../controllers/challengeController');
 const challengeStatusController = require('../controllers/challengeStatusController');
 const { validateIdParam, validateChallenge, validateStatus } = require('../middlewares/validateFilds');
@@ -16,7 +17,7 @@ router.get('/:id',  validateIdParam(), challengeController.show);
 
 
 //Auth here to authenticate next routes
-
+router.use(adminValidate);
 
 router.post('/', validateChallenge(), challengeController.store);
 

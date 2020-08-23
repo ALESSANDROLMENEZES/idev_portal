@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const feedbackController = require('../controllers/feedbackController');
 const feedbackStatusController = require('../controllers/feedbackStatusController');
+const { adminValidate } = require('../middlewares/auth');
 const {
     validateIdParam,
     validateNewFeedback,
@@ -29,6 +30,7 @@ router.get('/status/:id', validateIdParam(), feedbackStatusController.show);
 
 
 //Auth here to authenticate next routes
+router.use(adminValidate);
 
 
 router.post('/status/store', validateStatus(), feedbackStatusController.store);

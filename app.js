@@ -15,6 +15,7 @@ const modulesRouter = require('./routes/modules');
 const questionnairesRouter = require('./routes/questionnaires');
 const teamsRouter = require('./routes/teams');
 const timelineRouter = require('./routes/timeline');
+const { validate } = require('./middlewares/auth');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', indexRouter);
+app.use(validate);
 app.use('/api/users', usersRouter);
 app.use('/api/challenges', challengesRouter);
 app.use('/api/classes', classesRouter);

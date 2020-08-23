@@ -10,6 +10,8 @@ const {
     validateQuestionidParam,
     validateAnswer
 } = require('../middlewares/validateFilds');
+const { adminValidate } = require('../middlewares/auth');
+
 
 router.get('/index/:classId/:questionId', validateGetQuestionnaire(), questionnaireController.index);
 
@@ -24,7 +26,7 @@ router.post('/useranswers', userAnsweredController.store);
 
 
 //Auth here to authenticate next routes
-
+router.use(adminValidate);
 
 
 router.post('/complete', questionnaireController.storeAnswersAndLinkAllToQuestionAndQuestionnaire);

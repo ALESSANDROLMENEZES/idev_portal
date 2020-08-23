@@ -9,7 +9,7 @@ module.exports = {
     validate: async (req, res, next)=>{
         
         try {
-            if (!req.headers.autorization) {
+            if (!req.headers.authorization) {
                 throw new Error('Informe a credencial no header');
             }   
 
@@ -48,6 +48,19 @@ module.exports = {
             return token;
         } catch (error) {
             throw new Error(error.message);
+        }
+    },
+
+    adminValidate: async (req, res, next) => {
+        try {
+            const { user } = req;
+            if (user.admin) {
+                next();
+            } else {
+                throw new Error('Usuário sem permissão');
+            }
+        } catch (error) {
+            res.status(401).json({ error: true, msg: error.message });
         }
     }
 
