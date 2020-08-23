@@ -3,7 +3,13 @@ const router = express.Router();
 const questionnaireController = require('../controllers/questionnaireController');
 const answerController = require('../controllers/answerController');
 const userAnsweredController = require('../controllers/userAnsweredController');
-const { validateGetQuestionnaire, validateIdParam, validateQuestionnaire, validateQuestionidParam } = require('../middlewares/validateFilds');
+const {
+    validateGetQuestionnaire,
+    validateIdParam,
+    validateQuestionnaire,
+    validateQuestionidParam,
+    validateAnswer
+} = require('../middlewares/validateFilds');
 
 router.get('/index/:classId/:questionId', validateGetQuestionnaire(), questionnaireController.index);
 

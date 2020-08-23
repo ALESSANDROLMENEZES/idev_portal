@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const { validateIdParam, validateEmailAndPassword } = require('../middlewares/validateFilds');
 
 
-router.post('/', validateEmailAndPassword(), userController.store);
+router.post('/register', validateEmailAndPassword(), userController.store);
 
 router.get('/', userController.index);
 

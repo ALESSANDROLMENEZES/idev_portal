@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const bk = require('bcrypt');
 const { validationResult } = require('express-validator');
+const { generateToken } = require('../middlewares/auth');
 
 module.exports = {
     
@@ -37,7 +38,7 @@ module.exports = {
     },
     
     
-    store: async (req, res) => {
+    store: async (req, res, next) => {
         const transaction = await User.sequelize.transaction();
         try {
             
@@ -60,8 +61,13 @@ module.exports = {
 
             const result = await User.create({ email, password:encryptedPass });
             result.password = undefined;
+            
+            req.user = { id: result.id, admin: result.admin };
+            const token = await generateToken(req, res, next);
+            
             await transaction.commit();
-            return res.status(200).json({ result });              
+            return res.status(200).json({ result, token });  
+            
         } catch (error) {
             await transaction.rollback();
             console.log(error);
@@ -161,7 +167,7 @@ module.exports = {
         }
     },
     
-    login: async (req, res) => {
+    login: async (req, res, next) => {
         try {
 
             const errors = validationResult(req);
@@ -180,7 +186,12 @@ module.exports = {
             if (!passMatch) {
                 return res.status(422).json({ error: true, msg: 'Email ou senha inválido' });
             }
-            return res.status(200).json({ conected:true });
+
+            req.user = { id: result.id, admin: result.admin };
+            const token = await generateToken(req, res, next);
+
+            return res.status(200).json({ token });
+
         } catch (error) {
             console.log(error);
             return res.status(422).json({ error: true, msg:error.message});            
