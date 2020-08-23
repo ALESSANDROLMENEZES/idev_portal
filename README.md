@@ -2,6 +2,10 @@
 
 Portal gameficado de aprendizado colaborativo para a comunidade IDEV,
 
+##### BASE URL: <https://idev-app.herokuapp.com/api/>
+
+[Clique aqui para acessar a api](https://idev-app.herokuapp.com/api/ "api")
+
 - nodeJS,
 - Sequelize,
 - Javascript,
